@@ -1,0 +1,237 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+/*
+ * Tailwind v4 theme bridge. Tokens defined in tokens.css are exposed to
+ * utility classes here — `bg-tint-muga`, `text-ink-soft`, `font-display`,
+ * `ease-brand` and so on. Add a token above, expose it here, use it anywhere.
+ */
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-paper: var(--paper);
+
+  --color-tint-muga: var(--tint-muga);
+  --color-tint-cloud: var(--tint-cloud);
+  --color-tint-paddy: var(--tint-paddy);
+  --color-tint-loktak: var(--tint-loktak);
+  --color-tint-cherry: var(--tint-cherry);
+
+  --color-muga-gold: var(--muga-gold);
+  --color-muga-gold-ink: var(--muga-gold-ink);
+  --color-muga-gold-hover: var(--muga-gold-hover);
+  --color-muga-gold-on: var(--muga-gold-on);
+  --color-naga-red: var(--naga-red);
+  --color-naga-red-ink: var(--naga-red-ink);
+  --color-naga-red-hover: var(--naga-red-hover);
+  --color-naga-red-glow: var(--naga-red-glow);
+  --color-deep-teal: var(--deep-teal);
+  --color-deep-teal-ink: var(--deep-teal-ink);
+
+  --color-night: var(--night);
+  --color-night-soft: var(--night-soft);
+  --color-night-text: var(--night-text);
+  --color-night-text-soft: var(--night-text-soft);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-utility);
+
+  --text-12: var(--step-12);
+  --text-14: var(--step-14);
+  --text-16: var(--step-16);
+  --text-18: var(--step-18);
+  --text-22: var(--step-22);
+  --text-28: var(--step-28);
+  --text-36: var(--step-36);
+  --text-48: var(--step-48);
+  --text-64: var(--step-64);
+  --text-88: var(--step-88);
+
+  --radius-control: var(--radius-control);
+  --radius-media: var(--radius-media);
+
+  --ease-brand: var(--ease);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--step-16);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Works at 320px: never let a wide child scroll the document sideways. */
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible focus on every interactive element. Never remove without
+     replacing — this is enforced by the quality floor. */
+  :focus-visible {
+    outline: 2px solid var(--deep-teal);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .is-dark :focus-visible {
+    outline-color: var(--paper);
+  }
+
+  ::selection {
+    background-color: var(--muga-gold);
+    color: var(--paper);
+  }
+
+  /* next/image and video never shift layout. */
+  img,
+  video,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+@layer utilities {
+  /*
+   * Hero headline reveal — line by line, behind a clip-path mask.
+   *
+   * Deliberately CSS rather than Framer Motion. A JS-driven reveal cannot
+   * start until hydration, which pushes the largest text paint past the 2.5s
+   * LCP budget on a throttled connection. As CSS it begins at first paint,
+   * so the headline is the LCP element at roughly FCP + the animation.
+   *
+   * `backwards` fill applies the from-state during the stagger delay, so
+   * nothing flashes in unmasked before its turn.
+   */
+  @keyframes hero-line-rise {
+    from {
+      transform: translateY(110%);
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      transform: translateY(0);
+      clip-path: inset(0 0 -12% 0);
+    }
+  }
+
+  .u-hero-line {
+    display: block;
+    animation: hero-line-rise 900ms var(--ease) backwards;
+  }
+
+  /* Content column and full-bleed media column. */
+  .u-container {
+    width: 100%;
+    max-width: calc(var(--content-max) + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .u-container-wide {
+    width: 100%;
+    max-width: calc(var(--media-max) + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .u-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(16px, 2vw, 28px);
+  }
+
+  /* Mono utility text: eyebrows, dates, prices, permit codes. */
+  .u-mono {
+    font-family: var(--font-utility);
+    font-size: var(--step-12);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .u-skip-link {
+    position: absolute;
+    left: var(--gutter);
+    top: 0;
+    z-index: 100;
+    transform: translateY(-150%);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 20px;
+    transition: transform var(--dur-micro) var(--ease);
+  }
+
+  .u-skip-link:focus-visible {
+    transform: translateY(12px);
+  }
+
+  /* Hides content visually but keeps it for assistive tech. */
+  .u-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/*
+ * Reduced motion. Every transform and parallax is disabled; opacity-only
+ * transitions survive. Components additionally read the preference in JS via
+ * useReducedMotion() so Framer Motion and Lenis stand down too.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-property: opacity !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-motion] {
+    transform: none !important;
+  }
+}

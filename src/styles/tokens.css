@@ -1,0 +1,102 @@
+/*
+ * Design tokens. Single source of truth for colour, type, space and motion.
+ * Nothing in the app may use a raw hex value — everything routes through here.
+ */
+
+:root {
+  /* ---- Ink and paper ---------------------------------------------------- */
+  --ink: #14201b;
+  --ink-soft: #4a5852;
+  --paper: #fbfaf7;
+
+  /* Derived ink steps. Kept as tokens so contrast can be tuned in one place.
+     `--ink-faint` carries 12px mono metadata, so it is set to clear AA (4.5:1)
+     against the *lowest-contrast* tint (cherry, 4.80) rather than merely
+     looking quiet. Do not lighten it without re-checking all six tints. */
+  --ink-faint: #5f6a66;
+  --ink-hairline: rgb(20 32 27 / 0.12);
+  --ink-hairline-strong: rgb(20 32 27 / 0.24);
+
+  /* ---- Section tints ---------------------------------------------------- */
+  --tint-muga: #f7efe0; /* Assam muga silk */
+  --tint-cloud: #eaf0f2; /* Meghalaya mist */
+  --tint-paddy: #edf2e4; /* Ziro valley terraces */
+  --tint-loktak: #e6eff0; /* Manipur lake water */
+  --tint-cherry: #f8eaea; /* Shillong cherry blossom */
+
+  /* ---- Accents ---------------------------------------------------------- */
+  --muga-gold: #b8862f;
+  --naga-red: #a32e2e;
+  --deep-teal: #1d6a63;
+
+  /* Darkened accent steps for text-on-tint that must clear AA. */
+  --muga-gold-ink: #7a5817;
+  --naga-red-ink: #8b2424;
+  --deep-teal-ink: #175651;
+
+  /* Interaction and on-dark steps of the accents. */
+  --muga-gold-hover: #a4761f;
+  --muga-gold-on: #201604; /* text sitting on a muga-gold fill */
+  --naga-red-hover: #8b2424;
+  --naga-red-glow: #e4908f; /* urgency text on the dark band */
+
+  /* ---- Dark surfaces (hero + the single dark band) ----------------------- */
+  --night: #0d1512;
+  --night-soft: #16221d;
+  --night-text: #eef2ef;
+  --night-text-soft: #a9b6b0;
+
+  /* ---- Type ------------------------------------------------------------- */
+  /* The display face lives behind one token: swapping Newsreader for a
+     licensed Canela / PP Editorial New is a single edit here plus the
+     next/font declaration in src/app/fonts.ts. */
+  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-body:
+    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-utility:
+    var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  /* Fluid scale: 12 / 14 / 16 / 18 / 22 / 28 / 36 / 48 / 64 / 88 */
+  --step-12: 0.75rem;
+  --step-14: 0.875rem;
+  --step-16: 1rem;
+  --step-18: clamp(1rem, 0.97rem + 0.15vw, 1.125rem);
+  --step-22: clamp(1.125rem, 1.06rem + 0.33vw, 1.375rem);
+  --step-28: clamp(1.375rem, 1.24rem + 0.65vw, 1.75rem);
+  --step-36: clamp(1.625rem, 1.36rem + 1.3vw, 2.25rem);
+  --step-48: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+  --step-64: clamp(2.5rem, 1.6rem + 4.5vw, 4rem);
+  --step-88: clamp(3rem, 1.4rem + 8vw, 5.5rem);
+
+  /* ---- Layout ----------------------------------------------------------- */
+  --content-max: 1280px;
+  --media-max: 1600px;
+  --gutter: 20px;
+  --section-pad: 96px;
+  --header-h: 68px;
+
+  /* ---- Radius ----------------------------------------------------------- */
+  --radius-control: 2px; /* buttons, inputs */
+  --radius-media: 16px; /* media cards */
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur: 600ms;
+  --dur-micro: 200ms;
+  --dur-image: 700ms;
+  --dur-route: 240ms;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 40px;
+    --header-h: 76px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --gutter: 72px;
+    --section-pad: 160px;
+  }
+}

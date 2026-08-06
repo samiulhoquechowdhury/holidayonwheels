@@ -1,0 +1,36 @@
+name: Lighthouse
+
+on: pull_request
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm build
+
+      # Budgets live in lighthouserc.json rather than inline, and assert the
+      # thresholds from the brief's quality floor rather than the
+      # `lighthouse:recommended` preset. The preset errors on a long tail of
+      # audits unrelated to those budgets, which would fail every PR for
+      # reasons nobody is being asked to fix.
+      - name: Run Lighthouse CI
+        run: pnpm dlx @lhci/cli@0.14.x autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

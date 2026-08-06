@@ -1,0 +1,164 @@
+"use client";
+
+import { useState } from "react";
+import { cn } from "@/lib/cn";
+import { Chip } from "@/components/primitives/Chip";
+import type { ItineraryDay, MealPlan } from "@/content/types";
+
+/**
+ * Day-by-day itinerary. Each day expands to reveal its highlights; the first
+ * is open by default so the component never reads as a wall of closed rows.
+ *
+ * Uses native `<details>` semantics via a button + region pair rather than
+ * `<details>` itself, because the summary needs to carry chips and a rule
+ * line that `<summary>` handles badly across browsers.
+ */
+
+const MEAL_LABEL: Record<MealPlan, string> = {
+  breakfast: "Breakfast",
+  "half-board": "Breakfast & dinner",
+  "full-board": "All meals",
+  none: "No meals",
+};
+
+export function ItineraryTimeline({
+  days,
+  className,
+}: {
+  days: ItineraryDay[];
+  className?: string;
+}) {
+  const [open, setOpen] = useState<number[]>([1]);
+
+  const toggle = (day: number) =>
+    setOpen((current) =>
+      current.includes(day)
+        ? current.filter((d) => d !== day)
+        : [...current, day],
+    );
+
+  const allOpen = open.length === days.length;
+
+  return (
+    <div className={cn("min-w-0", className)}>
+      <div className="mb-4 flex justify-end">
+        <button
+          type="button"
+          onClick={() => setOpen(allOpen ? [] : days.map((d) => d.day))}
+          className="u-mono min-h-11 text-deep-teal-ink underline underline-offset-4"
+        >
+          {allOpen ? "Collapse all days" : "Expand all days"}
+        </button>
+      </div>
+
+      <ol className="flex flex-col">
+        {days.map((day) => {
+          const isOpen = open.includes(day.day);
+          const panelId = `itinerary-day-${day.day}`;
+
+          return (
+            <li
+              key={day.day}
+              className="border-t border-[var(--ink-hairline)] last:border-b"
+            >
+              <h3>
+                <button
+                  type="button"
+                  onClick={() => toggle(day.day)}
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
+                  className="flex w-full items-start gap-4 py-5 text-left sm:gap-6"
+                >
+                  <span className="u-mono mt-1 w-14 shrink-0 text-ink-faint tabular-nums sm:w-16">
+                    Day {day.day}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-18 font-medium sm:text-22">
+                      {day.title}
+                    </span>
+                    {!isOpen ? (
+                      <span className="mt-1.5 line-clamp-2 block text-16 text-ink-soft">
+                        {day.summary}
+                      </span>
+                    ) : null}
+                  </span>
+                  <ExpandGlyph open={isOpen} />
+                </button>
+              </h3>
+
+              <div
+                id={panelId}
+                hidden={!isOpen}
+                className="pb-7 pl-[calc(3.5rem+1rem)] sm:pl-[calc(4rem+1.5rem)]"
+              >
+                <p className="max-w-prose text-16 text-ink-soft">
+                  {day.summary}
+                </p>
+
+                <ul className="mt-4 flex flex-wrap gap-1.5">
+                  <li>
+                    <Chip tone="teal">
+                      {day.stay ? `Night in ${day.stay}` : "Departure day"}
+                    </Chip>
+                  </li>
+                  <li>
+                    <Chip>{MEAL_LABEL[day.meals]}</Chip>
+                  </li>
+                  {day.distanceKm ? (
+                    <li>
+                      <Chip>{day.distanceKm} km by road</Chip>
+                    </li>
+                  ) : null}
+                  {day.altitude ? (
+                    <li>
+                      <Chip tone={day.altitude >= 3500 ? "red" : "neutral"}>
+                        {day.altitude.toLocaleString("en-IN")} m
+                        {day.altitude >= 3500 ? " · altitude" : ""}
+                      </Chip>
+                    </li>
+                  ) : null}
+                </ul>
+
+                {day.highlights.length > 0 ? (
+                  <ul className="mt-5 flex flex-col gap-2">
+                    {day.highlights.map((highlight) => (
+                      <li
+                        key={highlight}
+                        className="flex gap-3 text-16 text-ink-soft"
+                      >
+                        <span aria-hidden="true" className="text-muga-gold">
+                          —
+                        </span>
+                        {highlight}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
+function ExpandGlyph({ open }: { open: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="mt-1.5 flex h-6 w-6 shrink-0 items-center justify-center"
+    >
+      <span className="relative block h-3 w-3">
+        <span className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-current" />
+        <span
+          className={cn(
+            "absolute top-0 left-1/2 h-full w-px -translate-x-1/2 bg-current",
+            "transition-transform duration-[var(--dur-micro)] ease-brand",
+            open && "scale-y-0",
+          )}
+        />
+      </span>
+    </span>
+  );
+}

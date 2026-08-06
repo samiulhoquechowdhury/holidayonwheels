@@ -1,0 +1,8 @@
+# Conventional commits. Keeps the changelog and the dependabot prefixes honest.
+pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9 /_-]+\))?!?: .{1,}'
+if ! grep -qE "$pattern" "$1"; then
+  echo "✗ Commit message must follow Conventional Commits."
+  echo "  e.g. feat(tours): add departure calendar"
+  echo "  types: feat fix docs style refactor perf test build ci chore revert"
+  exit 1
+fi

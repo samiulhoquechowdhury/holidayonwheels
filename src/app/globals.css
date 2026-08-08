@@ -11,6 +11,7 @@
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
   --color-paper: var(--paper);
+  --color-plate: var(--plate);
 
   --color-tint-muga: var(--tint-muga);
   --color-tint-cloud: var(--tint-cloud);
@@ -51,6 +52,7 @@
 
   --radius-control: var(--radius-control);
   --radius-media: var(--radius-media);
+  --radius-plate: var(--radius-plate);
 
   --ease-brand: var(--ease);
 }
@@ -153,6 +155,18 @@
   .u-hero-line {
     display: block;
     animation: hero-line-rise 900ms var(--ease) backwards;
+  }
+
+  /*
+   * A floating white sheet: the header's logo / nav / menu plates, and the
+   * drawer. The logo artwork is drawn in black on white, so it needs an
+   * opaque light ground wherever it lands — including over the dark hero and
+   * inside the dark footer.
+   */
+  .u-plate {
+    background-color: var(--plate);
+    border-radius: var(--radius-plate);
+    box-shadow: var(--shadow-plate);
   }
 
   /* Content column and full-bleed media column. */

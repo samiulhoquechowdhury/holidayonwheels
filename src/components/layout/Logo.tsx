@@ -6,9 +6,13 @@ import { cn } from "@/lib/cn";
 /**
  * The wordmark, and the single place the brand mark is decided.
  *
- * Save the supplied logo at `public/brand/logo.svg`, set `site.logo.enabled`
- * to true, and it replaces the typographic fallback everywhere at once. No
- * other file references the logo.
+ * The supplied artwork is black letterforms with white detail inside them, so
+ * it is always mounted on an opaque white plate — over the dark hero and
+ * inside the dark footer it would otherwise disappear. `tone` therefore only
+ * affects the typographic fallback, which is drawn in `currentColor`.
+ *
+ * To swap the mark: replace `public/brand/logo.png` and update the intrinsic
+ * dimensions in `config/site.ts`. No other file references it.
  */
 export function Logo({
   tone = "ink",
@@ -17,36 +21,50 @@ export function Logo({
   tone?: "ink" | "paper";
   className?: string;
 }) {
-  return (
-    <Link
-      href="/"
-      aria-label={`${site.name} — home`}
-      className={cn(
-        "inline-flex items-center gap-2.5",
-        tone === "paper" ? "text-paper" : "text-ink",
-        className,
-      )}
-    >
-      {site.logo.enabled ? (
+  if (site.logo.enabled) {
+    return (
+      <Link
+        href="/"
+        aria-label={`${site.name} — home`}
+        className={cn(
+          "u-plate inline-flex shrink-0 items-center px-3.5 md:px-4",
+          "h-[var(--plate-h)]",
+          className,
+        )}
+      >
         <Image
           src={site.logo.src}
           alt={site.logo.alt}
           width={site.logo.width}
           height={site.logo.height}
+          // The header mark is in the first viewport on every route, so it is
+          // fetched eagerly. It is small enough not to compete with the hero
+          // poster for the LCP slot.
           priority
-          className="h-7 w-auto"
+          sizes="120px"
+          className="h-7 w-auto md:h-8"
         />
-      ) : (
-        <>
-          <WheelGlyph />
-          <span className="font-display text-22 leading-none tracking-[-0.02em]">
-            Holidays{" "}
-            {/* Roman, not italic — the italic Newsreader is a whole extra
-                font file and this was the only thing using it. */}
-            <span className="opacity-55">on</span> Wheels
-          </span>
-        </>
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href="/"
+      aria-label={`${site.name} — home`}
+      className={cn(
+        "inline-flex shrink-0 items-center gap-2.5",
+        tone === "paper" ? "text-paper" : "text-ink",
+        className,
       )}
+    >
+      <WheelGlyph />
+      <span className="font-display text-22 leading-none tracking-[-0.02em]">
+        Holidays{" "}
+        {/* Roman, not italic — the italic Newsreader is a whole extra
+            font file and this was the only thing using it. */}
+        <span className="opacity-55">on</span> Wheels
+      </span>
     </Link>
   );
 }

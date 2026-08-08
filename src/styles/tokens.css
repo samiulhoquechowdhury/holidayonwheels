@@ -9,6 +9,12 @@
   --ink-soft: #4a5852;
   --paper: #fbfaf7;
 
+  /* Raised true-white surfaces: the floating header plates and the menu
+     drawer. Its own token rather than a reuse of `--paper`, because these sit
+     *on top of* paper and on top of the dark hero, and need to read as a
+     distinct sheet in both places. The logo artwork is drawn on white too. */
+  --plate: #ffffff;
+
   /* Derived ink steps. Kept as tokens so contrast can be tuned in one place.
      `--ink-faint` carries 12px mono metadata, so it is set to clear AA (4.5:1)
      against the *lowest-contrast* tint (cherry, 4.80) rather than merely
@@ -73,11 +79,25 @@
   --media-max: 1600px;
   --gutter: 20px;
   --section-pad: 96px;
-  --header-h: 68px;
+
+  /* The header floats as separate plates rather than spanning a solid bar.
+     `--header-h` stays the *total* band height so every `top:` and `padding-
+     top:` offset across the app keeps working unchanged. */
+  --plate-h: 48px;
+  --header-pad: 10px;
+  --header-h: calc(var(--plate-h) + var(--header-pad) * 2);
 
   /* ---- Radius ----------------------------------------------------------- */
   --radius-control: 2px; /* buttons, inputs */
   --radius-media: 16px; /* media cards */
+  --radius-plate: 999px; /* floating header plates */
+
+  /* ---- Elevation -------------------------------------------------------- */
+  /* Only the two floating surfaces cast a shadow. Cards deliberately do not —
+     see the motion spec: no shadow bloom on hover. */
+  --shadow-plate:
+    0 1px 2px rgb(20 32 27 / 0.06), 0 6px 20px rgb(20 32 27 / 0.09);
+  --shadow-drawer: -28px 0 70px rgb(20 32 27 / 0.2);
 
   /* ---- Motion ----------------------------------------------------------- */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -90,7 +110,8 @@
 @media (min-width: 768px) {
   :root {
     --gutter: 40px;
-    --header-h: 76px;
+    --plate-h: 56px;
+    --header-pad: 14px;
   }
 }
 

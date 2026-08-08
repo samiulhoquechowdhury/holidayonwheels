@@ -49,13 +49,37 @@ ffmpeg -i public/media/hero.mp4 -vframes 1 -q:v 3 public/media/hero-poster.jpg
 
 ## 2. Brand
 
-| File                    | Spec                                                       |
+| File                    | Status                                                     |
 | ----------------------- | ---------------------------------------------------------- |
-| `public/brand/logo.svg` | Vector, single colour, `currentColor` if possible, ~180×32 |
+| `public/HOH Logo.png`   | Supplied. 2000×2000 RGB, no alpha, heavy padding. Source.  |
+| `public/brand/logo.png` | **In use.** 621×240, transparent, derived from the source. |
 
-Then set `site.logo.enabled = true` in `src/config/site.ts`. Until that flag is
-flipped, the header renders a typographic wordmark — so a missing file never
-ships as a broken image. `Logo.tsx` is the only file that references the mark.
+The derived file was made from the supplied artwork with:
+
+```sh
+magick "public/HOH Logo.png" -alpha set -fuzz 8% \
+  -fill none -floodfill +0+0 white       -fill none -floodfill +1999+0 white \
+  -fill none -floodfill +0+1999 white    -fill none -floodfill +1999+1999 white \
+  -trim +repage -resize x240 -strip PNG32:public/brand/logo.png
+```
+
+Flood-filling from the four corners rather than a global white→alpha matters:
+the mark has white pictograms _inside_ its black letterforms, and a global
+replace would punch holes through them.
+
+Two things still to settle:
+
+- **The wordmark disagrees with the site name.** The artwork reads "Holiday on
+  Hill — Northeast India"; `site.name` is "Holidays on Wheels". Whichever is
+  right, `site.logo.alt` follows `site.name`, so today the alt text does not
+  describe the image.
+- **A vector would be better.** The mark is line art with fine detail; at 240px
+  tall it is 92kB of PNG doing an SVG's job. If an `.svg` or `.ai` exists, it
+  should replace this.
+
+Setting `site.logo.enabled = false` reverts to the typographic wordmark, so a
+bad or missing file can never ship as a broken image. `Logo.tsx` is the only
+file that references the mark.
 
 ---
 

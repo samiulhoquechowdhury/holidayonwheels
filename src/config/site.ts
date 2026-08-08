@@ -19,14 +19,23 @@ export const site = {
   currency: "INR",
   logo: {
     /**
-     * Flip to `true` once the supplied logo is saved at `src`. Until then the
-     * header renders a typographic wordmark, so no broken image ever ships.
+     * Set `false` to fall back to the typographic wordmark — the header keeps
+     * working either way, so no broken image can ever ship.
      */
-    enabled: false,
-    src: "/brand/logo.svg",
-    /** Intrinsic dimensions of the supplied file. Update when the logo lands. */
-    width: 180,
-    height: 32,
+    enabled: true,
+    /**
+     * Derived from the supplied `public/HOH Logo.png`: outer white flood-
+     * filled to transparent from the corners (so the white icons *inside* the
+     * letterforms survive), trimmed of its padding, and resized to 240px tall.
+     * The source file is kept for re-export.
+     *
+     * NOTE: the supplied artwork reads "Holiday on Hill — Northeast India",
+     * which is not `site.name`. Confirm which wordmark is correct before
+     * launch; `alt` below follows `name`, so today they disagree.
+     */
+    src: "/brand/logo.png",
+    width: 621,
+    height: 240,
     alt: "Holidays on Wheels",
   },
   contact: {

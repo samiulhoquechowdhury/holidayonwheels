@@ -77,7 +77,7 @@ src/
 │  └─ dev/             component sandbox — every primitive, every variant
 ├─ components/
 │  ├─ primitives/      Button, Chip, Eyebrow, PriceTag, Media, Field
-│  ├─ layout/          SectionShell, Reveal, WeaveBand, DetailLayout, Header, Footer
+│  ├─ layout/          SectionShell, Reveal, WeaveBand, DetailLayout, Header, MenuDrawer, Footer
 │  ├─ cards/           ResultCard + typed adapters
 │  ├─ booking/         BookingWidget, AvailabilityCalendar, ItineraryTimeline, AddOnStep
 │  └─ search/          SearchBar, FilterRail, ResultsGrid
@@ -175,7 +175,9 @@ disallow direct pushes.
 ## Open questions still outstanding
 
 1. Final domain — `site.url` is a placeholder.
-2. Logo file — drop at `public/brand/logo.svg` and flip `site.logo.enabled`.
+2. **Which wordmark is correct.** The supplied logo reads "Holiday on Hill —
+   Northeast India"; `site.name` is "Holidays on Wheels". The logo is wired in
+   and rendering, but the two disagree. See MEDIA.md § Brand.
 3. Real photography and video (see MEDIA.md). Highest risk.
 4. Whether `beepdrive.com` accepts deep links. Until confirmed, `rentalUrl()`
    in `config/external.ts` drops all context and returns the homepage rather

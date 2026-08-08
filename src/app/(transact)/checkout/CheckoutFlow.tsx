@@ -81,8 +81,6 @@ export function CheckoutFlow({ order }: { order: Order }) {
 
   function goTo(next: Step) {
     setStep(next);
-    // Announce the new step to a screen reader and put focus somewhere useful.
-    window.requestAnimationFrame(() => headingRef.current?.focus());
   }
 
   function validateTravellers(): boolean {
@@ -111,6 +109,28 @@ export function CheckoutFlow({ order }: { order: Order }) {
     if (Object.keys(errors).length === 0) return;
     document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
   }, [errors]);
+
+  /*
+   * Move focus to the new step's heading, so the flow is traversable by
+   * keyboard and announced to a screen reader.
+   *
+   * This has to be an effect. Calling `.focus()` from a `requestAnimationFrame`
+   * inside the click handler — which is what this did — raced React's commit:
+   * the button that was clicked unmounts as the step changes, which drops
+   * focus to <body>, and that happened *after* the frame callback had already
+   * run. The result was focus on <body> on every step change.
+   *
+   * The mount guard keeps it from stealing focus on first paint, when nobody
+   * has asked to go anywhere.
+   */
+  const stepMounted = useRef(false);
+  useEffect(() => {
+    if (!stepMounted.current) {
+      stepMounted.current = true;
+      return;
+    }
+    headingRef.current?.focus();
+  }, [step]);
 
   function pay() {
     const serial = String(

@@ -83,7 +83,7 @@ export default async function EventDetailPage({
                             key={item}
                             className="flex gap-4 border-b border-[var(--ink-hairline)] pb-3 text-18"
                           >
-                            <span aria-hidden="true" className="text-muga-gold">
+                            <span aria-hidden="true" className="text-clay">
                               —
                             </span>
                             {item}
@@ -98,11 +98,11 @@ export default async function EventDetailPage({
               id: "tickets",
               label: "Ticket tiers",
               content: (
-                <ul className="grid gap-6 sm:grid-cols-2">
+                <ul className="grid gap-8 sm:grid-cols-2">
                   {event.tickets.map((tier) => (
                     <li
                       key={tier.name}
-                      className="flex flex-col rounded-[var(--radius-media)] border border-[var(--ink-hairline)] p-6"
+                      className="flex flex-col rounded-[var(--radius-card)] bg-shell p-6"
                     >
                       <h3 className="text-22">{tier.name}</h3>
                       <p className="mt-3 flex-1 text-16 text-ink-soft">
@@ -111,7 +111,7 @@ export default async function EventDetailPage({
                       <ul className="mt-5 flex flex-col gap-2">
                         {tier.perks.map((perk) => (
                           <li key={perk} className="flex gap-3 text-14">
-                            <span aria-hidden="true" className="text-deep-teal">
+                            <span aria-hidden="true" className="text-sage">
                               —
                             </span>
                             {perk}
@@ -131,7 +131,7 @@ export default async function EventDetailPage({
         <>
           <WeaveBand region={event.region} height={32} opacity={0.45} />
           <SectionShell
-            tint="paddy"
+            tint="shell"
             pattern={event.region}
             patternOpacity={0.03}
           >
@@ -142,7 +142,7 @@ export default async function EventDetailPage({
               link={{ href: "/homestays", label: "All homestays" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {stays.map((stay, index) => (
                 <li key={stay.slug}>
                   <Reveal delay={index * 0.06}>
@@ -161,14 +161,14 @@ export default async function EventDetailPage({
       {others.length > 0 ? (
         <>
           <WeaveBand region="neutral" height={28} opacity={0.4} />
-          <SectionShell tint="cloud" pattern="neutral" patternOpacity={0.03}>
+          <SectionShell tint="shell" pattern="neutral" patternOpacity={0.03}>
             <SectionHeader
               eyebrow="Also in this state"
               title="Other events nearby"
               link={{ href: "/events", label: "All events" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {others.map((other, index) => (
                 <li key={other.slug}>
                   <Reveal delay={index * 0.06}>

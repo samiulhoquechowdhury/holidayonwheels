@@ -48,9 +48,9 @@ export type ResultCardProps = {
 };
 
 const ACCENT: Record<ResultCardVariant, string> = {
-  tour: "text-muga-gold-ink",
-  moto: "text-naga-red-ink",
-  stay: "text-deep-teal-ink",
+  tour: "text-clay-ink",
+  moto: "text-ember-ink",
+  stay: "text-sage-ink",
   event: "text-ink-soft",
 };
 
@@ -81,49 +81,68 @@ export function ResultCard({
   sizes,
 }: ResultCardProps) {
   const dark = tone === "onDark";
+  const rule = dark
+    ? "border-[var(--night-hairline)]"
+    : "border-[var(--ink-hairline)]";
+  const soft = dark ? "text-night-text-soft" : "text-ink-faint";
+
   return (
     <article className={cn("group relative flex flex-col", className)}>
-      <div className="overflow-hidden rounded-[var(--radius-media)]">
+      {/*
+       * Portrait, not landscape. 4:5 is the crop a place looks best in when
+       * the subject is a valley or a ridge — the old 3:2 cut the height out
+       * of everything — and a column of tall frames sets a slower rhythm
+       * down the page, which is the whole point of this design.
+       */}
+      <div className="overflow-hidden rounded-[var(--radius-card)]">
         <Media
           alt={imageAlt}
           src={imageSrc}
           seed={href}
           region={region}
-          aspect="3/2"
+          aspect="4/5"
           priority={priority}
           sizes={sizes}
           // The image scales inside the frame; the card itself never moves.
-          imageClassName="transition-transform duration-[var(--dur-image)] ease-brand motion-safe:group-hover:scale-105"
+          imageClassName="transition-transform duration-[var(--dur-image)] ease-brand motion-safe:group-hover:scale-[1.04]"
         />
       </div>
 
-      {/* Caption lifts 4px on hover. Reduced motion drops the transform. */}
-      <div className="mt-5 transition-transform duration-[var(--dur)] ease-brand motion-safe:group-hover:-translate-y-1">
+      <div className="mt-7 flex flex-1 flex-col">
         <p
           className={cn(
-            "u-mono",
+            "u-label",
             dark ? "text-night-text-soft" : ACCENT[variant],
           )}
         >
           {eyebrow}
         </p>
 
-        <h3
-          className={cn(
-            "mt-2.5 text-22 leading-tight",
-            dark && "text-night-text",
-          )}
-        >
-          {/* The whole card is the hit area, via this stretched link. */}
+        <h3 className={cn("mt-4 text-22", dark && "text-night-text")}>
+          {/* The whole card is the hit area, via this stretched link. The
+              rule under the title is the only hover feedback in the caption:
+              the old version lifted the entire text block 4px, which in a
+              grid of twelve made the page look like it was breathing. */}
           <Link href={href} className="after:absolute after:inset-0">
-            {title}
+            <span className="relative inline">
+              {title}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "absolute -bottom-1 left-0 block h-px w-full origin-right scale-x-0",
+                  "transition-transform duration-[var(--dur-micro)] ease-brand",
+                  "group-hover:origin-left group-hover:scale-x-100",
+                  dark ? "bg-night-text" : "bg-ink",
+                )}
+              />
+            </span>
           </Link>
         </h3>
 
         {strapline ? (
           <p
             className={cn(
-              "mt-2 text-16",
+              "mt-3 text-16",
               dark ? "text-night-text-soft" : "text-ink-soft",
             )}
           >
@@ -132,7 +151,7 @@ export function ResultCard({
         ) : null}
 
         {chips.length > 0 ? (
-          <ul className="mt-4 flex flex-wrap gap-1.5">
+          <ul className="mt-5 flex flex-wrap gap-2">
             {chips.map((chip) => (
               <li key={chip}>
                 <Chip tone={dark ? "onDark" : "neutral"}>{chip}</Chip>
@@ -141,41 +160,36 @@ export function ResultCard({
           </ul>
         ) : null}
 
+        {/* `mt-auto` pins the price to the bottom of the cell, so a row of
+            cards with different strapline lengths still lines its prices up. */}
         <div
           className={cn(
-            "mt-5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t pt-4",
-            dark
-              ? "border-[rgb(255_255_255/0.16)]"
-              : "border-[var(--ink-hairline)]",
+            "mt-auto flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t pt-6",
+            rule,
           )}
         >
           {/* A free event says "free", not "from ₹0". */}
           {price === 0 ? (
-            <p className="font-mono text-18">Free</p>
+            <p
+              className={cn(
+                "font-display text-22 leading-none",
+                dark && "text-night-text",
+              )}
+            >
+              Free
+            </p>
           ) : (
             <p className="flex items-baseline gap-2">
+              <span className={cn("u-label", soft)}>from</span>
               <span
                 className={cn(
-                  "u-mono",
-                  dark ? "text-night-text-soft" : "text-ink-soft",
-                )}
-              >
-                from
-              </span>
-              <span
-                className={cn(
-                  "font-mono text-18 tabular-nums",
+                  "u-num font-display text-22 leading-none",
                   dark && "text-night-text",
                 )}
               >
                 {formatINR(price)}
               </span>
-              <span
-                className={cn(
-                  "u-mono",
-                  dark ? "text-night-text-soft" : "text-ink-soft",
-                )}
-              >
+              <span className={cn("u-label", soft)}>
                 {priceUnit ?? DEFAULT_UNIT[variant]}
               </span>
             </p>
@@ -183,14 +197,12 @@ export function ResultCard({
           {note ? (
             <p
               className={cn(
-                "u-mono",
+                "u-label",
                 noteUrgent
                   ? dark
-                    ? "text-naga-red-glow"
-                    : "text-naga-red-ink"
-                  : dark
-                    ? "text-night-text-soft"
-                    : "text-ink-faint",
+                    ? "text-ember-glow"
+                    : "text-ember-ink"
+                  : soft,
               )}
             >
               {note}

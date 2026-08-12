@@ -196,7 +196,7 @@ export function ILPForm({ today }: { today: string }) {
       </FieldSet>
 
       {selected?.requiresPAP ? (
-        <p className="mt-6 rounded-[var(--radius-control)] border border-[color-mix(in_srgb,var(--muga-gold)_40%,transparent)] bg-[color-mix(in_srgb,var(--muga-gold)_8%,transparent)] p-5 text-16">
+        <p className="mt-6 rounded-[var(--radius-card)] border border-[color-mix(in_srgb,var(--clay)_40%,transparent)] bg-[color-mix(in_srgb,var(--clay)_8%,transparent)] p-5 text-16">
           {selected.name} also requires a Protected Area Permit for foreign
           nationals, which takes longer and for some nationalities takes
           considerably longer. Start at least eight weeks ahead and tell us in
@@ -207,7 +207,7 @@ export function ILPForm({ today }: { today: string }) {
       <div className="mt-14">
         <div className="flex items-baseline justify-between gap-4">
           <Eyebrow>Travellers</Eyebrow>
-          <p className="u-mono text-ink-faint">
+          <p className="u-label text-ink-faint">
             {travellers.length} of 7 maximum
           </p>
         </div>
@@ -314,7 +314,7 @@ export function ILPForm({ today }: { today: string }) {
                   onChange={(event) =>
                     update(traveller.id, { idNumber: event.target.value })
                   }
-                  className="font-mono tabular-nums"
+                  className="u-num"
                 />
               </Field>
 
@@ -327,7 +327,7 @@ export function ILPForm({ today }: { today: string }) {
                         current.filter((t) => t.id !== traveller.id),
                       )
                     }
-                    className="u-mono min-h-11 text-naga-red-ink underline underline-offset-4"
+                    className="u-label min-h-11 text-ember-ink underline underline-offset-4"
                   >
                     Remove traveller {index + 1}
                   </button>
@@ -423,7 +423,7 @@ function Submitted({
 }) {
   return (
     <div className="max-w-2xl">
-      <Chip tone="teal">Application received</Chip>
+      <Chip tone="sage">Application received</Chip>
       <h2 className="mt-6 text-36">We have it. Nothing else to do.</h2>
       <p className="mt-5 text-18 text-ink-soft">
         Your application for {state?.name} is with our permits desk and will go
@@ -433,19 +433,19 @@ function Submitted({
 
       <dl className="mt-10 grid gap-6 border-y border-[var(--ink-hairline)] py-8 sm:grid-cols-2">
         <div>
-          <dt className="u-mono text-ink-soft">Reference</dt>
-          <dd className="mt-2 font-mono text-18">{reference}</dd>
+          <dt className="u-label text-ink-soft">Reference</dt>
+          <dd className="u-num mt-2 text-18">{reference}</dd>
         </div>
         <div>
-          <dt className="u-mono text-ink-soft">State</dt>
+          <dt className="u-label text-ink-soft">State</dt>
           <dd className="mt-2 text-18">{state?.name}</dd>
         </div>
         <div>
-          <dt className="u-mono text-ink-soft">Valid from</dt>
+          <dt className="u-label text-ink-soft">Valid from</dt>
           <dd className="mt-2 text-18">{formatLong(from)}</dd>
         </div>
         <div>
-          <dt className="u-mono text-ink-soft">Valid to</dt>
+          <dt className="u-label text-ink-soft">Valid to</dt>
           <dd className="mt-2 text-18">{formatLong(to)}</dd>
         </div>
       </dl>
@@ -454,7 +454,7 @@ function Submitted({
         You can track it under{" "}
         <a
           href="/account/permits"
-          className="text-deep-teal-ink underline underline-offset-4"
+          className="text-sage-ink underline underline-offset-4"
         >
           My permits
         </a>

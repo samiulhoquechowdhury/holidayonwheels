@@ -56,7 +56,7 @@ export default async function JournalPostPage({
           </Eyebrow>
           <h1 className="mt-5 text-48 lg:text-64">{post.title}</h1>
           <p className="mt-6 text-22 text-ink-soft">{post.excerpt}</p>
-          <p className="u-mono mt-8 text-ink-faint">By {post.author}</p>
+          <p className="u-label mt-8 text-ink-faint">By {post.author}</p>
         </div>
       </SectionShell>
 
@@ -98,7 +98,7 @@ export default async function JournalPostPage({
           <div className="mt-16 border-t border-[var(--ink-hairline)] pt-8">
             <Link
               href="/journal"
-              className="u-mono text-deep-teal-ink underline underline-offset-4"
+              className="u-label text-sage-ink underline underline-offset-4"
             >
               All writing
             </Link>
@@ -107,14 +107,14 @@ export default async function JournalPostPage({
       </SectionShell>
 
       <WeaveBand region="neutral" height={28} opacity={0.4} />
-      <SectionShell tint="cloud" pattern="neutral" patternOpacity={0.03}>
+      <SectionShell tint="shell" pattern="neutral" patternOpacity={0.03}>
         <SectionHeader
           eyebrow="Keep reading"
           title="More from the journal"
           link={{ href: "/journal", label: "All writing" }}
           align="split"
         />
-        <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {more.map((other, index) => (
             <li key={other.slug}>
               <Reveal delay={index * 0.06}>
@@ -130,7 +130,7 @@ export default async function JournalPostPage({
                       imageClassName="transition-transform duration-[var(--dur-image)] ease-brand motion-safe:group-hover:scale-105"
                     />
                   </div>
-                  <p className="u-mono mt-5 text-ink-soft">{other.tag}</p>
+                  <p className="u-label mt-5 text-ink-soft">{other.tag}</p>
                   <h3 className="mt-3 text-22">{other.title}</h3>
                 </Link>
               </Reveal>

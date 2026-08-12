@@ -9,11 +9,24 @@ import { cn } from "@/lib/cn";
  * after. Keyboard traversal of the booking flow depends on all three.
  */
 
+/*
+ * Inputs are recessed, not outlined.
+ *
+ * `--radius-input` rather than `--radius-control`: everything else in this
+ * system is a full pill, but a pill-shaped text field puts the caret on a
+ * curve and reads as a search box no matter what is in it. 14px is as soft as
+ * a field can go and still say "type here".
+ *
+ * The resting state is a filled shell with a hairline; focus darkens the
+ * hairline to full ink rather than adding a ring, so the field does not grow
+ * and nothing beside it shifts.
+ */
 const CONTROL = cn(
-  "min-h-12 w-full rounded-[var(--radius-control)] border bg-paper px-3.5 text-16",
-  "border-[var(--ink-hairline-strong)] transition-colors duration-[var(--dur-micro)]",
-  "hover:border-ink focus:border-ink outline-none",
-  "aria-[invalid=true]:border-naga-red",
+  "min-h-12 w-full rounded-[var(--radius-input)] border bg-shell px-4 text-16",
+  "border-transparent transition-colors duration-[var(--dur-micro)] ease-brand",
+  "hover:border-[var(--ink-hairline-strong)] focus:border-ink focus:bg-plate outline-none",
+  "placeholder:text-ink-faint",
+  "aria-[invalid=true]:border-ember",
   "disabled:opacity-50",
 );
 
@@ -36,12 +49,12 @@ export function Field({
 }) {
   return (
     <div className={cn("min-w-0", className)}>
-      <label htmlFor={id} className="u-mono block text-ink-soft">
+      <label htmlFor={id} className="u-label block text-ink-soft">
         {label}
         {required ? (
           <>
             {" "}
-            <span aria-hidden="true" className="text-naga-red-ink">
+            <span aria-hidden="true" className="text-ember-ink">
               *
             </span>
             <span className="u-sr-only">(required)</span>
@@ -58,7 +71,7 @@ export function Field({
         <p
           id={`${id}-error`}
           role="alert"
-          className="mt-2 text-14 text-naga-red-ink"
+          className="mt-2 text-14 text-ember-ink"
         >
           {error}
         </p>
@@ -169,7 +182,7 @@ export function FieldSet({
       {description ? (
         <p className="mt-2 max-w-prose text-14 text-ink-soft">{description}</p>
       ) : null}
-      <div className="mt-6 grid gap-6 sm:grid-cols-2">{children}</div>
+      <div className="mt-6 grid gap-8 sm:grid-cols-2">{children}</div>
     </fieldset>
   );
 }

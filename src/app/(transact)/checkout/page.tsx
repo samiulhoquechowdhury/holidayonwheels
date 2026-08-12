@@ -56,7 +56,7 @@ function NothingToBook() {
         eyebrow="Checkout"
         title="There is nothing in this booking"
         intro="Checkout starts from a trip, a homestay or an event — this link did not carry one, or the trip it pointed at is no longer running."
-        tint="cloud"
+        tint="shell"
         region="neutral"
       />
       <SectionShell tint="paper">

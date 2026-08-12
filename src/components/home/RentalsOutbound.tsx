@@ -34,14 +34,14 @@ const CARDS = [
 
 export function RentalsOutbound() {
   return (
-    <ul className="grid gap-4 md:grid-cols-2">
+    <ul className="grid gap-6 md:grid-cols-2 lg:gap-8">
       {CARDS.map((card, index) => (
         <li key={card.kind}>
           <Reveal delay={index * 0.08}>
             <a
               href={rentalUrl({ kind: card.kind })}
               {...OUTBOUND_LINK_PROPS}
-              className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-media)] border border-[var(--ink-hairline)] bg-paper"
+              className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] bg-plate transition-shadow duration-[var(--dur)] ease-brand hover:shadow-[var(--shadow-lift)]"
             >
               <div className="overflow-hidden">
                 <Media
@@ -54,7 +54,7 @@ export function RentalsOutbound() {
                 />
               </div>
 
-              <div className="flex flex-1 flex-col p-6 lg:p-8">
+              <div className="flex flex-1 flex-col p-7 lg:p-9">
                 <div className="flex items-start justify-between gap-4">
                   <Eyebrow tone="soft" as="span">
                     Beep Drive
@@ -64,10 +64,10 @@ export function RentalsOutbound() {
                   </span>
                 </div>
 
-                <h3 className="mt-4 text-28">{card.title}</h3>
-                <p className="mt-3 flex-1 text-16 text-ink-soft">{card.copy}</p>
+                <h3 className="mt-5 text-28">{card.title}</h3>
+                <p className="mt-4 flex-1 text-16 text-ink-soft">{card.copy}</p>
 
-                <p className="mt-6 inline-flex items-center gap-2 text-16 underline decoration-[var(--ink-hairline-strong)] underline-offset-8 group-hover:decoration-current">
+                <p className="mt-8 inline-flex items-center gap-2.5 border-t border-[var(--ink-hairline)] pt-6 text-16">
                   Continue on beepdrive.com
                   <OutboundGlyph />
                 </p>

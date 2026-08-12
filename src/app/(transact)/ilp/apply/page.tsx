@@ -22,7 +22,7 @@ export default function ILPApplyPage() {
         eyebrow="Permits"
         title="Apply for a permit"
         intro="One application per state, up to seven travellers. We do not charge for processing — where a state levies a government fee it is passed through at cost."
-        tint="loktak"
+        tint="shell"
         region="manipur"
       />
 

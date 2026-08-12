@@ -60,7 +60,7 @@ export function ContactForm() {
   if (sent) {
     return (
       <div className="max-w-xl">
-        <Chip tone="teal">Message sent</Chip>
+        <Chip tone="sage">Message sent</Chip>
         <h2 className="mt-6 text-36">We have it.</h2>
         <p className="mt-5 text-18 text-ink-soft">
           Someone will reply within one working day, usually the same day. If
@@ -139,7 +139,7 @@ export function ContactForm() {
             type="month"
             value={values.month}
             onChange={(event) => set("month", event.target.value)}
-            className="tabular-nums"
+            className="u-num"
           />
         </Field>
         <Field

@@ -45,7 +45,7 @@ export function ItineraryTimeline({
         <button
           type="button"
           onClick={() => setOpen(allOpen ? [] : days.map((d) => d.day))}
-          className="u-mono min-h-11 text-deep-teal-ink underline underline-offset-4"
+          className="u-label min-h-11 text-sage-ink underline underline-offset-4"
         >
           {allOpen ? "Collapse all days" : "Expand all days"}
         </button>
@@ -69,7 +69,7 @@ export function ItineraryTimeline({
                   aria-controls={panelId}
                   className="flex w-full items-start gap-4 py-5 text-left sm:gap-6"
                 >
-                  <span className="u-mono mt-1 w-14 shrink-0 text-ink-faint tabular-nums sm:w-16">
+                  <span className="u-label u-num mt-1 w-14 shrink-0 text-ink-faint sm:w-16">
                     Day {day.day}
                   </span>
                   <span className="min-w-0 flex-1">
@@ -97,7 +97,7 @@ export function ItineraryTimeline({
 
                 <ul className="mt-4 flex flex-wrap gap-1.5">
                   <li>
-                    <Chip tone="teal">
+                    <Chip tone="sage">
                       {day.stay ? `Night in ${day.stay}` : "Departure day"}
                     </Chip>
                   </li>
@@ -111,7 +111,7 @@ export function ItineraryTimeline({
                   ) : null}
                   {day.altitude ? (
                     <li>
-                      <Chip tone={day.altitude >= 3500 ? "red" : "neutral"}>
+                      <Chip tone={day.altitude >= 3500 ? "ember" : "neutral"}>
                         {day.altitude.toLocaleString("en-IN")} m
                         {day.altitude >= 3500 ? " · altitude" : ""}
                       </Chip>
@@ -126,7 +126,7 @@ export function ItineraryTimeline({
                         key={highlight}
                         className="flex gap-3 text-16 text-ink-soft"
                       >
-                        <span aria-hidden="true" className="text-muga-gold">
+                        <span aria-hidden="true" className="text-clay">
                           —
                         </span>
                         {highlight}

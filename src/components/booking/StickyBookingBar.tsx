@@ -56,13 +56,13 @@ export function StickyBookingBar({
           animate={reduced ? { opacity: 1 } : { y: 0 }}
           exit={reduced ? { opacity: 0 } : { y: "100%" }}
           transition={reduced ? { duration: 0.2 } : stickySpring}
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--ink-hairline)] bg-paper lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--ink-hairline)] bg-plate shadow-[var(--shadow-lift)] lg:hidden"
           style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
         >
           <div className="u-container flex items-center justify-between gap-4 py-3">
             <div className="min-w-0">
-              <p className="u-mono truncate text-ink-soft">{label}</p>
-              <p className="mt-0.5 font-mono text-18 tabular-nums">
+              <p className="u-label truncate text-ink-soft">{label}</p>
+              <p className="u-num mt-0.5 font-display text-22 leading-none">
                 {formatINR(amount)}
               </p>
               <p className="u-sr-only">{amountLabel}</p>

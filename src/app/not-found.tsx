@@ -17,7 +17,7 @@ export default function NotFound() {
   return (
     <>
       <SectionShell
-        tint="cloud"
+        tint="shell"
         pattern="neutral"
         patternOpacity={0.04}
         spacing="flush"
@@ -46,7 +46,7 @@ export default function NotFound() {
             <li key={route.href}>
               <Link
                 href={route.href}
-                className="inline-flex min-h-12 items-center border-b border-[var(--ink-hairline)] text-18 transition-colors hover:text-deep-teal-ink"
+                className="inline-flex min-h-12 items-center border-b border-[var(--ink-hairline)] text-18 transition-colors hover:text-sage-ink"
               >
                 {route.label}
               </Link>

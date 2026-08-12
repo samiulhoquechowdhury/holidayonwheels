@@ -66,7 +66,7 @@ export function StayBookingWidget({
       <section
         aria-labelledby="stay-booking-heading"
         className={cn(
-          "rounded-[var(--radius-media)] border border-[var(--ink-hairline)] bg-paper p-6 lg:p-7",
+          "rounded-[var(--radius-panel)] bg-plate p-7 shadow-[var(--shadow-soft)] lg:p-8",
           className,
         )}
       >
@@ -76,11 +76,11 @@ export function StayBookingWidget({
 
         <div className="flex items-baseline justify-between gap-3">
           <Eyebrow>From</Eyebrow>
-          <p className="font-mono text-28 tabular-nums">
+          <p className="u-num font-display text-28 leading-none">
             {formatINR(stay.fromPrice)}
           </p>
         </div>
-        <p className="u-mono mt-1 text-right text-ink-soft">per night</p>
+        <p className="u-label mt-1 text-right text-ink-soft">per night</p>
 
         <div className="mt-7">
           <Eyebrow className="mb-3">Room</Eyebrow>
@@ -96,11 +96,11 @@ export function StayBookingWidget({
                       htmlFor={id}
                       className={cn(
                         "flex min-h-14 cursor-pointer items-center justify-between gap-3 border px-4 py-3",
-                        "rounded-[var(--radius-control)] transition-colors duration-[var(--dur-micro)] ease-brand",
+                        "rounded-[var(--radius-input)] transition-colors duration-[var(--dur-micro)] ease-brand",
                         isSelected
-                          ? "border-ink bg-[rgb(20_32_27/0.04)]"
+                          ? "border-ink bg-[rgb(46_42_36/0.04)]"
                           : "border-[var(--ink-hairline)] hover:border-[var(--ink-hairline-strong)]",
-                        "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-deep-teal",
+                        "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-sage",
                       )}
                     >
                       <input
@@ -114,11 +114,11 @@ export function StayBookingWidget({
                       />
                       <span className="min-w-0">
                         <span className="block text-16">{option.name}</span>
-                        <span className="u-mono mt-1 block text-ink-faint">
+                        <span className="u-label mt-1 block text-ink-faint">
                           Sleeps {option.sleeps}
                         </span>
                       </span>
-                      <span className="shrink-0 font-mono text-16 tabular-nums">
+                      <span className="u-num shrink-0 text-16">
                         {formatINR(option.perNight)}
                       </span>
                     </label>
@@ -166,7 +166,7 @@ export function StayBookingWidget({
                 {formatINR(room.perNight)} × {nights}{" "}
                 {nights === 1 ? "night" : "nights"}
               </dt>
-              <dd className="shrink-0 font-mono text-14 tabular-nums">
+              <dd className="u-num shrink-0 text-14">
                 {formatINR(quote.roomTotal)}
               </dd>
             </div>
@@ -175,7 +175,7 @@ export function StayBookingWidget({
                 <dt className="text-14 text-ink-soft">
                   Extra bed × {quote.extraGuests}
                 </dt>
-                <dd className="shrink-0 font-mono text-14 tabular-nums">
+                <dd className="u-num shrink-0 text-14">
                   {formatINR(quote.extraCharge)}
                 </dd>
               </div>
@@ -184,14 +184,12 @@ export function StayBookingWidget({
               <dt className="text-14 text-ink-soft">
                 Meals — {MEAL_COPY[stay.mealsIncluded]}
               </dt>
-              <dd className="shrink-0 font-mono text-14 text-deep-teal-ink">
-                Included
-              </dd>
+              <dd className="u-num shrink-0 text-14 text-sage-ink">Included</dd>
             </div>
           </dl>
           <div className="mt-4 flex items-baseline justify-between gap-4 border-t border-[var(--ink-hairline)] pt-4">
-            <p className="u-mono">Total</p>
-            <p className="font-mono text-22 tabular-nums">
+            <p className="u-label">Total</p>
+            <p className="u-num font-display text-22 leading-none">
               {formatINR(quote.total)}
             </p>
           </div>

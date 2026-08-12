@@ -17,7 +17,7 @@ export function ResultsGrid({
   return (
     <ul
       className={cn(
-        "grid gap-x-6 gap-y-14 sm:grid-cols-2 xl:grid-cols-3",
+        "grid gap-x-8 gap-y-16 sm:grid-cols-2 xl:grid-cols-3",
         className,
       )}
     >
@@ -38,16 +38,16 @@ export function EmptyResults({
   what?: string;
 }) {
   return (
-    <div className="border-t border-[var(--ink-hairline)] py-16 text-center">
-      <Eyebrow>Nothing matches</Eyebrow>
-      <p className="mx-auto mt-5 max-w-md text-22">
+    <div className="border-t border-[var(--ink-hairline)] py-24 text-center">
+      <Eyebrow className="justify-center">Nothing matches</Eyebrow>
+      <p className="mx-auto mt-6 max-w-md text-28">
         No {what} match every filter you have set.
       </p>
-      <p className="mx-auto mt-4 max-w-md text-16 text-ink-soft">
+      <p className="u-lede mx-auto mt-5 max-w-md text-18 text-ink-soft">
         Loosen one of them, or tell us what you had in mind — most of what we
         run started as somebody asking for something that was not on the site.
       </p>
-      <div className="mt-8 flex flex-wrap justify-center gap-3">
+      <div className="mt-10 flex flex-wrap justify-center gap-3">
         {onClear ? (
           <button
             type="button"

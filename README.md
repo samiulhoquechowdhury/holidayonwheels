@@ -44,7 +44,10 @@ Money is integer rupees. Dates are ISO `YYYY-MM-DD` strings. Anything derived
 
 ### 2. `SectionShell` and `Reveal` own the system
 
-`SectionShell` owns section tint, background pattern and vertical rhythm.
+`SectionShell` owns section surface, background texture and vertical rhythm.
+There are four surfaces — `paper`, `shell`, `sand` and `night` — and most of
+the site is `paper`. Sections are separated by space and hairlines, not by
+alternating colour.
 `Reveal` owns the one scroll animation. Every section and every reveal goes
 through them — that is what stops thirty files each growing their own slightly
 different fade.
@@ -101,13 +104,18 @@ and dark. Check there before composing a page.
   to Tailwind through the `@theme` block in `globals.css`. If you need a new
   shade, add a token.
 - Every image needs real `alt` text describing the place, never "image".
-- Sentence case everywhere except mono utility text.
+- Sentence case everywhere except `.u-label` utility text, which is the only
+  uppercase in the system.
+- **No monospace.** Utility labels are the body face tracked wide (`.u-label`);
+  figures are tabular lining numerals from that same family (`.u-num`).
 - Conventional commits, enforced by a `commit-msg` hook.
 
 ### Motion
 
 Framer Motion + Lenis. One easing curve (`cubic-bezier(0.16, 1, 0.3, 1)`),
-three durations, and **at most two animated elements per viewport**.
+four durations, and **at most two animated elements per viewport**. Durations
+are long by default — 700ms for a transition, 220ms for a micro-interaction —
+because unhurried movement is most of what the design is doing.
 
 `prefers-reduced-motion: reduce` disables every transform and parallax, leaving
 opacity-only transitions. Components read it in JS via `useReducedMotion()` so
@@ -146,11 +154,13 @@ the real files in causes no layout shift.
 Enforced in CI by `.github/workflows/lighthouse.yml` against `lighthouserc.json`:
 
 - Performance ≥ 90, accessibility ≥ 95, best practices ≥ 95, SEO ≥ 95
-- LCP < 2.5s — the hero **poster** is the LCP element, never the video
+- LCP < 2.5s — the home hero's LCP element is the **headline**, which is text
+  on a flat ground; on detail pages it is the lead image. Never a video: no
+  `<video>` enters the DOM until after first paint
 - CLS < 0.05
 - Visible focus rings on every interactive element; full keyboard traversal of
   the booking flow
-- All text contrast AA against its tint, including over patterns
+- All text contrast AA against its surface, including over the weave texture
 - Works at 320px
 
 Budgets assert the thresholds above rather than `lighthouse:recommended`, which

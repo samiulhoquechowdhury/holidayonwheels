@@ -156,18 +156,18 @@ export function ToursBrowser({
 
       <div className="min-w-0">
         <div className="mb-10 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--ink-hairline)] pb-5">
-          <h2 className="u-mono text-ink-soft">
+          <h2 className="u-label text-ink-soft">
             {results.length} {results.length === 1 ? "trip" : "trips"}
           </h2>
           <div className="flex items-center gap-3">
-            <label htmlFor="sort" className="u-mono text-ink-soft">
+            <label htmlFor="sort" className="u-label text-ink-soft">
               Sort
             </label>
             <select
               id="sort"
               value={sort}
               onChange={(event) => setSort(event.target.value as SortKey)}
-              className="min-h-11 rounded-[var(--radius-control)] border border-[var(--ink-hairline-strong)] bg-transparent px-3 text-14"
+              className="min-h-11 rounded-[var(--radius-input)] border border-[var(--ink-hairline-strong)] bg-transparent px-3 text-14"
             >
               {SORTS.map((option) => (
                 <option key={option.value} value={option.value}>

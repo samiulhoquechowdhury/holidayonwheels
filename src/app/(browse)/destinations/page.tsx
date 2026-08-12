@@ -27,7 +27,7 @@ export default function DestinationsPage() {
         eyebrow="Eight states"
         title="Where you could go"
         intro="Roughly west to east. Each of these is a different country in every way that matters to a traveller — language, food, altitude, religion and road quality."
-        tint="cloud"
+        tint="shell"
         region="meghalaya"
       />
 
@@ -101,7 +101,7 @@ export default function DestinationsPage() {
                   <ul className="mt-6 flex flex-wrap gap-1.5">
                     {destination.requiresILP ? (
                       <li>
-                        <Chip tone="teal">Inner Line Permit</Chip>
+                        <Chip tone="sage">Inner Line Permit</Chip>
                       </li>
                     ) : (
                       <li>
@@ -115,7 +115,7 @@ export default function DestinationsPage() {
                     ))}
                   </ul>
 
-                  <p className="u-mono mt-6 text-ink-soft">
+                  <p className="u-label mt-6 text-ink-soft">
                     Best {destination.bestMonths.join(" · ")}
                   </p>
 

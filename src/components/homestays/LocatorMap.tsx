@@ -36,12 +36,7 @@ export function LocatorMap({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "rounded-[var(--radius-media)] border border-[var(--ink-hairline)] bg-tint-cloud p-6",
-        className,
-      )}
-    >
+    <div className={cn("rounded-[var(--radius-card)] bg-shell p-7", className)}>
       <Eyebrow>Where they are</Eyebrow>
 
       <svg
@@ -80,14 +75,14 @@ export function LocatorMap({
                 cx={x}
                 cy={y}
                 r="5"
-                className="fill-deep-teal"
+                className="fill-sage"
                 opacity="0.85"
               />
               <circle
                 cx={x}
                 cy={y}
                 r="11"
-                className="fill-deep-teal"
+                className="fill-sage"
                 opacity="0.12"
               />
             </g>
@@ -102,10 +97,10 @@ export function LocatorMap({
           <li key={stay.slug}>
             <Link
               href={`/homestays/${stay.slug}`}
-              className="flex min-h-11 items-baseline justify-between gap-3 text-14 transition-colors hover:text-deep-teal-ink"
+              className="flex min-h-11 items-baseline justify-between gap-3 text-14 transition-colors hover:text-sage-ink"
             >
               <span className="min-w-0 truncate">{stay.name}</span>
-              <span className="u-mono shrink-0 text-ink-faint">
+              <span className="u-label shrink-0 text-ink-faint">
                 {stay.locality}
               </span>
             </Link>

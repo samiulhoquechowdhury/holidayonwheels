@@ -45,7 +45,7 @@ export default function ILPPage() {
         eyebrow="Permits"
         title="Inner Line Permits, without the panic"
         intro="Four of the eight states need one. They are not difficult, they are refused for predictable reasons, and we process them for every traveller on every booking at no charge."
-        tint="loktak"
+        tint="shell"
         region="manipur"
       />
 
@@ -65,13 +65,13 @@ export default function ILPPage() {
             </caption>
             <thead>
               <tr className="border-b border-[var(--ink-hairline-strong)]">
-                <th scope="col" className="u-mono py-4 pr-4 text-ink-soft">
+                <th scope="col" className="u-label py-4 pr-4 text-ink-soft">
                   State
                 </th>
-                <th scope="col" className="u-mono py-4 pr-4 text-ink-soft">
+                <th scope="col" className="u-label py-4 pr-4 text-ink-soft">
                   Indian nationals
                 </th>
-                <th scope="col" className="u-mono py-4 text-ink-soft">
+                <th scope="col" className="u-label py-4 text-ink-soft">
                   Foreign nationals
                 </th>
               </tr>
@@ -87,14 +87,14 @@ export default function ILPPage() {
                   </th>
                   <td className="py-5 pr-4">
                     {destination.requiresILP ? (
-                      <Chip tone="teal">Inner Line Permit</Chip>
+                      <Chip tone="sage">Inner Line Permit</Chip>
                     ) : (
                       <Chip>Not required</Chip>
                     )}
                   </td>
                   <td className="py-5">
                     {destination.requiresPAP ? (
-                      <Chip tone="gold">Protected Area Permit</Chip>
+                      <Chip tone="clay">Protected Area Permit</Chip>
                     ) : (
                       <Chip>Not required</Chip>
                     )}
@@ -113,7 +113,7 @@ export default function ILPPage() {
       </SectionShell>
 
       <WeaveBand region="manipur" height={32} opacity={0.45} />
-      <SectionShell tint="loktak" pattern="manipur" patternOpacity={0.03}>
+      <SectionShell tint="shell" pattern="manipur" patternOpacity={0.03}>
         <SectionHeader
           eyebrow="How we handle it"
           title="Four steps, none of them yours"
@@ -122,7 +122,7 @@ export default function ILPPage() {
           {STEPS.map((step, index) => (
             <li key={step.title}>
               <Reveal delay={index * 0.05}>
-                <Eyebrow tone="teal" as="p">
+                <Eyebrow tone="sage" as="p">
                   Step {index + 1}
                 </Eyebrow>
                 <h3 className="mt-4 text-22">{step.title}</h3>
@@ -140,7 +140,7 @@ export default function ILPPage() {
       </SectionShell>
 
       <WeaveBand region="nagaland" height={28} opacity={0.4} />
-      <SectionShell tint="cherry" pattern="nagaland" patternOpacity={0.03}>
+      <SectionShell tint="sand" pattern="nagaland" patternOpacity={0.03}>
         <SectionHeader
           eyebrow="Questions"
           title="What people usually ask"

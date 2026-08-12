@@ -22,7 +22,7 @@ export default function JournalPage() {
         eyebrow="Journal"
         title="Worth reading before you book"
         intro="Practical writing about the region, from people who run trips in it. No listicles."
-        tint="muga"
+        tint="sand"
         region="sikkim"
       />
 
@@ -50,7 +50,7 @@ export default function JournalPage() {
               />
             </Link>
             <div className="lg:self-center">
-              <p className="u-mono text-ink-soft">
+              <p className="u-label text-ink-soft">
                 {lead.tag} · {formatMedium(lead.publishedAt)} ·{" "}
                 {lead.readingMinutes} min read
               </p>
@@ -64,7 +64,7 @@ export default function JournalPage() {
           </article>
         </Reveal>
 
-        <ul className="mt-20 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-20 grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
           {rest.map((post, index) => (
             <li key={post.slug}>
               <Reveal delay={Math.min(index, 3) * 0.05}>
@@ -81,12 +81,12 @@ export default function JournalPage() {
                         imageClassName="transition-transform duration-[var(--dur-image)] ease-brand motion-safe:group-hover:scale-105"
                       />
                     </div>
-                    <p className="u-mono mt-5 text-ink-soft">
+                    <p className="u-label mt-5 text-ink-soft">
                       {post.tag} · {formatMedium(post.publishedAt)}
                     </p>
                     <h3 className="mt-3 text-22">{post.title}</h3>
                     <p className="mt-2 text-16 text-ink-soft">{post.excerpt}</p>
-                    <p className="u-mono mt-4 text-ink-faint">
+                    <p className="u-label mt-4 text-ink-faint">
                       {post.readingMinutes} min read
                     </p>
                   </Link>

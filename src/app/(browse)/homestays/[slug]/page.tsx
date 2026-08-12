@@ -90,8 +90,8 @@ export default async function HomestayDetailPage({
               id: "host",
               label: "Your hosts",
               content: (
-                <div className="max-w-prose rounded-[var(--radius-media)] border border-[var(--ink-hairline)] p-6 lg:p-8">
-                  <Eyebrow tone="teal">Hosted by</Eyebrow>
+                <div className="max-w-prose rounded-[var(--radius-card)] bg-shell p-6 lg:p-8">
+                  <Eyebrow tone="sage">Hosted by</Eyebrow>
                   <p className="mt-4 text-28">{stay.hostName}</p>
                   <p className="mt-4 text-16 text-ink-soft">{stay.hostStory}</p>
                 </div>
@@ -101,19 +101,19 @@ export default async function HomestayDetailPage({
               id: "rooms",
               label: "Rooms",
               content: (
-                <ul className="grid gap-6 sm:grid-cols-2">
+                <ul className="grid gap-8 sm:grid-cols-2">
                   {stay.rooms.map((room) => (
                     <li
                       key={room.name}
-                      className="flex flex-col rounded-[var(--radius-media)] border border-[var(--ink-hairline)] p-6"
+                      className="flex flex-col rounded-[var(--radius-card)] bg-shell p-6"
                     >
                       <div className="flex items-baseline justify-between gap-3">
                         <h3 className="text-22">{room.name}</h3>
-                        <p className="shrink-0 font-mono text-16 tabular-nums">
+                        <p className="u-num shrink-0 text-16">
                           {formatINR(room.perNight)}
                         </p>
                       </div>
-                      <p className="u-mono mt-2 text-ink-faint">
+                      <p className="u-label mt-2 text-ink-faint">
                         Sleeps {room.sleeps} · per night
                       </p>
                       <p className="mt-4 flex-1 text-16 text-ink-soft">
@@ -137,13 +137,13 @@ export default async function HomestayDetailPage({
               content: (
                 <div className="grid gap-12 sm:grid-cols-2">
                   <div>
-                    <Eyebrow tone="teal" className="mb-4">
+                    <Eyebrow tone="sage" className="mb-4">
                       What is here
                     </Eyebrow>
                     <ul className="flex flex-col gap-3">
                       {stay.amenities.map((item) => (
                         <li key={item} className="flex gap-3 text-16">
-                          <span aria-hidden="true" className="text-deep-teal">
+                          <span aria-hidden="true" className="text-sage">
                             —
                           </span>
                           {item}
@@ -177,7 +177,7 @@ export default async function HomestayDetailPage({
       {tours.length > 0 ? (
         <>
           <WeaveBand region={stay.region} height={32} opacity={0.45} />
-          <SectionShell tint="muga" pattern={stay.region} patternOpacity={0.03}>
+          <SectionShell tint="sand" pattern={stay.region} patternOpacity={0.03}>
             <SectionHeader
               eyebrow="Guided trips nearby"
               title={`Tours through ${getDestinationName(stay.state)}`}
@@ -185,7 +185,7 @@ export default async function HomestayDetailPage({
               link={{ href: "/tours", label: "All trips" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {tours.map((tour, index) => (
                 <li key={tour.slug}>
                   <Reveal delay={index * 0.06}>
@@ -204,14 +204,14 @@ export default async function HomestayDetailPage({
       {nearby.length > 0 ? (
         <>
           <WeaveBand region="neutral" height={28} opacity={0.4} />
-          <SectionShell tint="cloud" pattern="neutral" patternOpacity={0.03}>
+          <SectionShell tint="shell" pattern="neutral" patternOpacity={0.03}>
             <SectionHeader
               eyebrow="Also in this state"
               title="Other houses nearby"
               link={{ href: "/homestays", label: "All homestays" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {nearby.map((other, index) => (
                 <li key={other.slug}>
                   <Reveal delay={index * 0.06}>

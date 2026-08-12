@@ -31,7 +31,7 @@ export default function EventsPage() {
         eyebrow={`${events.length} events`}
         title="Time it right"
         intro="The region's festivals are its best argument, and most of them are fixed to a season rather than a date. Several sell their accommodation out a year ahead."
-        tint="cherry"
+        tint="sand"
         region="mizoram"
       />
 
@@ -39,10 +39,10 @@ export default function EventsPage() {
         <div className="flex flex-col gap-20">
           {months.map((month) => (
             <section key={month}>
-              <h2 className="u-mono mb-8 border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
+              <h2 className="u-label mb-8 border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
                 {formatMonthYear(`${month}-01`)}
               </h2>
-              <ul className="grid gap-x-6 gap-y-14 sm:grid-cols-2 xl:grid-cols-3">
+              <ul className="grid gap-x-8 gap-y-16 sm:grid-cols-2 xl:grid-cols-3">
                 {byMonth[month].map((event, index) => (
                   <li key={event.slug}>
                     <Reveal delay={Math.min(index, 3) * 0.05}>

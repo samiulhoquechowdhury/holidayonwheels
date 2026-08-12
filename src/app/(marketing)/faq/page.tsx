@@ -39,7 +39,7 @@ export default function FaqPage() {
         eyebrow="Questions"
         title="The things people actually ask"
         intro="If the answer you need is not here, ask us — we would rather answer it than have you guess."
-        tint="cloud"
+        tint="shell"
         region="meghalaya"
       />
 
@@ -96,13 +96,13 @@ export default function FaqPage() {
 
       <WeaveBand region="manipur" height={28} opacity={0.4} />
       <SectionShell
-        tint="loktak"
+        tint="shell"
         pattern="manipur"
         patternOpacity={0.03}
         spacing="tight"
       >
         <Reveal className="max-w-2xl">
-          <Eyebrow tone="teal">Still stuck</Eyebrow>
+          <Eyebrow tone="sage">Still stuck</Eyebrow>
           <h2 className="mt-5 text-36">Ask us the awkward one.</h2>
           <p className="mt-5 text-18 text-ink-soft">
             Whether a route is too hard, whether a state is safe right now,

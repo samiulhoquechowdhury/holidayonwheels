@@ -29,12 +29,12 @@ const KIND_PATH: Record<Booking["kind"], string> = {
 
 const STATUS: Record<
   Booking["status"],
-  { label: string; tone: "gold" | "teal" | "red" | "neutral" }
+  { label: string; tone: "clay" | "sage" | "ember" | "neutral" }
 > = {
-  confirmed: { label: "Confirmed", tone: "teal" },
-  "pending-payment": { label: "Balance due", tone: "gold" },
+  confirmed: { label: "Confirmed", tone: "sage" },
+  "pending-payment": { label: "Balance due", tone: "clay" },
   completed: { label: "Completed", tone: "neutral" },
-  cancelled: { label: "Cancelled", tone: "red" },
+  cancelled: { label: "Cancelled", tone: "ember" },
 };
 
 export default function BookingsPage() {
@@ -47,7 +47,7 @@ export default function BookingsPage() {
         eyebrow="Your account"
         title="My bookings"
         intro="Everything you have booked, and everything still to pay. Permits raised as part of a trip are linked to it."
-        tint="cloud"
+        tint="shell"
         region="neutral"
       />
 
@@ -55,7 +55,7 @@ export default function BookingsPage() {
         <AccountNav current="bookings" />
 
         <section className="mt-14">
-          <h2 className="u-mono border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
+          <h2 className="u-label border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
             Coming up
           </h2>
           {upcoming.length > 0 ? (
@@ -73,7 +73,7 @@ export default function BookingsPage() {
 
         {past.length > 0 ? (
           <section className="mt-20">
-            <h2 className="u-mono border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
+            <h2 className="u-label border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
               Past and cancelled
             </h2>
             <ul className="mt-8 flex flex-col gap-6">
@@ -102,7 +102,7 @@ function BookingRow({
 
   return (
     <article
-      className={`grid gap-6 rounded-[var(--radius-media)] border border-[var(--ink-hairline)] p-5 sm:grid-cols-[180px_1fr] ${
+      className={`grid gap-8 rounded-[var(--radius-card)] bg-plate p-7 shadow-[var(--shadow-soft)] sm:grid-cols-[180px_1fr] ${
         muted ? "opacity-70" : ""
       }`}
     >
@@ -119,7 +119,7 @@ function BookingRow({
       <div className="min-w-0">
         <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
           <div className="min-w-0">
-            <p className="u-mono text-ink-faint">{booking.reference}</p>
+            <p className="u-label text-ink-faint">{booking.reference}</p>
             <h3 className="mt-2 text-22">
               <Link
                 href={`${KIND_PATH[booking.kind]}/${booking.itemSlug}`}
@@ -134,24 +134,22 @@ function BookingRow({
 
         <dl className="mt-5 flex flex-wrap gap-x-10 gap-y-3">
           <div>
-            <dt className="u-mono text-ink-faint">Dates</dt>
-            <dd className="mt-1 font-mono text-14 tabular-nums">
+            <dt className="u-label text-ink-faint">Dates</dt>
+            <dd className="u-num mt-1 text-14">
               {formatRange(booking.startDate, booking.endDate)}
             </dd>
           </div>
           <div>
-            <dt className="u-mono text-ink-faint">Travellers</dt>
+            <dt className="u-label text-ink-faint">Travellers</dt>
             <dd className="mt-1 text-14">{booking.travellers}</dd>
           </div>
           <div>
-            <dt className="u-mono text-ink-faint">Total</dt>
-            <dd className="mt-1 font-mono text-14 tabular-nums">
-              {formatINR(booking.total)}
-            </dd>
+            <dt className="u-label text-ink-faint">Total</dt>
+            <dd className="u-num mt-1 text-14">{formatINR(booking.total)}</dd>
           </div>
           {!muted ? (
             <div>
-              <dt className="u-mono text-ink-faint">Departs</dt>
+              <dt className="u-label text-ink-faint">Departs</dt>
               <dd className="mt-1 text-14">
                 {relativeToNow(booking.startDate)}
               </dd>
@@ -160,7 +158,7 @@ function BookingRow({
         </dl>
 
         {booking.status === "pending-payment" ? (
-          <div className="mt-5 flex flex-wrap items-center gap-4 rounded-[var(--radius-control)] border border-[color-mix(in_srgb,var(--muga-gold)_40%,transparent)] bg-[color-mix(in_srgb,var(--muga-gold)_8%,transparent)] p-4">
+          <div className="mt-5 flex flex-wrap items-center gap-4 rounded-[var(--radius-card)] border border-[color-mix(in_srgb,var(--clay)_40%,transparent)] bg-[color-mix(in_srgb,var(--clay)_8%,transparent)] p-4">
             <p className="flex-1 text-14">
               Your balance of {formatINR(Math.round(booking.total * 0.75))} is
               due 60 days before departure.
@@ -177,7 +175,7 @@ function BookingRow({
             linked to this booking —{" "}
             <Link
               href="/account/permits"
-              className="text-deep-teal-ink underline underline-offset-4"
+              className="text-sage-ink underline underline-offset-4"
             >
               view under My permits
             </Link>

@@ -108,7 +108,7 @@ export default async function TourDetailPage({
                   <ul className="flex flex-col gap-3">
                     {tour.highlights.map((highlight) => (
                       <li key={highlight} className="flex gap-3 text-16">
-                        <span aria-hidden="true" className="text-muga-gold">
+                        <span aria-hidden="true" className="text-clay">
                           —
                         </span>
                         {highlight}
@@ -175,7 +175,7 @@ export default async function TourDetailPage({
         <>
           <WeaveBand region={tour.region} height={32} opacity={0.45} />
           <SectionShell
-            tint="paddy"
+            tint="shell"
             pattern={tour.region}
             patternOpacity={0.03}
           >
@@ -186,7 +186,7 @@ export default async function TourDetailPage({
               link={{ href: "/homestays", label: "All homestays" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:gap-8">
               {stays.map((stay, index) => (
                 <li key={stay.slug}>
                   <Reveal delay={index * 0.06}>
@@ -205,14 +205,14 @@ export default async function TourDetailPage({
       {related.length > 0 ? (
         <>
           <WeaveBand region="neutral" height={28} opacity={0.4} />
-          <SectionShell tint="cloud" pattern="neutral" patternOpacity={0.03}>
+          <SectionShell tint="shell" pattern="neutral" patternOpacity={0.03}>
             <SectionHeader
               eyebrow="Also worth a look"
               title="Trips that cover the same ground"
               link={{ href: "/tours", label: "All trips" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {related.map((other, index) => (
                 <li key={other.slug}>
                   <Reveal delay={index * 0.06}>
@@ -234,7 +234,7 @@ export default async function TourDetailPage({
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="u-mono text-ink-soft">{label}</dt>
+      <dt className="u-label text-ink-soft">{label}</dt>
       <dd className="mt-2 text-16">{value}</dd>
     </div>
   );

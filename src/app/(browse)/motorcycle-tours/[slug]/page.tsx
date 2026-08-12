@@ -98,8 +98,8 @@ export default async function MotorcycleTourDetailPage({
                 <div className="max-w-prose">
                   <p className="text-18 text-ink-soft">{tour.intro}</p>
 
-                  <div className="mt-10 rounded-[var(--radius-control)] border border-[color-mix(in_srgb,var(--naga-red)_35%,transparent)] bg-[color-mix(in_srgb,var(--naga-red)_6%,transparent)] p-5">
-                    <Eyebrow tone="red">Riding experience needed</Eyebrow>
+                  <div className="mt-10 rounded-[var(--radius-card)] border border-[color-mix(in_srgb,var(--ember)_35%,transparent)] bg-[color-mix(in_srgb,var(--ember)_6%,transparent)] p-5">
+                    <Eyebrow tone="ember">Riding experience needed</Eyebrow>
                     <p className="mt-3 text-16">{tour.ridingExperience}</p>
                   </div>
 
@@ -107,7 +107,7 @@ export default async function MotorcycleTourDetailPage({
                   <ul className="flex flex-col gap-3">
                     {tour.highlights.map((highlight) => (
                       <li key={highlight} className="flex gap-3 text-16">
-                        <span aria-hidden="true" className="text-naga-red">
+                        <span aria-hidden="true" className="text-ember">
                           —
                         </span>
                         {highlight}
@@ -156,11 +156,11 @@ export default async function MotorcycleTourDetailPage({
                         >
                           <span className="text-16">
                             {bike.name}
-                            <span className="u-mono ml-2 text-ink-faint">
+                            <span className="u-label ml-2 text-ink-faint">
                               {bike.engineCc}cc
                             </span>
                           </span>
-                          <span className="shrink-0 font-mono text-14 tabular-nums">
+                          <span className="u-num shrink-0 text-14">
                             {bike.surcharge === 0
                               ? "Included"
                               : bike.surcharge > 0
@@ -193,7 +193,7 @@ export default async function MotorcycleTourDetailPage({
                   <ul className="mt-6 grid max-w-prose gap-3 sm:grid-cols-2">
                     {tour.supportVehicle.map((item) => (
                       <li key={item} className="flex gap-3 text-16">
-                        <span aria-hidden="true" className="text-naga-red">
+                        <span aria-hidden="true" className="text-ember">
                           —
                         </span>
                         {item}
@@ -220,14 +220,14 @@ export default async function MotorcycleTourDetailPage({
       {related.length > 0 ? (
         <>
           <WeaveBand region="nagaland" height={32} opacity={0.45} />
-          <SectionShell tint="cherry" pattern="nagaland" patternOpacity={0.03}>
+          <SectionShell tint="sand" pattern="nagaland" patternOpacity={0.03}>
             <SectionHeader
               eyebrow="Also worth a look"
               title="Other expeditions on this ground"
               link={{ href: "/motorcycle-tours", label: "All expeditions" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {related.map((other, index) => (
                 <li key={other.slug}>
                   <Reveal delay={index * 0.06}>

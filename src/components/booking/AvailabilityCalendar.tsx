@@ -25,8 +25,8 @@ const STATUS_LABEL: Record<Departure["status"], string> = {
 
 const STATUS_TONE: Record<Departure["status"], string> = {
   open: "text-ink-soft",
-  filling: "text-naga-red-ink",
-  guaranteed: "text-deep-teal-ink",
+  filling: "text-ember-ink",
+  guaranteed: "text-sage-ink",
   "sold-out": "text-ink-faint",
 };
 
@@ -67,14 +67,14 @@ export function AvailabilityCalendar({
                 htmlFor={id}
                 className={cn(
                   "flex min-h-14 cursor-pointer items-center justify-between gap-3 border px-4 py-3",
-                  "rounded-[var(--radius-control)] transition-colors duration-[var(--dur-micro)] ease-brand",
+                  "rounded-[var(--radius-input)] transition-colors duration-[var(--dur-micro)] ease-brand",
                   soldOut && "cursor-not-allowed opacity-50",
                   isSelected
-                    ? "border-ink bg-[rgb(20_32_27/0.04)]"
+                    ? "border-ink bg-[rgb(46_42_36/0.04)]"
                     : "border-[var(--ink-hairline)] hover:border-[var(--ink-hairline-strong)]",
                   // The focus ring lives on the label because the input itself
                   // is visually hidden.
-                  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-deep-teal",
+                  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-sage",
                 )}
               >
                 <input
@@ -88,12 +88,12 @@ export function AvailabilityCalendar({
                   className="u-sr-only"
                 />
                 <span className="min-w-0">
-                  <span className="block font-mono text-14 tabular-nums">
+                  <span className="u-num block text-14">
                     {formatRange(departure.date, departure.endDate)}
                   </span>
                   <span
                     className={cn(
-                      "u-mono mt-1 block",
+                      "u-label mt-1 block",
                       STATUS_TONE[departure.status],
                     )}
                   >
@@ -104,11 +104,11 @@ export function AvailabilityCalendar({
                 </span>
                 <span className="shrink-0 text-right">
                   {departure.wasPerPerson ? (
-                    <span className="block font-mono text-12 text-ink-faint line-through">
+                    <span className="u-num block text-12 text-ink-faint line-through">
                       {formatINR(departure.wasPerPerson)}
                     </span>
                   ) : null}
-                  <span className="block font-mono text-16 tabular-nums">
+                  <span className="u-num block text-16">
                     {formatINR(departure.perPerson)}
                   </span>
                 </span>
@@ -143,7 +143,7 @@ export function NightSelector({
   return (
     <div className={cn("grid gap-4 sm:grid-cols-2", className)}>
       <div>
-        <label htmlFor="check-in" className="u-mono mb-2 block text-ink-soft">
+        <label htmlFor="check-in" className="u-label mb-2 block text-ink-soft">
           Check in
         </label>
         <input
@@ -152,11 +152,11 @@ export function NightSelector({
           value={checkIn}
           min={minDate}
           onChange={(event) => onCheckInChange(event.target.value)}
-          className="min-h-12 w-full rounded-[var(--radius-control)] border border-[var(--ink-hairline-strong)] bg-paper px-3 font-mono text-14 tabular-nums"
+          className="u-num min-h-12 w-full rounded-[var(--radius-input)] border border-[var(--ink-hairline-strong)] bg-paper px-3 text-14"
         />
       </div>
       <div>
-        <label htmlFor="nights" className="u-mono mb-2 block text-ink-soft">
+        <label htmlFor="nights" className="u-label mb-2 block text-ink-soft">
           Nights
         </label>
         <div className="flex items-stretch">
@@ -171,7 +171,7 @@ export function NightSelector({
           </button>
           <output
             htmlFor="nights"
-            className="flex min-h-12 flex-1 items-center justify-center border-y border-[var(--ink-hairline-strong)] font-mono text-16 tabular-nums"
+            className="u-num flex min-h-12 flex-1 items-center justify-center border-y border-[var(--ink-hairline-strong)] text-16"
           >
             {nights}
           </output>
@@ -185,7 +185,7 @@ export function NightSelector({
             +
           </button>
         </div>
-        <p className="u-mono mt-2 text-ink-faint">
+        <p className="u-label mt-2 text-ink-faint">
           Checking out {formatMedium(addNights(checkIn, nights))}
         </p>
       </div>

@@ -19,7 +19,7 @@ export default function ContactPage() {
         eyebrow="Contact"
         title="Tell us what you have in mind"
         intro="Most of what we run started as somebody asking for something that was not on the site. Be specific and the reply will be useful."
-        tint="cherry"
+        tint="sand"
         region="mizoram"
       />
 
@@ -38,7 +38,7 @@ export default function ContactPage() {
               </a>
               <a
                 href={`tel:${site.contact.phone.replace(/\s/g, "")}`}
-                className="font-mono tabular-nums underline decoration-[var(--ink-hairline-strong)] underline-offset-8 hover:decoration-current"
+                className="u-num underline decoration-[var(--ink-hairline-strong)] underline-offset-8 hover:decoration-current"
               >
                 {site.contact.phone}
               </a>
@@ -59,8 +59,8 @@ export default function ContactPage() {
               ))}
             </ul>
 
-            <div className="mt-12 rounded-[var(--radius-control)] border border-[var(--ink-hairline)] p-5">
-              <Eyebrow tone="teal">Permits</Eyebrow>
+            <div className="mt-12 rounded-[var(--radius-card)] border border-[var(--ink-hairline)] p-5">
+              <Eyebrow tone="sage">Permits</Eyebrow>
               <p className="mt-3 text-14 text-ink-soft">
                 Permit questions are answered fastest by our permits desk. Put
                 &ldquo;permit&rdquo; in the first line of your message and it

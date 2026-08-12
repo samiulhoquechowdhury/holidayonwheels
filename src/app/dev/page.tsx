@@ -48,7 +48,7 @@ export default function DevPage() {
         <ul className="flex flex-col gap-8">
           {weaveRegions.map((region) => (
             <li key={region}>
-              <p className="u-mono mb-3 text-ink-soft">
+              <p className="u-label mb-3 text-ink-soft">
                 {weaveMotifs[region].label} — {weaveMotifs[region].tradition}
               </p>
               <div className="border-y border-[var(--ink-hairline)]">
@@ -67,7 +67,7 @@ export default function DevPage() {
           {weaveRegions.slice(0, 8).map((region) => (
             <li
               key={region}
-              className="relative isolate h-40 overflow-hidden rounded-[var(--radius-media)] bg-tint-muga"
+              className="relative isolate h-40 overflow-hidden rounded-[var(--radius-media)] bg-sand"
             >
               <WeavePattern region={region} scale={6} opacity={0.06} />
               <p className="relative p-4 text-14">
@@ -93,43 +93,41 @@ export default function DevPage() {
           <p className="font-display text-28">28 — Northeast India</p>
           <p className="font-display text-22">22 — Northeast India</p>
           <p className="text-18">
-            18 — Body text at this size, in Geist Sans, sentence case.
+            18 — Body text at this size, in Figtree, sentence case.
           </p>
           <p className="text-16">
-            16 — Body text at this size, in Geist Sans, sentence case.
+            16 — Body text at this size, in Figtree, sentence case.
           </p>
           <p className="text-14">
-            14 — Body text at this size, in Geist Sans, sentence case.
+            14 — Body text at this size, in Figtree, sentence case.
           </p>
-          <p className="u-mono">12 — Mono utility, uppercase, 0.14em</p>
+          <p className="u-label">12 — Mono utility, uppercase, 0.14em</p>
         </div>
       </Spec>
 
       {/* ---- Colour ------------------------------------------------------ */}
       <Spec
-        title="Tints and accents"
-        note="Every colour is a token. No inline hex anywhere."
+        title="Surfaces and accents"
+        note="Four surfaces, three accents. Every colour is a token — no inline hex anywhere."
       >
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5">
           {[
             ["paper", "bg-paper"],
-            ["muga", "bg-tint-muga"],
-            ["cloud", "bg-tint-cloud"],
-            ["paddy", "bg-tint-paddy"],
-            ["loktak", "bg-tint-loktak"],
-            ["cherry", "bg-tint-cherry"],
-            ["ink", "bg-ink"],
+            ["shell", "bg-shell"],
+            ["sand", "bg-sand"],
+            ["plate", "bg-plate"],
             ["night", "bg-night"],
-            ["muga gold", "bg-muga-gold"],
-            ["naga red", "bg-naga-red"],
-            ["deep teal", "bg-deep-teal"],
+            ["ink", "bg-ink"],
             ["ink soft", "bg-[var(--ink-soft)]"],
+            ["clay — muga silk", "bg-clay"],
+            ["ember — terracotta", "bg-ember"],
+            ["sage", "bg-sage"],
           ].map(([label, klass]) => (
             <li key={label}>
               <div
-                className={`h-20 rounded-[var(--radius-media)] border border-[var(--ink-hairline)] ${klass}`}
+                className={`h-20 rounded-[var(--radius-card)] border border-[var(--ink-hairline)] ${klass}`}
               />
-              <p className="u-mono mt-2 text-ink-soft">{label}</p>
+              <p className="u-label mt-2 text-ink-soft">{label}</p>
             </li>
           ))}
         </ul>
@@ -179,9 +177,9 @@ export default function DevPage() {
         <div className="flex flex-col gap-8">
           <Row label="Chip tones">
             <Chip>Neutral</Chip>
-            <Chip tone="gold">Gold</Chip>
-            <Chip tone="red">Red</Chip>
-            <Chip tone="teal">Teal</Chip>
+            <Chip tone="clay">Clay</Chip>
+            <Chip tone="ember">Ember</Chip>
+            <Chip tone="sage">Sage</Chip>
           </Row>
           <Row label="FilterChip">
             <FilterChip>Unselected</FilterChip>
@@ -191,7 +189,7 @@ export default function DevPage() {
             <PriceTag amount={124500} />
             <PriceTag amount={74500} wasAmount={84500} prefix="from" />
             <PriceTag amount={3200} unit="per night" size="sm" />
-            <PriceTag amount={248000} size="lg" tone="gold" />
+            <PriceTag amount={248000} size="lg" tone="clay" />
           </Row>
         </div>
       </Spec>
@@ -200,9 +198,9 @@ export default function DevPage() {
       <Spec title="Eyebrow">
         <div className="flex flex-wrap gap-8">
           <Eyebrow>Soft</Eyebrow>
-          <Eyebrow tone="gold">Gold</Eyebrow>
-          <Eyebrow tone="red">Red</Eyebrow>
-          <Eyebrow tone="teal">Teal</Eyebrow>
+          <Eyebrow tone="clay">Clay</Eyebrow>
+          <Eyebrow tone="ember">Ember</Eyebrow>
+          <Eyebrow tone="sage">Sage</Eyebrow>
         </div>
       </Spec>
 
@@ -223,7 +221,7 @@ export default function DevPage() {
                   sizes="320px"
                 />
               </div>
-              <p className="u-mono mt-2 text-ink-soft">{aspect}</p>
+              <p className="u-label mt-2 text-ink-soft">{aspect}</p>
             </li>
           ))}
         </ul>
@@ -286,7 +284,7 @@ export default function DevPage() {
       >
         <OutboundLink
           href={BEEPDRIVE_URL}
-          className="text-16 text-deep-teal-ink underline underline-offset-4"
+          className="text-16 text-sage-ink underline underline-offset-4"
         >
           Car and bike hire on Beep Drive
         </OutboundLink>
@@ -300,8 +298,8 @@ export default function DevPage() {
         <div className="flex flex-col gap-4">
           {[0, 0.1, 0.2].map((delay) => (
             <Reveal key={delay} delay={delay}>
-              <div className="rounded-[var(--radius-media)] border border-[var(--ink-hairline)] p-6">
-                <p className="u-mono text-ink-soft">delay {delay}s</p>
+              <div className="rounded-[var(--radius-card)] bg-shell p-7">
+                <p className="u-label text-ink-soft">delay {delay}s</p>
               </div>
             </Reveal>
           ))}
@@ -358,7 +356,7 @@ function Row({
   return (
     <div>
       <p
-        className={`u-mono mb-4 ${dark ? "text-night-text-soft" : "text-ink-soft"}`}
+        className={`u-label mb-4 ${dark ? "text-night-text-soft" : "text-ink-soft"}`}
       >
         {label}
       </p>

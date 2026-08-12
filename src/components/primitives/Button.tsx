@@ -5,30 +5,46 @@ import { useRef, useState, type ComponentProps } from "react";
 import { motion, useReducedMotion, type HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { microTransition } from "@/lib/motion";
+import { ArrowGlyph } from "./ArrowGlyph";
+
+/**
+ * Buttons are full pills, and every one of them is quiet.
+ *
+ * The old set led with a large muga-gold fill. In this language the gold is a
+ * signal rather than a surface: `primary` is ink — the calmest thing a
+ * confident button can be — and `clay` exists for the one action per page
+ * that genuinely wants warmth. A page with three gold buttons has no primary
+ * action at all.
+ */
 
 export type ButtonVariant =
-  "primary" | "secondary" | "ghost" | "moto" | "onDark";
+  "primary" | "clay" | "secondary" | "ghost" | "moto" | "onDark";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const VARIANT: Record<ButtonVariant, string> = {
-  // Muga gold on near-black: the only large gold fill on the site.
+  // Warm ink on paper. The default, and it should stay the default.
   primary:
-    "bg-muga-gold text-muga-gold-on hover:bg-muga-gold-hover border border-transparent",
+    "bg-ink text-paper border border-transparent hover:bg-[color-mix(in_srgb,var(--ink)_88%,var(--paper))]",
+  // Muga silk. One per page, for the action that is actually the point.
+  clay: "bg-clay text-clay-on border border-transparent hover:bg-clay-deep",
+  // A hairline that fills in on hover rather than changing colour.
   secondary:
-    "bg-transparent text-ink border border-[var(--ink-hairline-strong)] hover:border-ink hover:bg-[rgb(20_32_27/0.04)]",
+    "bg-transparent text-ink border border-[var(--ink-hairline-strong)] hover:border-ink hover:bg-[rgb(46_42_36/0.045)]",
   ghost:
-    "bg-transparent text-ink border border-transparent hover:bg-[rgb(20_32_27/0.06)]",
-  // Motorcycle tours and anything urgent.
-  moto: "bg-naga-red text-paper hover:bg-naga-red-hover border border-transparent",
+    "bg-transparent text-ink border border-transparent hover:bg-[rgb(46_42_36/0.06)]",
+  // Motorcycle tours and anything with a deadline on it.
+  moto: "bg-ember text-paper border border-transparent hover:bg-ember-hover",
   onDark:
-    "bg-paper text-ink border border-transparent hover:bg-[color-mix(in_srgb,var(--paper)_88%,var(--muga-gold))]",
+    "bg-paper text-ink border border-transparent hover:bg-[color-mix(in_srgb,var(--paper)_86%,var(--clay))]",
 };
 
 const SIZE: Record<ButtonSize, string> = {
   // 44px minimum tap target at every size — mobile is the primary surface.
-  sm: "min-h-11 px-4 text-14",
-  md: "min-h-12 px-6 text-16",
-  lg: "min-h-14 px-8 text-18",
+  // Wider than the old set: a pill needs horizontal room, or the label ends
+  // up jammed against the curve.
+  sm: "min-h-11 px-5 text-14",
+  md: "min-h-12 px-7 text-16",
+  lg: "min-h-14 px-9 text-18",
 };
 
 const BASE = cn(
@@ -50,11 +66,15 @@ function surface({ variant = "primary", size = "md", block }: SurfaceProps) {
 }
 
 /**
- * Magnetic pull, capped at 4px, desktop pointer only. Touch never triggers it
- * (there is no hover to trigger from) and reduced motion switches it off
- * entirely rather than shortening it.
+ * Magnetic pull, capped at `limit` px, desktop pointer only. Touch never
+ * triggers it (there is no hover to trigger from) and reduced motion switches
+ * it off entirely rather than shortening it.
+ *
+ * Exported because the header's menu and CTA plates use the same pull — the
+ * cap is the whole character of the effect, and two implementations of it
+ * would drift apart.
  */
-function useMagnetic(enabled: boolean) {
+export function useMagnetic(enabled: boolean, limit = 4) {
   const ref = useRef<HTMLElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
@@ -68,8 +88,11 @@ function useMagnetic(enabled: boolean) {
           const dx = event.clientX - (rect.left + rect.width / 2);
           const dy = event.clientY - (rect.top + rect.height / 2);
           setOffset({
-            x: Math.max(-4, Math.min(4, (dx / rect.width) * 8)),
-            y: Math.max(-4, Math.min(4, (dy / rect.height) * 8)),
+            x: Math.max(-limit, Math.min(limit, (dx / rect.width) * limit * 2)),
+            y: Math.max(
+              -limit,
+              Math.min(limit, (dy / rect.height) * limit * 2),
+            ),
           });
         },
         onPointerLeave: () => setOffset({ x: 0, y: 0 }),
@@ -142,3 +165,60 @@ export function ButtonLink({
     </MotionLink>
   );
 }
+
+/**
+ * A text link that reads as an action: the label, and a rule that draws
+ * itself in from the left on hover. This replaces the permanent underline the
+ * old system used on every index link — thirty standing underlines is thirty
+ * lines of visual noise in a design whose argument is empty space.
+ *
+ * The rule is a `scaleX` on a child rather than a `text-decoration`
+ * transition: text-decoration cannot be animated, and a border-bottom cannot
+ * be made to grow from one end.
+ */
+export function TextLink({
+  href,
+  children,
+  tone = "ink",
+  className,
+  ...props
+}: {
+  href: ComponentProps<typeof Link>["href"];
+  children: React.ReactNode;
+  tone?: "ink" | "onDark";
+  className?: string;
+} & Omit<ComponentProps<typeof Link>, "href" | "className">) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "group/link inline-flex min-h-11 items-center gap-2.5 text-16",
+        tone === "onDark" ? "text-night-text" : "text-ink",
+        className,
+      )}
+      {...props}
+    >
+      <span className="relative">
+        {children}
+        <span
+          aria-hidden="true"
+          className={cn(
+            "absolute -bottom-0.5 left-0 block h-px w-full origin-right scale-x-0",
+            "transition-transform duration-[var(--dur-micro)] ease-brand",
+            "group-hover/link:origin-left group-hover/link:scale-x-100",
+            "group-focus-visible/link:origin-left group-focus-visible/link:scale-x-100",
+            tone === "onDark" ? "bg-night-text" : "bg-ink",
+          )}
+        />
+      </span>
+      <ArrowGlyph className="transition-transform duration-[var(--dur-micro)] ease-brand motion-safe:group-hover/link:translate-x-1" />
+    </Link>
+  );
+}
+
+/**
+ * The one arrow in the system now lives in its own module so server
+ * components can draw it without pulling Framer Motion in with it. Re-exported
+ * here because thirty call sites already import it from this file.
+ */
+export { ArrowGlyph } from "./ArrowGlyph";

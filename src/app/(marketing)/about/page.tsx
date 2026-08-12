@@ -46,7 +46,7 @@ export default function AboutPage() {
         eyebrow="About"
         title="We only do the Northeast"
         intro="Eight states, one region, and no attempt to also sell you Rajasthan. Everything on this site is somewhere we run trips ourselves."
-        tint="muga"
+        tint="sand"
         region="assam"
       />
 
@@ -96,7 +96,7 @@ export default function AboutPage() {
       </SectionShell>
 
       <WeaveBand region="meghalaya" height={32} opacity={0.45} />
-      <SectionShell tint="cloud" pattern="meghalaya" patternOpacity={0.035}>
+      <SectionShell tint="shell" pattern="meghalaya" patternOpacity={0.035}>
         <SectionHeader
           eyebrow="How we work"
           title="Four things we will not compromise on"
@@ -115,7 +115,7 @@ export default function AboutPage() {
       </SectionShell>
 
       <WeaveBand region="sikkim" height={32} opacity={0.45} />
-      <SectionShell tint="paddy" pattern="sikkim" patternOpacity={0.035}>
+      <SectionShell tint="shell" pattern="sikkim" patternOpacity={0.035}>
         <Reveal className="max-w-2xl">
           <Eyebrow>Talk to us</Eyebrow>
           <h2 className="mt-5 text-36">
@@ -144,7 +144,7 @@ export default function AboutPage() {
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <dt className="u-mono order-2 mt-2 text-ink-soft">{label}</dt>
+      <dt className="u-label order-2 mt-2 text-ink-soft">{label}</dt>
       <dd className="font-display text-48 leading-none">{value}</dd>
     </div>
   );

@@ -21,17 +21,17 @@ export default function HomestaysPage() {
         eyebrow={`${homestays.length} places to stay`}
         title="Stay in somebody's house"
         intro="Every homestay here is owned and run by the family living in it, and they set their own rates. We take a booking commission and nothing else. Two of them have no road to them at all."
-        tint="paddy"
+        tint="shell"
         region="arunachal"
       />
 
       <SectionShell tint="paper">
         <div className="grid gap-12 lg:grid-cols-[1fr_320px] lg:gap-16">
           <div className="min-w-0">
-            <h2 className="u-mono mb-8 text-ink-soft">
+            <h2 className="u-label mb-8 text-ink-soft">
               {homestays.length} homestays across eight states
             </h2>
-            <ul className="grid gap-x-6 gap-y-14 sm:grid-cols-2">
+            <ul className="grid gap-x-8 gap-y-16 sm:grid-cols-2">
               {homestays.map((stay, index) => (
                 <li key={stay.slug}>
                   <Reveal delay={Math.min(index, 5) * 0.04}>

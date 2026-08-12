@@ -42,15 +42,15 @@ export default function MotorcycleToursPage() {
         eyebrow={`${tours.length} expeditions`}
         title="Guided rides, with a truck behind you"
         intro="Group motorcycle expeditions across the Northeast. Every departure runs with a lead rider, a sweep rider and a support pickup — which is the difference between an expedition and a group of people on bikes hoping for the best."
-        tint="cherry"
+        tint="sand"
         region="nagaland"
       />
 
       <SectionShell tint="paper">
-        <h2 className="u-mono mb-8 border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
+        <h2 className="u-label mb-8 border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
           {tours.length} expeditions
         </h2>
-        <ul className="grid gap-x-6 gap-y-14 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid gap-x-8 gap-y-16 sm:grid-cols-2 xl:grid-cols-3">
           {tours.map((tour, index) => (
             <li key={tour.slug}>
               <Reveal delay={Math.min(index, 5) * 0.04}>

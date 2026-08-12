@@ -50,10 +50,10 @@ export function SearchBar({
       role="search"
       aria-label="Find a trip"
       className={cn(
-        "w-full rounded-[var(--radius-control)] border p-2",
+        "w-full rounded-[var(--radius-panel)] p-2",
         dark
-          ? "border-[rgb(255_255_255/0.28)] bg-[rgb(13_21_18/0.55)] backdrop-blur-md"
-          : "border-[var(--ink-hairline-strong)] bg-paper",
+          ? "border border-[rgb(255_255_255/0.28)] bg-[rgb(42_38_33/0.55)] backdrop-blur-md"
+          : "bg-shell",
         className,
       )}
     >
@@ -101,7 +101,7 @@ export function SearchBar({
             type="month"
             value={when}
             onChange={(event) => setWhen(event.target.value)}
-            className={cn(inputClass, "tabular-nums", dark && "text-paper")}
+            className={cn(inputClass, "u-num", dark && "text-paper")}
           />
         </Field>
 
@@ -181,7 +181,7 @@ function Field({
       <label
         htmlFor={htmlFor}
         className={cn(
-          "u-mono block px-3 pt-2",
+          "u-label block px-3 pt-2",
           dark ? "text-night-text-soft" : "text-ink-soft",
         )}
       >

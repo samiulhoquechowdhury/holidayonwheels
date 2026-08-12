@@ -367,11 +367,11 @@ function StepIndicator({ current }: { current: Step }) {
               <span
                 aria-hidden="true"
                 className={cn(
-                  "flex h-6 w-6 items-center justify-center rounded-full font-mono text-12",
+                  "u-num flex h-6 w-6 items-center justify-center rounded-full text-12",
                   state === "current"
                     ? "bg-ink text-paper"
                     : state === "done"
-                      ? "bg-deep-teal text-paper"
+                      ? "bg-sage text-paper"
                       : "border border-[var(--ink-hairline-strong)] text-ink-faint",
                 )}
               >
@@ -379,7 +379,7 @@ function StepIndicator({ current }: { current: Step }) {
               </span>
               <span
                 className={cn(
-                  "u-mono",
+                  "u-label",
                   state === "todo" ? "text-ink-faint" : "text-ink",
                 )}
                 aria-current={state === "current" ? "step" : undefined}
@@ -411,8 +411,8 @@ function PaymentStep({
 
   return (
     <div className="mt-10">
-      <div className="rounded-[var(--radius-control)] border border-[color-mix(in_srgb,var(--muga-gold)_40%,transparent)] bg-[color-mix(in_srgb,var(--muga-gold)_8%,transparent)] p-5">
-        <Eyebrow tone="gold">Demonstration only</Eyebrow>
+      <div className="rounded-[var(--radius-card)] border border-[color-mix(in_srgb,var(--clay)_40%,transparent)] bg-[color-mix(in_srgb,var(--clay)_8%,transparent)] p-5">
+        <Eyebrow tone="clay">Demonstration only</Eyebrow>
         <p className="mt-3 text-16">
           No payment gateway is connected in this build. Submitting takes no
           money and charges no card — it produces the confirmation you would
@@ -448,11 +448,11 @@ function PaymentStep({
                   htmlFor={`pay-${option.id}`}
                   className={cn(
                     "flex min-h-14 cursor-pointer items-center justify-between gap-3 border px-4 py-3",
-                    "rounded-[var(--radius-control)] transition-colors duration-[var(--dur-micro)]",
+                    "rounded-[var(--radius-input)] transition-colors duration-[var(--dur-micro)]",
                     method === option.id
-                      ? "border-ink bg-[rgb(20_32_27/0.04)]"
+                      ? "border-ink bg-[rgb(46_42_36/0.04)]"
                       : "border-[var(--ink-hairline)] hover:border-[var(--ink-hairline-strong)]",
-                    "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-deep-teal",
+                    "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-sage",
                   )}
                 >
                   <input
@@ -466,7 +466,7 @@ function PaymentStep({
                   />
                   <span>
                     <span className="block text-16">{option.label}</span>
-                    <span className="u-mono mt-1 block text-ink-faint">
+                    <span className="u-label mt-1 block text-ink-faint">
                       {option.note}
                     </span>
                   </span>
@@ -494,7 +494,7 @@ function PaymentStep({
             <TextInput
               id="bill-pin"
               autoComplete="postal-code"
-              className="font-mono"
+              className="u-num"
             />
           </Field>
           <Field
@@ -550,7 +550,7 @@ function OrderSummary({
   return (
     <aside aria-label="Order summary" className="order-first lg:order-none">
       <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
-        <div className="overflow-hidden rounded-[var(--radius-media)] border border-[var(--ink-hairline)] bg-paper">
+        <div className="overflow-hidden rounded-[var(--radius-panel)] bg-plate shadow-[var(--shadow-soft)]">
           <Media
             alt={order.heroAlt}
             seed={order.slug}
@@ -574,7 +574,7 @@ function OrderSummary({
               </li>
               {order.requiresILP ? (
                 <li>
-                  <Chip tone="teal">Permit included</Chip>
+                  <Chip tone="sage">Permit included</Chip>
                 </li>
               ) : null}
             </ul>
@@ -583,7 +583,7 @@ function OrderSummary({
               {order.lines.map((line) => (
                 <div key={line.label} className="flex justify-between gap-4">
                   <dt className="text-14 text-ink-soft">{line.label}</dt>
-                  <dd className="shrink-0 font-mono text-14 tabular-nums">
+                  <dd className="u-num shrink-0 text-14">
                     {line.amount < 0 ? "−" : ""}
                     {formatINR(Math.abs(line.amount))}
                   </dd>
@@ -593,7 +593,7 @@ function OrderSummary({
               {chosen.map((addOn) => (
                 <div key={addOn.id} className="flex justify-between gap-4">
                   <dt className="text-14 text-ink-soft">{addOn.title}</dt>
-                  <dd className="shrink-0 font-mono text-14 tabular-nums">
+                  <dd className="u-num shrink-0 text-14">
                     {addOn.price === 0
                       ? "Included"
                       : formatINR(
@@ -607,17 +607,17 @@ function OrderSummary({
             </dl>
 
             <div className="mt-5 flex items-baseline justify-between gap-4 border-t border-[var(--ink-hairline)] pt-5">
-              <p className="u-mono">Total</p>
-              <p className="font-mono text-22 tabular-nums">
+              <p className="u-label">Total</p>
+              <p className="u-num font-display text-22 leading-none">
                 {formatINR(total)}
               </p>
             </div>
-            <p className="u-mono mt-2 text-right text-ink-faint">
+            <p className="u-label mt-2 text-right text-ink-faint">
               Due today {formatINR(dueToday)}
             </p>
 
             {addOnTotal > 0 ? (
-              <p className="u-mono mt-1 text-right text-deep-teal-ink">
+              <p className="u-label mt-1 text-right text-sage-ink">
                 Extras {formatINR(addOnTotal)}
               </p>
             ) : null}
@@ -643,7 +643,7 @@ function Confirmation({
 }) {
   return (
     <div className="max-w-2xl">
-      <Chip tone="teal">Booking confirmed</Chip>
+      <Chip tone="sage">Booking confirmed</Chip>
       <h2 className="mt-6 text-48">You are going.</h2>
       <p className="mt-6 text-18 text-ink-soft">
         {order.title}, departing {formatLong(order.startDate)}. A confirmation
@@ -653,25 +653,25 @@ function Confirmation({
 
       <dl className="mt-12 grid gap-6 border-y border-[var(--ink-hairline)] py-8 sm:grid-cols-2">
         <div>
-          <dt className="u-mono text-ink-soft">Reference</dt>
-          <dd className="mt-2 font-mono text-18">{reference}</dd>
+          <dt className="u-label text-ink-soft">Reference</dt>
+          <dd className="u-num mt-2 text-18">{reference}</dd>
         </div>
         <div>
-          <dt className="u-mono text-ink-soft">Dates</dt>
+          <dt className="u-label text-ink-soft">Dates</dt>
           <dd className="mt-2 text-18">
             {formatRange(order.startDate, order.endDate)}
           </dd>
         </div>
         <div>
-          <dt className="u-mono text-ink-soft">Paid today</dt>
-          <dd className="mt-2 font-mono text-18">{formatINR(dueToday)}</dd>
+          <dt className="u-label text-ink-soft">Paid today</dt>
+          <dd className="u-num mt-2 text-18">{formatINR(dueToday)}</dd>
         </div>
         <div>
-          <dt className="u-mono text-ink-soft">Balance</dt>
-          <dd className="mt-2 font-mono text-18">
+          <dt className="u-label text-ink-soft">Balance</dt>
+          <dd className="u-num mt-2 text-18">
             {formatINR(total - dueToday)}
             {total - dueToday > 0 ? (
-              <span className="u-mono ml-2 text-ink-faint">
+              <span className="u-label ml-2 text-ink-faint">
                 due 60 days before
               </span>
             ) : null}
@@ -680,15 +680,15 @@ function Confirmation({
       </dl>
 
       {order.requiresILP ? (
-        <div className="mt-10 rounded-[var(--radius-control)] border border-[color-mix(in_srgb,var(--deep-teal)_35%,transparent)] bg-[color-mix(in_srgb,var(--deep-teal)_6%,transparent)] p-6">
-          <Eyebrow tone="teal">What happens next</Eyebrow>
+        <div className="mt-10 rounded-[var(--radius-card)] border border-[color-mix(in_srgb,var(--sage)_35%,transparent)] bg-[color-mix(in_srgb,var(--sage)_6%,transparent)] p-6">
+          <Eyebrow tone="sage">What happens next</Eyebrow>
           <p className="mt-3 text-16">
             Your Inner Line Permit application goes to the state portal today.
             Expect a decision in three to seven working days — you will get an
             email, and it will appear under{" "}
             <Link
               href="/account/permits"
-              className="text-deep-teal-ink underline underline-offset-4"
+              className="text-sage-ink underline underline-offset-4"
             >
               My permits
             </Link>
@@ -700,7 +700,7 @@ function Confirmation({
       <div className="mt-12 flex flex-wrap gap-3">
         <Link
           href="/account/bookings"
-          className="inline-flex min-h-12 items-center rounded-[var(--radius-control)] bg-muga-gold px-6 text-16 font-medium text-muga-gold-on"
+          className="inline-flex min-h-12 items-center rounded-[var(--radius-control)] bg-clay px-6 text-16 font-medium text-clay-on"
         >
           Go to my bookings
         </Link>

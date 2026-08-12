@@ -61,11 +61,11 @@ export function AddOnStep({
               <label
                 className={cn(
                   "flex cursor-pointer gap-4 border p-4",
-                  "rounded-[var(--radius-control)] transition-colors duration-[var(--dur-micro)] ease-brand",
+                  "rounded-[var(--radius-input)] transition-colors duration-[var(--dur-micro)] ease-brand",
                   isSelected
-                    ? "border-ink bg-[rgb(20_32_27/0.04)]"
+                    ? "border-ink bg-[rgb(46_42_36/0.04)]"
                     : "border-[var(--ink-hairline)] hover:border-[var(--ink-hairline-strong)]",
-                  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-deep-teal",
+                  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-sage",
                 )}
               >
                 <input
@@ -92,7 +92,7 @@ export function AddOnStep({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <Eyebrow
-                        tone={addOn.kind === "permit" ? "teal" : "soft"}
+                        tone={addOn.kind === "permit" ? "sage" : "soft"}
                         as="span"
                       >
                         {LABEL[addOn.kind]}
@@ -106,16 +106,16 @@ export function AddOnStep({
                     {addOn.description}
                   </p>
 
-                  <p className="mt-3 font-mono text-14 tabular-nums">
+                  <p className="u-num mt-3 text-14">
                     {price === 0 ? (
-                      <span className="text-deep-teal-ink">
+                      <span className="text-sage-ink">
                         Included at no charge
                       </span>
                     ) : (
                       <>
                         {formatINR(price)}
                         {addOn.perTraveller ? (
-                          <span className="u-mono ml-2 text-ink-faint">
+                          <span className="u-label ml-2 text-ink-faint">
                             {formatINR(addOn.price)} × {travellers}
                           </span>
                         ) : null}
@@ -173,7 +173,7 @@ function Checkbox({ checked }: { checked: boolean }) {
  */
 function RentalOutboundCard() {
   return (
-    <div className="mt-6 rounded-[var(--radius-control)] border border-dashed border-[var(--ink-hairline-strong)] p-4">
+    <div className="mt-6 rounded-[var(--radius-card)] border border-dashed border-[var(--ink-hairline-strong)] p-4">
       <Eyebrow tone="soft" as="p">
         Also worth having
       </Eyebrow>
@@ -186,7 +186,7 @@ function RentalOutboundCard() {
       <OutboundLink
         href={rentalUrl()}
         showIndicator={false}
-        className="mt-4 inline-flex min-h-11 items-center gap-2 text-14 font-medium text-deep-teal-ink underline underline-offset-4"
+        className="mt-4 inline-flex min-h-11 items-center gap-2 text-14 font-medium text-sage-ink underline underline-offset-4"
       >
         Browse hire on Beep Drive
         <OutboundGlyph />

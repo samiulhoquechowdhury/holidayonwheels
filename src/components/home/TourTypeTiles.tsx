@@ -50,34 +50,34 @@ const TILES: {
 
 export function TourTypeTiles() {
   return (
-    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
       {TILES.map((tile, index) => (
         <li key={tile.type}>
           <Reveal delay={index * 0.06}>
             <Link
               href={`/tours?type=${tile.type}`}
-              className="group relative block overflow-hidden rounded-[var(--radius-media)]"
+              className="group relative block overflow-hidden rounded-[var(--radius-card)]"
             >
               <Media
                 alt={tile.alt}
                 seed={`tour-type-${tile.type}`}
                 region={tile.region}
-                aspect="4/5"
+                aspect="3/4"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
                 imageClassName="transition-transform duration-[var(--dur-image)] ease-brand motion-safe:group-hover:scale-105"
               />
               <span
                 aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-[rgb(13_21_18/0.82)] via-[rgb(13_21_18/0.15)] to-transparent"
+                className="absolute inset-0 bg-gradient-to-t from-[rgb(42_38_33/0.78)] via-[rgb(42_38_33/0.12)] to-transparent"
               />
-              <span className="absolute inset-x-0 bottom-0 p-5 text-paper">
-                <span className="block font-[family-name:var(--font-display)] text-28 leading-tight">
+              <span className="absolute inset-x-0 bottom-0 p-6 text-paper lg:p-7">
+                <span className="block font-display text-28 leading-[var(--leading-display)] tracking-[var(--tracking-display)]">
                   {tile.title}
                 </span>
-                <span className="mt-2 block text-14 text-[rgb(255_255_255/0.82)]">
+                <span className="mt-3 block text-14 text-[rgb(255_255_255/0.78)]">
                   {tile.copy}
                 </span>
-                <span className="mt-4 inline-flex items-center gap-2 text-14">
+                <span className="u-label mt-6 inline-flex items-center gap-2.5">
                   Browse
                   <ArrowGlyph className="transition-transform duration-[var(--dur-micro)] ease-brand motion-safe:group-hover:translate-x-1" />
                 </span>

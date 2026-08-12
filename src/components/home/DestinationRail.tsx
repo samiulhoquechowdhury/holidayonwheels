@@ -16,11 +16,8 @@ import type { SectionTint } from "@/components/layout/SectionShell";
 
 const TINT_BG: Record<SectionTint, string> = {
   paper: "bg-paper",
-  muga: "bg-tint-muga",
-  cloud: "bg-tint-cloud",
-  paddy: "bg-tint-paddy",
-  loktak: "bg-tint-loktak",
-  cherry: "bg-tint-cherry",
+  shell: "bg-shell",
+  sand: "bg-sand",
   night: "bg-night",
 };
 
@@ -70,7 +67,7 @@ export function DestinationRail() {
                 </div>
 
                 <div className="relative flex flex-1 flex-col p-6">
-                  <p className="u-mono text-ink-soft">
+                  <p className="u-label text-ink-soft">
                     {count} {count === 1 ? "trip" : "trips"}
                     {destination.requiresILP ? " · permit needed" : ""}
                   </p>
@@ -78,7 +75,7 @@ export function DestinationRail() {
                   <p className="mt-3 flex-1 text-16 text-ink-soft">
                     {destination.tagline}
                   </p>
-                  <p className="u-mono mt-6 text-ink">
+                  <p className="u-label mt-6 text-ink">
                     {destination.bestMonths[0]} –{" "}
                     {destination.bestMonths.at(-1)}
                   </p>

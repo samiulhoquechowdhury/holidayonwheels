@@ -49,7 +49,7 @@ export function TicketPicker({
       <section
         aria-labelledby="ticket-heading"
         className={cn(
-          "rounded-[var(--radius-media)] border border-[var(--ink-hairline)] bg-paper p-6 lg:p-7",
+          "rounded-[var(--radius-panel)] bg-plate p-7 shadow-[var(--shadow-soft)] lg:p-8",
           className,
         )}
       >
@@ -76,12 +76,12 @@ export function TicketPicker({
                       htmlFor={id}
                       className={cn(
                         "flex cursor-pointer flex-col gap-2 border px-4 py-4",
-                        "rounded-[var(--radius-control)] transition-colors duration-[var(--dur-micro)] ease-brand",
+                        "rounded-[var(--radius-input)] transition-colors duration-[var(--dur-micro)] ease-brand",
                         soldOut && "cursor-not-allowed opacity-50",
                         isSelected
-                          ? "border-ink bg-[rgb(20_32_27/0.04)]"
+                          ? "border-ink bg-[rgb(46_42_36/0.04)]"
                           : "border-[var(--ink-hairline)] hover:border-[var(--ink-hairline-strong)]",
-                        "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-deep-teal",
+                        "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-sage",
                       )}
                     >
                       <input
@@ -101,7 +101,7 @@ export function TicketPicker({
                       />
                       <span className="flex items-baseline justify-between gap-3">
                         <span className="text-16">{option.name}</span>
-                        <span className="shrink-0 font-mono text-16 tabular-nums">
+                        <span className="u-num shrink-0 text-16">
                           {option.price === 0
                             ? "Free"
                             : formatINR(option.price)}
@@ -113,9 +113,9 @@ export function TicketPicker({
                       {option.remaining !== null ? (
                         <span
                           className={cn(
-                            "u-mono",
+                            "u-label",
                             option.remaining <= 50
-                              ? "text-naga-red-ink"
+                              ? "text-ember-ink"
                               : "text-ink-faint",
                           )}
                         >
@@ -138,7 +138,7 @@ export function TicketPicker({
             <ul className="flex flex-col gap-2">
               {tier.perks.map((perk) => (
                 <li key={perk} className="flex gap-3 text-14 text-ink-soft">
-                  <span aria-hidden="true" className="text-deep-teal">
+                  <span aria-hidden="true" className="text-sage">
                     —
                   </span>
                   {perk}
@@ -159,8 +159,8 @@ export function TicketPicker({
         </div>
 
         <div className="mt-7 flex items-baseline justify-between gap-4 border-t border-[var(--ink-hairline)] pt-5">
-          <p className="u-mono">Total</p>
-          <p className="font-mono text-22 tabular-nums">
+          <p className="u-label">Total</p>
+          <p className="u-num font-display text-22 leading-none">
             {free ? "Free" : formatINR(total)}
           </p>
         </div>

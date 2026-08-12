@@ -3,32 +3,55 @@
 
 /*
  * Tailwind v4 theme bridge. Tokens defined in tokens.css are exposed to
- * utility classes here — `bg-tint-muga`, `text-ink-soft`, `font-display`,
+ * utility classes here — `bg-sand`, `text-ink-soft`, `font-display`,
  * `ease-brand` and so on. Add a token above, expose it here, use it anywhere.
  */
 @theme inline {
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
+
   --color-paper: var(--paper);
+  --color-shell: var(--shell);
+  --color-sand: var(--sand);
   --color-plate: var(--plate);
 
-  --color-tint-muga: var(--tint-muga);
-  --color-tint-cloud: var(--tint-cloud);
-  --color-tint-paddy: var(--tint-paddy);
-  --color-tint-loktak: var(--tint-loktak);
-  --color-tint-cherry: var(--tint-cherry);
+  --color-clay: var(--clay);
+  --color-clay-deep: var(--clay-deep);
+  --color-clay-ink: var(--clay-ink);
+  --color-clay-hover: var(--clay-hover);
+  --color-clay-on: var(--clay-on);
 
-  --color-muga-gold: var(--muga-gold);
-  --color-muga-gold-ink: var(--muga-gold-ink);
-  --color-muga-gold-hover: var(--muga-gold-hover);
-  --color-muga-gold-on: var(--muga-gold-on);
-  --color-naga-red: var(--naga-red);
-  --color-naga-red-ink: var(--naga-red-ink);
-  --color-naga-red-hover: var(--naga-red-hover);
-  --color-naga-red-glow: var(--naga-red-glow);
-  --color-deep-teal: var(--deep-teal);
-  --color-deep-teal-ink: var(--deep-teal-ink);
+  --color-ember: var(--ember);
+  --color-ember-ink: var(--ember-ink);
+  --color-ember-hover: var(--ember-hover);
+  --color-ember-glow: var(--ember-glow);
+
+  --color-sage: var(--sage);
+  --color-sage-ink: var(--sage-ink);
+
+  /* The eight state colours, and their text-safe steps. */
+  --color-sky: var(--sky);
+  --color-sky-ink: var(--sky-ink);
+  --color-jade: var(--jade);
+  --color-jade-ink: var(--jade-ink);
+  --color-indigo: var(--indigo);
+  --color-indigo-ink: var(--indigo-ink);
+  --color-naga: var(--naga);
+  --color-naga-ink: var(--naga-ink);
+  --color-magenta: var(--magenta);
+  --color-magenta-ink: var(--magenta-ink);
+  --color-moss: var(--moss);
+  --color-moss-ink: var(--moss-ink);
+  --color-plum: var(--plum);
+  --color-plum-ink: var(--plum-ink);
+  --color-marigold: var(--marigold);
+  --color-marigold-ink: var(--marigold-ink);
+
+  --color-butter: var(--butter);
+  --color-mint: var(--mint);
+  --color-blush: var(--blush);
+  --color-lilac: var(--lilac);
 
   --color-night: var(--night);
   --color-night-soft: var(--night-soft);
@@ -36,8 +59,8 @@
   --color-night-text-soft: var(--night-text-soft);
 
   --font-display: var(--font-display);
+  --font-accent: var(--font-accent);
   --font-sans: var(--font-body);
-  --font-mono: var(--font-utility);
 
   --text-12: var(--step-12);
   --text-14: var(--step-14);
@@ -49,9 +72,15 @@
   --text-48: var(--step-48);
   --text-64: var(--step-64);
   --text-88: var(--step-88);
+  --text-120: var(--step-120);
+  --text-160: var(--step-160);
 
+  --radius-frame: var(--radius-frame);
   --radius-control: var(--radius-control);
+  --radius-input: var(--radius-input);
+  --radius-card: var(--radius-card);
   --radius-media: var(--radius-media);
+  --radius-panel: var(--radius-panel);
   --radius-plate: var(--radius-plate);
 
   --ease-brand: var(--ease);
@@ -73,21 +102,33 @@
     color: var(--ink);
     font-family: var(--font-body);
     font-size: var(--step-16);
-    line-height: 1.6;
+    font-weight: 400;
+    /* Generous by default. This design's whole character is air, and leading
+       is where a reader feels it before they notice anything else. */
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     /* Works at 320px: never let a wide child scroll the document sideways. */
     overflow-x: clip;
   }
 
+  /*
+   * Display type: light serif, set airy. The old system tracked headlines to
+   * -0.02em and led them at 1.08, which is the correct setting for dense
+   * editorial and the wrong one here — tight display type reads urgent, and
+   * nothing on this site is urgent.
+   */
   h1,
   h2,
   h3,
   h4 {
     font-family: var(--font-display);
-    font-weight: 400;
-    line-height: 1.08;
-    letter-spacing: -0.02em;
+    /* Fraunces at 400 is a text weight; display sizes want the extra stem
+       weight or the face goes grey against warm paper. */
+    font-weight: 380;
+    font-variation-settings: var(--display-variations);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
     text-wrap: balance;
   }
 
@@ -98,18 +139,18 @@
   /* Visible focus on every interactive element. Never remove without
      replacing — this is enforced by the quality floor. */
   :focus-visible {
-    outline: 2px solid var(--deep-teal);
+    outline: 2px solid var(--sage-ink);
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: 4px;
   }
 
   .is-dark :focus-visible {
-    outline-color: var(--paper);
+    outline-color: var(--night-text);
   }
 
   ::selection {
-    background-color: var(--muga-gold);
-    color: var(--paper);
+    background-color: var(--clay);
+    color: var(--clay-on);
   }
 
   /* next/image and video never shift layout. */
@@ -130,44 +171,7 @@
 }
 
 @layer utilities {
-  /*
-   * Hero headline reveal — line by line, behind a clip-path mask.
-   *
-   * Deliberately CSS rather than Framer Motion. A JS-driven reveal cannot
-   * start until hydration, which pushes the largest text paint past the 2.5s
-   * LCP budget on a throttled connection. As CSS it begins at first paint,
-   * so the headline is the LCP element at roughly FCP + the animation.
-   *
-   * `backwards` fill applies the from-state during the stagger delay, so
-   * nothing flashes in unmasked before its turn.
-   */
-  @keyframes hero-line-rise {
-    from {
-      transform: translateY(110%);
-      clip-path: inset(0 0 100% 0);
-    }
-    to {
-      transform: translateY(0);
-      clip-path: inset(0 0 -12% 0);
-    }
-  }
-
-  .u-hero-line {
-    display: block;
-    animation: hero-line-rise 900ms var(--ease) backwards;
-  }
-
-  /*
-   * A floating white sheet: the header's logo / nav / menu plates, and the
-   * drawer. The logo artwork is drawn in black on white, so it needs an
-   * opaque light ground wherever it lands — including over the dark hero and
-   * inside the dark footer.
-   */
-  .u-plate {
-    background-color: var(--plate);
-    border-radius: var(--radius-plate);
-    box-shadow: var(--shadow-plate);
-  }
+  /* ---- Layout ----------------------------------------------------------- */
 
   /* Content column and full-bleed media column. */
   .u-container {
@@ -187,17 +191,527 @@
   .u-grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: clamp(16px, 2vw, 28px);
+    gap: clamp(20px, 2.4vw, 36px);
   }
 
-  /* Mono utility text: eyebrows, dates, prices, permit codes. */
-  .u-mono {
+  /* The structural device of this design: a warm hairline with a great deal
+     of space around it, in place of a change of background colour. */
+  .u-rule {
+    border-top: 1px solid var(--ink-hairline);
+  }
+
+  .is-dark .u-rule {
+    border-top-color: var(--night-hairline);
+  }
+
+  /* ---- Type ------------------------------------------------------------- */
+
+  /*
+   * Utility label: eyebrows, dates, permit codes, section numbers. The body
+   * face tracked wide and set small — the only uppercase text in the system.
+   *
+   * Weight 500 rather than 400: at 12px with 0.16em of tracking, a light
+   * weight disintegrates. Wide tracking always needs weight back.
+   */
+  .u-label {
     font-family: var(--font-utility);
     font-size: var(--step-12);
-    letter-spacing: 0.14em;
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
-    line-height: 1.2;
+    line-height: 1.3;
   }
+
+  /*
+   * Figures: prices, seat counts, altitudes, durations. Tabular so a column
+   * of them aligns, and lining so they sit on the baseline with the caps
+   * around them. No monospace involved — a mono price reads like a receipt.
+   */
+  .u-num {
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /*
+   * Large introductory copy. The one place the body face is set light —
+   * 300 needs size to hold together, and below 18px it goes grey and thin.
+   */
+  .u-lede {
+    font-weight: 300;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+  }
+
+  /*
+   * Statement type. The one enormous line per section — hero, manifesto, the
+   * closing card. Leading goes below 1 and tracking doubles, because at 160px
+   * the defaults that make a 48px headline feel unhurried instead make it
+   * feel like three unrelated lines stacked in a column.
+   */
+  .u-statement {
+    font-family: var(--font-display);
+    font-weight: 380;
+    font-variation-settings: var(--display-variations);
+    line-height: var(--leading-statement);
+    letter-spacing: var(--tracking-statement);
+    /* Not `balance`: statement lines are broken by hand into explicit spans,
+       and balancing would fight the composition. Where a hand-set line is too
+       long for a phone it is allowed to wrap normally. */
+    text-wrap: pretty;
+  }
+
+  /*
+   * The accent word.
+   *
+   * A second serif, italic, one word at a time. It is set slightly larger
+   * than the line around it (1.06em) because an italic of the same nominal
+   * size optically reads smaller — matching the cap heights by eye is the
+   * difference between "designed" and "a font fell out".
+   */
+  .u-accent {
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.06em;
+    letter-spacing: -0.01em;
+    /* Instrument Serif's italic sits marginally high against Fraunces. */
+    display: inline-block;
+    transform: translateY(0.012em);
+  }
+
+  /* The other half of the same idea: one word in fired terracotta, upright.
+     Used where the line is already carrying an italic and a second one would
+     turn the sentence into a ransom note. */
+  .u-ember-word {
+    color: var(--ember-ink);
+  }
+
+  .is-dark .u-ember-word {
+    color: var(--ember-glow);
+  }
+
+  /*
+   * Knockout type over photography: the word is drawn as an outline so the
+   * image reads through it, and it fills solid on hover. Used on the journey
+   * cards, where the label has to sit *on* the picture without a scrim.
+   */
+  .u-knockout {
+    color: transparent;
+    /* 1px disappears at 88px against a photograph — the stroke has to scale
+       with the type or the word simply is not there. 2px is the floor that
+       survives a busy image behind it. */
+    -webkit-text-stroke: 2px rgb(255 255 255 / 0.92);
+    /* The stroke alone can still land on a light patch of sky. A soft dark
+       halo underneath guarantees it reads on any frame without putting a
+       scrim over the whole picture. */
+    text-shadow: 0 2px 20px rgb(20 18 15 / 0.55);
+    transition:
+      color var(--dur) var(--ease),
+      -webkit-text-stroke-color var(--dur) var(--ease);
+  }
+
+  .group:hover .u-knockout {
+    color: var(--night-text);
+  }
+
+  /*
+   * Outline list type — the eight-states index. Every row is drawn hollow and
+   * the hovered one fills in, so the list reads as one live object rather
+   * than eight links. The stroke is ink at low alpha rather than a grey: a
+   * true grey outline on warm paper turns blue.
+   */
+  .u-outline-row {
+    color: transparent;
+    /* Same rule as the knockout: the stroke has to carry an 88px word on its
+       own. At 1px and 32% these eight names were legible in the design file
+       and invisible on the page. */
+    -webkit-text-stroke: 1.6px rgb(46 42 36 / 0.5);
+    transition:
+      color var(--dur-micro) var(--ease),
+      -webkit-text-stroke-color var(--dur-micro) var(--ease);
+  }
+
+  /* Fills in that state's own colour. `--row-accent` is set per row, so the
+     index runs through the whole palette as you move down it — the single
+     most joyful thing on the page, and it costs one custom property. */
+  .u-outline-row[data-active="true"] {
+    color: var(--row-accent, var(--ink));
+    -webkit-text-stroke-color: var(--row-accent, var(--ink));
+  }
+
+  /* ---- Surfaces, continued ---------------------------------------------- */
+
+  /*
+   * Warm glass. The floating cards that sit over photography — the hero's
+   * proof card, the chapter control, the price chips on media. Tinted with
+   * paper rather than white, or it reads as a system panel dropped onto a
+   * travel site.
+   */
+  .u-glass {
+    background-color: var(--glass);
+    border: 1px solid var(--glass-line);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+  }
+
+  .u-glass-dark {
+    background-color: var(--glass-dark);
+    border: 1px solid var(--glass-dark-line);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    color: var(--night-text);
+  }
+
+  /*
+   * The blueprint grid. Four verticals behind a statement section, at an
+   * alpha you notice only once you are looking for it. It does one job: it
+   * makes an enormous line of type read as *placed on a system* rather than
+   * as centred in a box.
+   */
+  .u-grid-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--grid-line) 0 1px,
+      transparent 1px 25%
+    );
+  }
+
+  .is-dark .u-grid-lines {
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--grid-line-dark) 0 1px,
+      transparent 1px 25%
+    );
+  }
+
+  /* ---- Micro-interaction ------------------------------------------------- */
+
+  /*
+   * The luxury button's fill.
+   *
+   * A pseudo-element scaled on the Y axis from the bottom edge — not a
+   * background-color transition. The difference is direction: a colour fade
+   * is a state change, a fill that rises is the control acknowledging the
+   * cursor, and that read is the entire reason the effect exists. Scaling a
+   * layer stays on the compositor; animating background-color does not.
+   */
+  .u-fill::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .u-fill:hover::after,
+    .u-fill:focus-visible::after {
+      transform: scaleY(1);
+    }
+  }
+
+  /*
+   * Label roll: the label and a duplicate of it stacked, translated together
+   * so the second one arrives as the first leaves. Costs one extra copy of
+   * the text in the DOM (aria-hidden) and buys the single most legible
+   * "premium" micro-motion there is.
+   */
+  .u-roll {
+    display: block;
+    transition: transform var(--dur-micro) var(--ease);
+  }
+
+  /* The wrapper holds exactly two stacked copies of the label, so -50% of the
+     wrapper is precisely one line. Anything other than two copies desyncs. */
+  @media (hover: hover) {
+    .group\/roll:hover .u-roll,
+    .group\/roll:focus-visible .u-roll {
+      transform: translateY(-50%);
+    }
+  }
+
+  /*
+   * Media hover: the image pushes in while its frame stays exactly where it
+   * is. Paired with `overflow: hidden` on the frame — the crop moving is what
+   * sells it, not the picture growing.
+   */
+  .u-media-push {
+    transition: transform var(--dur-image) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .group:hover .u-media-push {
+      transform: scale(1.06);
+    }
+  }
+
+  /*
+   * Route crossfade. Owned by app/template.tsx — see the note there for why
+   * this is CSS and not a Framer `initial`. Opacity only, so it can never
+   * introduce layout shift during navigation.
+   */
+  @keyframes route-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .u-route-fade {
+    animation: route-fade var(--dur-route) var(--ease);
+  }
+
+  /* ---- Marquee ----------------------------------------------------------- */
+
+  /*
+   * Infinite strip. Two identical tracks translated by exactly -50% of the
+   * pair, so the seam lands where the copy repeats and there is no jump.
+   * Pure CSS rather than GSAP: it runs for the whole session, and it should
+   * not be holding a scroll-linked animation frame open to do it.
+   */
+  @keyframes marquee-track {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .u-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-track var(--marquee-dur, 44s) linear infinite;
+  }
+
+  .u-marquee-track[data-reverse="true"] {
+    animation-direction: reverse;
+  }
+
+  .u-marquee:hover .u-marquee-track {
+    animation-play-state: paused;
+  }
+
+  /* Fades the strip out at both edges so it reads as continuous rather than
+     as text being clipped by the viewport. */
+  .u-marquee-mask {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+  }
+
+  /* ---- GSAP hand-off ------------------------------------------------------
+   *
+   * There is deliberately no "hide everything until GSAP loads" class here.
+   *
+   * Every GSAP reveal on this site sets its own from-state inside
+   * `useGSAP`, which React runs in the layout phase — after the DOM is built
+   * and before the browser paints — so nothing is ever seen at full opacity
+   * first. Doing it in CSS instead would mean markup that stays invisible
+   * forever if the bundle fails to load, and the hero headline in particular
+   * cannot depend on JavaScript: it is the LCP element and it animates from
+   * CSS keyframes that start at first paint.
+   *
+   * The one thing GSAP needs from CSS is the clip the split lines rise out of.
+   * SplitText's own `mask` option generates this, but it is declared here too
+   * for the hand-written masks in the hero.
+   */
+  /*
+   * Statement type is led at 0.98, which is tighter than the glyphs are tall:
+   * a mask sized to the line box shaves ascenders off the top and the tail of
+   * every `g` off the bottom. The padding grows the clip past the line box and
+   * the matching negative margin takes the space back, so the mask is bigger
+   * than the line without the line occupying more room.
+   */
+  .u-line-mask {
+    display: block;
+    overflow: hidden;
+    padding-block: 0.16em;
+    margin-block: -0.16em;
+  }
+
+  /* ---- Surfaces --------------------------------------------------------- */
+
+  /*
+   * A floating white sheet: the header plates, the drawer, and the booking
+   * panel. The logo artwork is drawn in black on white, so it needs an opaque
+   * light ground wherever it lands — including over dark media and inside the
+   * dark footer.
+   */
+  .u-plate {
+    background-color: var(--plate);
+    border-radius: var(--radius-plate);
+    box-shadow: var(--shadow-plate);
+    /* `height` is here because the header retunes `--plate-h` on itself when
+       you scroll past 24px; the plates should ease into the smaller size
+       rather than snap to it. */
+    transition:
+      height var(--dur) var(--ease),
+      box-shadow var(--dur-micro) var(--ease),
+      transform var(--dur-micro) var(--ease);
+  }
+
+  /*
+   * A 1px lift on hover. The smallest movement that still registers as the
+   * sheet responding — anything more and the header starts bouncing while you
+   * pass the cursor across it.
+   */
+  .u-plate-hover:hover {
+    box-shadow: var(--shadow-plate-lift);
+  }
+
+  @media (hover: hover) {
+    .u-plate-hover:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  /* Scrolled: the header has left the hero and floats over content. */
+  [data-tight] .u-plate {
+    box-shadow: var(--shadow-plate-lift);
+  }
+
+  /* ---- Motion ----------------------------------------------------------- */
+
+  /*
+   * Headline reveal — line by line, behind a clip-path mask.
+   *
+   * Deliberately CSS rather than Framer Motion. A JS-driven reveal cannot
+   * start until hydration, which pushes the largest text paint past the 2.5s
+   * LCP budget on a throttled connection. As CSS it begins at first paint,
+   * so the headline is the LCP element at roughly FCP + the animation.
+   *
+   * `backwards` fill applies the from-state during the stagger delay, so
+   * nothing flashes in unmasked before its turn.
+   */
+  @keyframes hero-line-rise {
+    from {
+      transform: translateY(110%);
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      transform: translateY(0);
+      clip-path: inset(0 0 -14% 0);
+    }
+  }
+
+  .u-hero-line {
+    display: block;
+    animation: hero-line-rise 1100ms var(--ease) backwards;
+  }
+
+  /*
+   * Hero chapter progress — the rule that fills across one clip's dwell.
+   *
+   * A transform, not a width, so it runs on the compositor: this is the only
+   * thing on the page animating continuously for seven seconds at a stretch
+   * and it must not touch layout. Linear easing on purpose — it is a clock,
+   * and a clock that eases is a clock that lies.
+   *
+   * `--hero-clip` mirrors HERO_CLIP_MS in config/media.ts. Change both.
+   */
+  @keyframes hero-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .u-hero-progress {
+    --hero-clip: 7000ms;
+    animation: hero-progress var(--hero-clip) linear forwards;
+  }
+
+  /* Pausing the reel pauses the clock, rather than resetting it. */
+  .u-hero-progress[data-paused] {
+    animation-play-state: paused;
+  }
+
+  /*
+   * The slow push on the hero chapters. Barely perceptible per second and
+   * unmistakable across seven — it is what stops a held frame from reading as
+   * a photograph. Carries `data-motion`, so reduced motion drops it.
+   *
+   * It runs on every chapter continuously rather than starting when a chapter
+   * becomes active, and the reason is the crossfade: a drift tied to `active`
+   * would snap the outgoing chapter back to its start scale while it is still
+   * half visible. Each layer takes a negative delay instead, so the three are
+   * permanently out of phase and no two ever push in step.
+   */
+  @keyframes hero-drift {
+    from {
+      transform: scale(1.02);
+    }
+    to {
+      transform: scale(1.1);
+    }
+  }
+
+  .u-hero-drift {
+    animation: hero-drift 26s var(--ease) infinite alternate;
+    animation-delay: var(--drift-delay, 0s);
+  }
+
+  /* Scroll cue: a hairline that drains downward, then repeats. */
+  @keyframes scroll-cue {
+    0% {
+      transform: scaleY(0);
+      transform-origin: top;
+    }
+    45% {
+      transform: scaleY(1);
+      transform-origin: top;
+    }
+    55% {
+      transform: scaleY(1);
+      transform-origin: bottom;
+    }
+    100% {
+      transform: scaleY(0);
+      transform-origin: bottom;
+    }
+  }
+
+  .u-scroll-cue {
+    animation: scroll-cue 2.8s var(--ease) infinite;
+  }
+
+  /*
+   * Vignette over hero media. Pulls the corners down so the headline sits on
+   * its own ground no matter what the footage is doing behind it, without
+   * flattening the middle of the frame the way another flat scrim would.
+   */
+  .u-vignette {
+    pointer-events: none;
+    background: radial-gradient(
+      120% 90% at 50% 40%,
+      transparent 40%,
+      rgb(42 38 33 / 0.5) 100%
+    );
+  }
+
+  /* ---- Accessibility ---------------------------------------------------- */
 
   .u-skip-link {
     position: absolute;
@@ -207,12 +721,13 @@
     transform: translateY(-150%);
     background: var(--ink);
     color: var(--paper);
-    padding: 12px 20px;
+    padding: 12px 24px;
+    border-radius: var(--radius-control);
     transition: transform var(--dur-micro) var(--ease);
   }
 
   .u-skip-link:focus-visible {
-    transform: translateY(12px);
+    transform: translateY(16px);
   }
 
   /* Hides content visually but keeps it for assistive tech. */

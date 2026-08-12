@@ -34,7 +34,7 @@ export default function RentalsPage() {
         eyebrow="Operated by Beep Drive"
         title="Take the wheel yourself"
         intro="Self-drive car and motorcycle hire across the region is run by our partner Beep Drive rather than booked here. It opens in a new tab and is paid for separately."
-        tint="loktak"
+        tint="shell"
         region="tripura"
       />
 
@@ -57,7 +57,7 @@ export default function RentalsPage() {
           </p>
           <OutboundLink
             href={BEEPDRIVE_URL}
-            className="mt-8 inline-flex min-h-11 items-center gap-2 text-16 font-medium text-deep-teal-ink underline underline-offset-8"
+            className="mt-8 inline-flex min-h-11 items-center gap-2 text-16 font-medium text-sage-ink underline underline-offset-8"
           >
             Go to beepdrive.com
           </OutboundLink>
@@ -76,7 +76,7 @@ export default function RentalsPage() {
           link={{ href: "/motorcycle-tours", label: "All expeditions" }}
           align="split"
         />
-        <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {motos.map((tour, index) => (
             <li key={tour.slug}>
               <Reveal delay={index * 0.06}>

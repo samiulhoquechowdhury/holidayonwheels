@@ -105,7 +105,7 @@ export function MenuDrawer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: DUR_MICRO, ease: EASE }}
-            className="fixed inset-0 z-[60] cursor-default bg-[rgb(13_21_18/0.5)] backdrop-blur-[2px]"
+            className="fixed inset-0 z-[60] cursor-default bg-[rgb(42_38_33/0.42)] backdrop-blur-[3px]"
           />
 
           <motion.div
@@ -121,7 +121,7 @@ export function MenuDrawer({
             exit={reduced ? { opacity: 0 } : { opacity: 0, x: "100%" }}
             transition={{ duration: 0.4, ease: EASE }}
             style={{ boxShadow: "var(--shadow-drawer)" }}
-            className="fixed inset-y-0 right-0 z-[70] flex w-full max-w-[480px] flex-col overflow-y-auto bg-plate text-ink outline-none"
+            className="fixed inset-y-0 right-0 z-[70] flex w-full max-w-[520px] flex-col overflow-y-auto bg-paper text-ink outline-none sm:rounded-l-[var(--radius-panel)]"
           >
             {/*
              * Closing on `pathname` alone is not enough: navigating to the
@@ -149,15 +149,15 @@ export function MenuDrawer({
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="group flex items-baseline gap-4 border-t border-[var(--ink-hairline)] py-3.5 sm:py-4"
+                        className="group flex items-baseline gap-5 border-t border-[var(--ink-hairline)] py-4 sm:py-5"
                       >
                         <span
                           aria-hidden="true"
-                          className="u-mono w-6 shrink-0 text-ink-faint"
+                          className="u-label w-7 shrink-0 pt-2 text-ink-faint"
                         >
                           {String(index + 1).padStart(2, "0")}
                         </span>
-                        <span className="font-display text-28 leading-[1.1] tracking-[-0.02em] text-ink transition-opacity duration-[var(--dur-micro)] ease-brand group-hover:opacity-60 sm:text-36">
+                        <span className="font-display text-28 leading-[var(--leading-display)] tracking-[var(--tracking-display)] text-ink transition-[opacity,transform] duration-[var(--dur-micro)] ease-brand group-hover:opacity-55 motion-safe:group-hover:translate-x-1.5 sm:text-36">
                           {link.label}
                         </span>
                       </Link>
@@ -200,9 +200,9 @@ export function MenuDrawer({
                 <OutboundLink
                   href={BEEPDRIVE_URL}
                   showIndicator={false}
-                  className="mt-8 flex-col items-stretch gap-1 rounded-[var(--radius-media)] border border-[var(--ink-hairline-strong)] p-5 transition-colors duration-[var(--dur-micro)] ease-brand hover:bg-[rgb(20_32_27/0.04)]"
+                  className="mt-10 flex-col items-stretch gap-1 rounded-[var(--radius-card)] bg-shell p-6 transition-colors duration-[var(--dur-micro)] ease-brand hover:bg-[rgb(46_42_36/0.06)]"
                 >
-                  <span className="u-mono flex items-center justify-between gap-2 text-ink-faint">
+                  <span className="u-label flex items-center justify-between gap-2 text-ink-faint">
                     Self-drive
                     <OutboundArrow />
                   </span>
@@ -272,7 +272,7 @@ function CloseButton({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label="Close menu"
-      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--ink-hairline-strong)] text-ink transition-colors duration-[var(--dur-micro)] hover:bg-[rgb(20_32_27/0.06)]"
+      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--ink-hairline)] text-ink transition-colors duration-[var(--dur-micro)] hover:bg-[rgb(46_42_36/0.06)]"
     >
       <svg
         aria-hidden="true"

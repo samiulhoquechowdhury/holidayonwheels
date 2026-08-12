@@ -1,123 +1,249 @@
 /*
  * Design tokens. Single source of truth for colour, type, space and motion.
  * Nothing in the app may use a raw hex value — everything routes through here.
+ *
+ * The language is warm minimal: sand and clay neutrals, no hard black, soft
+ * large radii, and a great deal of air. Separation between sections comes
+ * from space and hairlines rather than from blocks of colour, so the palette
+ * below is deliberately short — four surfaces, three accents, and the ink
+ * steps that sit on them.
  */
 
 :root {
-  /* ---- Ink and paper ---------------------------------------------------- */
-  --ink: #14201b;
-  --ink-soft: #4a5852;
-  --paper: #fbfaf7;
+  /* ---- Ink ---------------------------------------------------------------
+     Warm, never black. #000 on a sand ground reads as a hole punched in the
+     page; the darkest ink here is a deep clay-brown that sits *in* the paper.
+     The three steps are checked against every surface below — `--ink-faint`
+     carries 12px metadata and clears AA (4.5:1) against `--sand`, the
+     lowest-contrast ground it can land on. Do not lighten it. */
+  --ink: #2e2a24;
+  --ink-soft: #6b6358;
+  --ink-faint: #736b5f;
 
-  /* Raised true-white surfaces: the floating header plates and the menu
-     drawer. Its own token rather than a reuse of `--paper`, because these sit
-     *on top of* paper and on top of the dark hero, and need to read as a
-     distinct sheet in both places. The logo artwork is drawn on white too. */
+  /* ---- Surfaces ----------------------------------------------------------
+     Four, in order of depth. Most of the site is `--paper`; `--shell` is the
+     one alternate ground; `--sand` is for emphasis and appears perhaps twice
+     per page; `--plate` is what floats above them. */
+  --paper: #faf7f2;
+  --shell: #f3eee6;
+  --sand: #ede4d6;
   --plate: #ffffff;
 
-  /* Derived ink steps. Kept as tokens so contrast can be tuned in one place.
-     `--ink-faint` carries 12px mono metadata, so it is set to clear AA (4.5:1)
-     against the *lowest-contrast* tint (cherry, 4.80) rather than merely
-     looking quiet. Do not lighten it without re-checking all six tints. */
-  --ink-faint: #5f6a66;
-  --ink-hairline: rgb(20 32 27 / 0.12);
-  --ink-hairline-strong: rgb(20 32 27 / 0.24);
+  /* Hairlines. The main structural device in this design — where the old
+     system changed background colour, this one draws a 1px warm grey line and
+     leaves 160px of space around it. */
+  --ink-hairline: rgb(46 42 36 / 0.11);
+  --ink-hairline-strong: rgb(46 42 36 / 0.22);
 
-  /* ---- Section tints ---------------------------------------------------- */
-  --tint-muga: #f7efe0; /* Assam muga silk */
-  --tint-cloud: #eaf0f2; /* Meghalaya mist */
-  --tint-paddy: #edf2e4; /* Ziro valley terraces */
-  --tint-loktak: #e6eff0; /* Manipur lake water */
-  --tint-cherry: #f8eaea; /* Shillong cherry blossom */
+  /* ---- Accents -----------------------------------------------------------
+     Muga silk gold stays — it is the actual colour of Assam's raw silk and it
+     is the brand's one warm signal. Naga red is now closer to a fired
+     terracotta than a flag red, which is what sits properly on sand. Sage
+     replaces the old deep teal: a cool green pulled towards grey, used for
+     permits, confirmations and anything procedural. */
+  --clay: #c4a88a; /* muga silk */
+  --clay-deep: #a8875f;
+  --clay-on: #2a2015; /* text sitting on a clay fill */
 
-  /* ---- Accents ---------------------------------------------------------- */
-  --muga-gold: #b8862f;
-  --naga-red: #a32e2e;
-  --deep-teal: #1d6a63;
+  --ember: #b4553f; /* fired terracotta */
+  --sage: #7d8b7a;
 
-  /* Darkened accent steps for text-on-tint that must clear AA. */
-  --muga-gold-ink: #7a5817;
-  --naga-red-ink: #8b2424;
-  --deep-teal-ink: #175651;
+  /* ---- The state palette -------------------------------------------------
+     Eight colours, one per state, and the site is built to be joyful with
+     them rather than in spite of them.
 
-  /* Interaction and on-dark steps of the accents. */
-  --muga-gold-hover: #a4761f;
-  --muga-gold-on: #201604; /* text sitting on a muga-gold fill */
-  --naga-red-hover: #8b2424;
-  --naga-red-glow: #e4908f; /* urgency text on the dark band */
+     They are not arbitrary brights. Each is pulled from something the state
+     is actually known for — Naga shawl red, Manipuri phanek magenta, the
+     indigo of an Arunachali weave, Assam's river blue, the moss of the Mizo
+     hills, Meghalaya's wet green, Tripura's palace plum, and Sikkim's
+     marigold. That is what keeps a colourful page from reading as a startup:
+     the colour has a reason, and the same eight recur everywhere, so the
+     reader learns them. By the third section a magenta chip *means* Manipur.
 
-  /* ---- Dark surfaces (hero + the single dark band) ----------------------- */
-  --night: #0d1512;
-  --night-soft: #16221d;
-  --night-text: #eef2ef;
-  --night-text-soft: #a9b6b0;
+     Every one of them is a *surface* colour. Text uses the `-ink` step below.
+     Nothing here is allowed to carry body copy on paper. */
+  --sky: #3e8fc4; /* Assam — the Brahmaputra */
+  --jade: #1d8a6a; /* Meghalaya — wet green */
+  --indigo: #3c4f9c; /* Arunachal — high weave indigo */
+  --naga: #ca4130; /* Nagaland — shawl red */
+  --magenta: #b93b74; /* Manipur — phanek */
+  --moss: #6f8c37; /* Mizoram — hill moss */
+  --plum: #7c4a8e; /* Tripura — palace */
+  --marigold: #e39a2c; /* Sikkim — festival marigold */
 
-  /* ---- Type ------------------------------------------------------------- */
-  /* The display face lives behind one token: swapping Newsreader for a
-     licensed Canela / PP Editorial New is a single edit here plus the
-     next/font declaration in src/app/fonts.ts. */
-  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  /* Text-safe steps. Each is the surface colour darkened until it clears AA
+     (4.5:1) on `--sand`, the lowest-contrast ground any of them can land on
+     — so one value is safe on all four light surfaces. */
+  --sky-ink: #226288;
+  --jade-ink: #14624b;
+  --indigo-ink: #2d3c78;
+  --naga-ink: #9b3123;
+  --magenta-ink: #8d2c58;
+  --moss-ink: #4f6427;
+  --plum-ink: #5c3769;
+  --marigold-ink: #8a5c12;
+
+  /* ---- Pale grounds ------------------------------------------------------
+     Tinted surfaces, in place of a page that is four shades of sand. Each is
+     its accent mixed to roughly 8% over paper — enough that the section has a
+     temperature, nowhere near enough to fight the photography on it. */
+  --butter: #fdf4e3;
+  --mint: #ecf5f0;
+  --blush: #fbeee9;
+  --lilac: #f2eff8;
+
+  /* Darkened accent steps for text that must clear AA on a light ground. */
+  --clay-ink: #7a5e39;
+  --ember-ink: #8e3e2c;
+  --sage-ink: #4e5b4c;
+
+  /* Interaction steps. */
+  --clay-hover: #8f7049;
+  --ember-hover: #98452f;
+
+  /* ---- Dark surfaces -----------------------------------------------------
+     The footer and the one dark band. Warm umber rather than a neutral
+     charcoal, so it reads as the same family as the paper it interrupts. */
+  --night: #2a2621;
+  --night-soft: #38332c;
+  --night-text: #f2ede5;
+  --night-text-soft: #b3a99b;
+  --night-hairline: rgb(242 237 229 / 0.14);
+  /* Urgency text on the dark band — the ember lifted until it clears AA. */
+  --ember-glow: #e0917c;
+
+  /* ---- Type --------------------------------------------------------------
+     Display is a light serif carrying the optical-size axis, so headline size
+     drives optical size with no extra CSS. Body is a humanist sans set light.
+     Both live behind a token: swapping in a licensed face is one edit here
+     plus the next/font declaration in src/app/fonts.ts. */
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  /* The accent. One word per headline — see `Accent` in components/type. */
+  --font-accent: var(--font-instrument), Georgia, "Times New Roman", serif;
   --font-body:
-    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-utility:
-    var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+    var(--font-figtree), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Utility labels are the body face, tracked wide and set small — not a
+     monospace. Mono eyebrows read technical, and this design is not. */
+  --font-utility: var(--font-body);
 
-  /* Fluid scale: 12 / 14 / 16 / 18 / 22 / 28 / 36 / 48 / 64 / 88 */
+  /* Fraunces variable axes, pinned. SOFT rounds the terminals so the face
+     survives being laid over photography; WONK stays off in running text and
+     is switched on only by the accent word, which wants the swashes. */
+  --display-variations: "SOFT" 40, "WONK" 0;
+  --display-variations-wonk: "SOFT" 40, "WONK" 1;
+
+  /* Fluid scale: 12 / 14 / 16 / 18 / 22 / 28 / 36 / 48 / 64 / 88 / 120 / 160.
+     Wider gaps at the top than the old scale — the design leans on one very
+     large size per page and keeps everything else quiet. */
   --step-12: 0.75rem;
   --step-14: 0.875rem;
   --step-16: 1rem;
   --step-18: clamp(1rem, 0.97rem + 0.15vw, 1.125rem);
-  --step-22: clamp(1.125rem, 1.06rem + 0.33vw, 1.375rem);
-  --step-28: clamp(1.375rem, 1.24rem + 0.65vw, 1.75rem);
-  --step-36: clamp(1.625rem, 1.36rem + 1.3vw, 2.25rem);
-  --step-48: clamp(2rem, 1.5rem + 2.5vw, 3rem);
-  --step-64: clamp(2.5rem, 1.6rem + 4.5vw, 4rem);
-  --step-88: clamp(3rem, 1.4rem + 8vw, 5.5rem);
+  --step-22: clamp(1.125rem, 1.04rem + 0.4vw, 1.375rem);
+  --step-28: clamp(1.375rem, 1.22rem + 0.75vw, 1.75rem);
+  --step-36: clamp(1.625rem, 1.32rem + 1.5vw, 2.25rem);
+  --step-48: clamp(2rem, 1.45rem + 2.75vw, 3rem);
+  --step-64: clamp(2.5rem, 1.55rem + 4.75vw, 4rem);
+  --step-88: clamp(3rem, 1.3rem + 8.5vw, 5.5rem);
+  --step-120: clamp(3.5rem, 0.6rem + 14.5vw, 7.5rem);
+  /* The statement size. Used for the hero line and the two full-bleed
+     statements, and nowhere else — a page with two of these has neither. */
+  --step-160: clamp(3.75rem, 0.1rem + 18vw, 10rem);
 
-  /* ---- Layout ----------------------------------------------------------- */
-  --content-max: 1280px;
-  --media-max: 1600px;
-  --gutter: 20px;
-  --section-pad: 96px;
+  /* Display type is set airy: looser leading and far less negative tracking
+     than the old system, which is most of what separates "editorial" from
+     "expensive". At statement sizes both tighten — 1.14 leading at 160px
+     leaves a corridor of white between lines wide enough to read as a gap. */
+  --leading-display: 1.14;
+  --leading-statement: 0.98;
+  --tracking-display: -0.015em;
+  --tracking-statement: -0.035em;
+  --tracking-label: 0.16em;
 
-  /* The header floats as separate plates rather than spanning a solid bar.
-     `--header-h` stays the *total* band height so every `top:` and `padding-
-     top:` offset across the app keeps working unchanged. */
-  --plate-h: 48px;
-  --header-pad: 10px;
+  /* ---- Layout ------------------------------------------------------------
+     Narrower content column and a much larger gutter than the old system.
+     Air is the design. */
+  --content-max: 1180px;
+  --media-max: 1560px;
+  --gutter: 24px;
+  --section-pad: 104px;
+
+  /* The header is one opaque paper bar. `--plate-h` is the height of the
+     controls inside it and `--header-h` the total band, so every `top:` and
+     `padding-top:` offset across the app resolves against one number. */
+  --plate-h: 52px;
+  --header-pad: 12px;
   --header-h: calc(var(--plate-h) + var(--header-pad) * 2);
 
-  /* ---- Radius ----------------------------------------------------------- */
-  --radius-control: 2px; /* buttons, inputs */
-  --radius-media: 16px; /* media cards */
-  --radius-plate: 999px; /* floating header plates */
+  /* Scrolled state. The header reassigns these two on itself, so only the
+     header changes size and every offset elsewhere still resolves against the
+     resting height. */
+  --plate-h-tight: 46px;
+  --header-pad-tight: 9px;
 
-  /* ---- Elevation -------------------------------------------------------- */
-  /* Only the two floating surfaces cast a shadow. Cards deliberately do not —
-     see the motion spec: no shadow bloom on hover. */
-  --shadow-plate:
-    0 1px 2px rgb(20 32 27 / 0.06), 0 6px 20px rgb(20 32 27 / 0.09);
-  --shadow-drawer: -28px 0 70px rgb(20 32 27 / 0.2);
+  /* ---- Radius ------------------------------------------------------------
+     Soft and large. Controls are full pills; surfaces are generously rounded
+     rather than square. Nothing in this design has a sharp corner. */
+  --radius-control: 999px; /* buttons, chips, header controls */
+  --radius-input: 14px; /* text fields, selects — pills read wrong here */
+  --radius-card: 20px;
+  --radius-media: 24px;
+  --radius-panel: 28px; /* booking panels, drawers, large sheets */
+  --radius-plate: 999px;
+  /* The inset frame: hero, the dark closing card, full-bleed media rows. A
+     section that floats inside the page rather than spanning it. */
+  --radius-frame: 36px;
 
-  /* ---- Motion ----------------------------------------------------------- */
+  /* ---- Glass -------------------------------------------------------------
+     One recipe, used by the floating cards that sit over photography. Warm-
+     tinted rather than neutral white, or it reads as iOS rather than as paper
+     over a photograph. */
+  --glass: rgb(250 247 242 / 0.82);
+  --glass-line: rgb(255 255 255 / 0.5);
+  --glass-blur: 20px;
+  --glass-dark: rgb(28 25 21 / 0.55);
+  --glass-dark-line: rgb(242 237 229 / 0.16);
+
+  /* The blueprint grid drawn faintly behind statement sections. Barely there
+     — it exists to make the type feel positioned rather than centred. */
+  --grid-line: rgb(46 42 36 / 0.055);
+  --grid-line-dark: rgb(242 237 229 / 0.07);
+
+  /* ---- Elevation ---------------------------------------------------------
+     Wide, soft and warm-tinted — a shadow cast in daylight, not a drop
+     shadow. Tinted with the ink rather than with black, or it greys the sand
+     underneath it. */
+  --shadow-soft:
+    0 1px 2px rgb(46 42 36 / 0.04), 0 8px 24px rgb(46 42 36 / 0.06);
+  --shadow-lift:
+    0 2px 6px rgb(46 42 36 / 0.05), 0 18px 48px rgb(46 42 36 / 0.1);
+  --shadow-plate: var(--shadow-soft);
+  --shadow-plate-lift: var(--shadow-lift);
+  --shadow-drawer: -30px 0 80px rgb(46 42 36 / 0.18);
+
+  /* ---- Motion ------------------------------------------------------------
+     One curve, four durations. Slower than the old system across the board:
+     unhurried movement is most of what "expensive" means in motion. */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur: 600ms;
-  --dur-micro: 200ms;
-  --dur-image: 700ms;
-  --dur-route: 240ms;
+  --dur: 700ms;
+  --dur-micro: 220ms;
+  --dur-image: 800ms;
+  --dur-route: 260ms;
 }
 
 @media (min-width: 768px) {
   :root {
-    --gutter: 40px;
-    --plate-h: 56px;
+    --gutter: 48px;
+    --plate-h: 58px;
     --header-pad: 14px;
+    --plate-h-tight: 50px;
+    --header-pad-tight: 11px;
   }
 }
 
 @media (min-width: 1024px) {
   :root {
-    --gutter: 72px;
-    --section-pad: 160px;
+    --gutter: 80px;
+    --section-pad: 176px;
   }
 }

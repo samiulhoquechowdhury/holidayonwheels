@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 const STATUS: Record<
   Permit["status"],
-  { label: string; tone: "gold" | "teal" | "red" | "neutral"; note: string }
+  { label: string; tone: "clay" | "sage" | "ember" | "neutral"; note: string }
 > = {
   draft: {
     label: "Draft",
@@ -26,17 +26,17 @@ const STATUS: Record<
   },
   submitted: {
     label: "With the state",
-    tone: "gold",
+    tone: "clay",
     note: "Filed and awaiting a decision. Three to seven working days is typical.",
   },
   approved: {
     label: "Approved",
-    tone: "teal",
+    tone: "sage",
     note: "Download the PDF and carry a printed copy — check-posts are not always online.",
   },
   rejected: {
     label: "Refused",
-    tone: "red",
+    tone: "ember",
     note: "We will have emailed you why, and we will refile at no charge.",
   },
   expired: {
@@ -61,7 +61,7 @@ export default function PermitsPage() {
         eyebrow="Your account"
         title="My permits"
         intro="Inner Line Permits and Protected Area Permits we are handling for you. We do not charge for processing."
-        tint="loktak"
+        tint="shell"
         region="manipur"
       />
 
@@ -70,7 +70,7 @@ export default function PermitsPage() {
 
         <section className="mt-14">
           <div className="flex flex-wrap items-baseline justify-between gap-4 border-b border-[var(--ink-hairline)] pb-4">
-            <h2 className="u-mono text-ink-soft">Current</h2>
+            <h2 className="u-label text-ink-soft">Current</h2>
             <ButtonLink href="/ilp/apply" variant="secondary" size="sm">
               Apply for another
             </ButtonLink>
@@ -100,7 +100,7 @@ export default function PermitsPage() {
 
         {archived.length > 0 ? (
           <section className="mt-20">
-            <h2 className="u-mono border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
+            <h2 className="u-label border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
               Expired and refused
             </h2>
             <ul className="mt-8 flex flex-col gap-4">
@@ -128,16 +128,14 @@ function PermitRow({
 
   return (
     <article
-      className={`rounded-[var(--radius-media)] border border-[var(--ink-hairline)] p-5 ${
+      className={`rounded-[var(--radius-card)] bg-plate p-7 shadow-[var(--shadow-soft)] ${
         muted ? "opacity-70" : ""
       }`}
     >
       <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
         <div className="min-w-0">
           {/* Permit codes are utility text — always mono, always selectable. */}
-          <p className="font-mono text-14 tracking-[0.06em] tabular-nums">
-            {permit.reference}
-          </p>
+          <p className="u-num text-14 tracking-[0.06em]">{permit.reference}</p>
           <h3 className="mt-2 text-22">
             {getDestinationName(permit.state)} · {permit.kind}
           </h3>
@@ -147,28 +145,28 @@ function PermitRow({
 
       <dl className="mt-5 flex flex-wrap gap-x-10 gap-y-3">
         <div>
-          <dt className="u-mono text-ink-faint">Traveller</dt>
+          <dt className="u-label text-ink-faint">Traveller</dt>
           <dd className="mt-1 text-14">{permit.travellerName}</dd>
         </div>
         <div>
-          <dt className="u-mono text-ink-faint">Valid</dt>
-          <dd className="mt-1 font-mono text-14 tabular-nums">
+          <dt className="u-label text-ink-faint">Valid</dt>
+          <dd className="u-num mt-1 text-14">
             {formatRange(permit.validFrom, permit.validTo)}
           </dd>
         </div>
         {permit.submittedAt ? (
           <div>
-            <dt className="u-mono text-ink-faint">Submitted</dt>
+            <dt className="u-label text-ink-faint">Submitted</dt>
             <dd className="mt-1 text-14">{formatLong(permit.submittedAt)}</dd>
           </div>
         ) : null}
         {permit.bookingReference ? (
           <div>
-            <dt className="u-mono text-ink-faint">Booking</dt>
+            <dt className="u-label text-ink-faint">Booking</dt>
             <dd className="mt-1 text-14">
               <Link
                 href="/account/bookings"
-                className="font-mono text-deep-teal-ink underline underline-offset-4"
+                className="u-num text-sage-ink underline underline-offset-4"
               >
                 {permit.bookingReference}
               </Link>

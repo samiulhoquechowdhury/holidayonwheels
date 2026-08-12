@@ -40,7 +40,7 @@ export default async function ToursPage({
         eyebrow={`${total} trips`}
         title="Guided tours across the Northeast"
         intro="Fixed departures and private trips across all eight states. Every one includes a guide from the region, all ground transport, and any permits you need."
-        tint="muga"
+        tint="sand"
         region="assam"
       >
         <SearchBar className="max-w-3xl" />

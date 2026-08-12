@@ -132,8 +132,8 @@ export default async function DestinationDetailPage({
             </dl>
 
             {destination.requiresILP ? (
-              <div className="mt-8 rounded-[var(--radius-control)] border border-[color-mix(in_srgb,var(--deep-teal)_35%,transparent)] bg-[color-mix(in_srgb,var(--deep-teal)_6%,transparent)] p-5">
-                <Eyebrow tone="teal">Permits</Eyebrow>
+              <div className="mt-8 rounded-[var(--radius-card)] border border-[color-mix(in_srgb,var(--sage)_35%,transparent)] bg-[color-mix(in_srgb,var(--sage)_6%,transparent)] p-5">
+                <Eyebrow tone="sage">Permits</Eyebrow>
                 <p className="mt-3 text-16">
                   {destination.name} needs an Inner Line Permit. We process it
                   for every traveller on every booking at no charge, and we
@@ -158,7 +158,7 @@ export default async function DestinationDetailPage({
         <>
           <WeaveBand region={destination.region} height={32} opacity={0.45} />
           <SectionShell
-            tint="muga"
+            tint="sand"
             pattern={destination.region}
             patternOpacity={0.03}
           >
@@ -168,7 +168,7 @@ export default async function DestinationDetailPage({
               link={{ href: "/tours", label: "All trips" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {tours.map((tour, index) => (
                 <li key={tour.slug}>
                   <Reveal delay={Math.min(index, 3) * 0.05}>
@@ -199,7 +199,7 @@ export default async function DestinationDetailPage({
               link={{ href: "/motorcycle-tours", label: "All expeditions" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {motos.map((tour, index) => (
                 <li key={tour.slug}>
                   <Reveal delay={index * 0.06}>
@@ -220,7 +220,7 @@ export default async function DestinationDetailPage({
         <>
           <WeaveBand region={destination.region} height={32} opacity={0.45} />
           <SectionShell
-            tint="paddy"
+            tint="shell"
             pattern={destination.region}
             patternOpacity={0.03}
           >
@@ -230,7 +230,7 @@ export default async function DestinationDetailPage({
               link={{ href: "/homestays", label: "All homestays" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {stays.map((stay, index) => (
                 <li key={stay.slug}>
                   <Reveal delay={index * 0.06}>
@@ -250,7 +250,7 @@ export default async function DestinationDetailPage({
         <>
           <WeaveBand region={destination.region} height={32} opacity={0.45} />
           <SectionShell
-            tint="cherry"
+            tint="sand"
             pattern={destination.region}
             patternOpacity={0.03}
           >
@@ -260,7 +260,7 @@ export default async function DestinationDetailPage({
               link={{ href: "/events", label: "All events" }}
               align="split"
             />
-            <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {events.map((event, index) => (
                 <li key={event.slug}>
                   <Reveal delay={index * 0.06}>
@@ -282,7 +282,7 @@ export default async function DestinationDetailPage({
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="u-mono text-ink-soft">{label}</dt>
+      <dt className="u-label text-ink-soft">{label}</dt>
       <dd className="mt-2 text-16">{value}</dd>
     </div>
   );

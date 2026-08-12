@@ -16,7 +16,7 @@ type WeaveBandProps = {
   /** Band height in pixels. Spec range is 28–40. */
   height?: number;
   /** `ink` on light tints, `paper` on the dark band. */
-  tone?: "ink" | "paper" | "gold" | "red" | "teal";
+  tone?: "ink" | "paper" | "clay" | "ember" | "sage";
   /** Motif opacity. The band is a divider, not a feature — keep it low. */
   opacity?: number;
   className?: string;
@@ -25,9 +25,9 @@ type WeaveBandProps = {
 const TONE_CLASS: Record<NonNullable<WeaveBandProps["tone"]>, string> = {
   ink: "text-ink",
   paper: "text-paper",
-  gold: "text-muga-gold",
-  red: "text-naga-red",
-  teal: "text-deep-teal",
+  clay: "text-clay",
+  ember: "text-ember",
+  sage: "text-sage",
 };
 
 /**

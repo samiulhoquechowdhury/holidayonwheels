@@ -97,7 +97,7 @@ export function FilterRail({
               <button
                 type="button"
                 onClick={onClear}
-                className="u-mono min-h-11 text-deep-teal-ink underline underline-offset-4"
+                className="u-label min-h-11 text-sage-ink underline underline-offset-4"
               >
                 Clear all
               </button>
@@ -118,7 +118,7 @@ export function FilterRail({
         >
           Filter and sort
           {activeCount > 0 ? (
-            <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1.5 font-mono text-12 text-paper">
+            <span className="u-num ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1.5 text-12 text-paper">
               {activeCount}
             </span>
           ) : null}
@@ -135,7 +135,7 @@ export function FilterRail({
               exit={{ opacity: 0 }}
               transition={{ duration: DUR_MICRO, ease: EASE }}
               onClick={() => setSheetOpen(false)}
-              className="fixed inset-0 z-50 bg-[rgb(13_21_18/0.5)] lg:hidden"
+              className="fixed inset-0 z-50 bg-[rgb(42_38_33/0.5)] lg:hidden"
             />
             <motion.div
               ref={sheetRef}
@@ -147,7 +147,7 @@ export function FilterRail({
               animate={reduced ? { opacity: 1 } : { y: 0 }}
               exit={reduced ? { opacity: 0 } : { y: "100%" }}
               transition={reduced ? { duration: DUR_MICRO } : stickySpring}
-              className="fixed inset-x-0 bottom-0 z-50 flex max-h-[85vh] flex-col rounded-t-[var(--radius-media)] bg-paper lg:hidden"
+              className="fixed inset-x-0 bottom-0 z-50 flex max-h-[85vh] flex-col rounded-t-[var(--radius-panel)] bg-paper lg:hidden"
             >
               <div className="flex items-center justify-between gap-3 border-b border-[var(--ink-hairline)] px-5 py-4">
                 <h2 className="text-22">Filters</h2>
@@ -205,7 +205,7 @@ function FilterGroup({
 }) {
   return (
     <fieldset className="min-w-0">
-      <legend className="u-mono mb-3 text-ink-soft">{group.label}</legend>
+      <legend className="u-label mb-3 text-ink-soft">{group.label}</legend>
       <ul className="flex flex-col">
         {group.options.map((option) => {
           const checked = selected.includes(option.value);
@@ -216,7 +216,7 @@ function FilterGroup({
                 htmlFor={id}
                 className={cn(
                   "flex min-h-11 cursor-pointer items-center gap-3 py-1",
-                  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-deep-teal",
+                  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-sage",
                 )}
               >
                 <input
@@ -231,7 +231,7 @@ function FilterGroup({
                 <Indicator checked={checked} round={group.single} />
                 <span className="flex-1 text-16">{option.label}</span>
                 {typeof option.count === "number" ? (
-                  <span className="font-mono text-12 text-ink-faint tabular-nums">
+                  <span className="u-num text-12 text-ink-faint">
                     {option.count}
                   </span>
                 ) : null}

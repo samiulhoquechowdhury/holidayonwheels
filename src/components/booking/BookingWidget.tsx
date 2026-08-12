@@ -81,7 +81,7 @@ export function BookingWidget({
       <section
         aria-labelledby="booking-heading"
         className={cn(
-          "rounded-[var(--radius-media)] border border-[var(--ink-hairline)] bg-paper p-6 lg:p-7",
+          "rounded-[var(--radius-panel)] bg-plate p-7 shadow-[var(--shadow-soft)] lg:p-8",
           className,
         )}
       >
@@ -91,11 +91,11 @@ export function BookingWidget({
 
         <div className="flex items-baseline justify-between gap-3">
           <Eyebrow>From</Eyebrow>
-          <p className="font-mono text-28 tabular-nums">
+          <p className="u-num font-display text-28 leading-none">
             {formatINR(quote.perPerson)}
           </p>
         </div>
-        <p className="u-mono mt-1 text-right text-ink-soft">per person</p>
+        <p className="u-label mt-1 text-right text-ink-soft">per person</p>
 
         <div className="mt-7">
           <Eyebrow className="mb-3">Choose a departure</Eyebrow>
@@ -116,7 +116,7 @@ export function BookingWidget({
             </p>
           ) : null}
           {pax >= 4 ? (
-            <p className="mt-2 text-14 text-deep-teal-ink">
+            <p className="mt-2 text-14 text-sage-ink">
               Your party size qualifies for a lower per-person rate. It is
               already applied above.
             </p>
@@ -183,7 +183,7 @@ function PriceBreakdown({
                 </span>
               ) : null}
             </dt>
-            <dd className="shrink-0 font-mono text-14 tabular-nums">
+            <dd className="u-num shrink-0 text-14">
               {line.amount < 0 ? "−" : ""}
               {formatINR(Math.abs(line.amount))}
             </dd>
@@ -191,10 +191,12 @@ function PriceBreakdown({
         ))}
       </dl>
       <div className="mt-4 flex items-baseline justify-between gap-4 border-t border-[var(--ink-hairline)] pt-4">
-        <p className="u-mono">Total</p>
-        <p className="font-mono text-22 tabular-nums">{formatINR(total)}</p>
+        <p className="u-label">Total</p>
+        <p className="u-num font-display text-22 leading-none">
+          {formatINR(total)}
+        </p>
       </div>
-      <p className="u-mono mt-2 text-right text-ink-faint">
+      <p className="u-label mt-2 text-right text-ink-faint">
         Due today {formatINR(Math.round(total * 0.25))}
       </p>
     </div>
@@ -227,7 +229,7 @@ export function PaxStepper({
       </button>
       <p
         aria-live="polite"
-        className="flex min-h-12 flex-1 items-center justify-center border-y border-[var(--ink-hairline-strong)] font-mono text-16 tabular-nums"
+        className="u-num flex min-h-12 flex-1 items-center justify-center border-y border-[var(--ink-hairline-strong)] text-16"
       >
         {value}
         <span className="u-sr-only"> {label}</span>

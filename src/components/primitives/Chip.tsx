@@ -1,20 +1,23 @@
 import { cn } from "@/lib/cn";
 
-export type ChipTone = "neutral" | "gold" | "red" | "teal" | "onDark";
-
-const TONE: Record<ChipTone, string> = {
-  neutral:
-    "border-[var(--ink-hairline-strong)] text-ink-soft bg-[rgb(255_255_255/0.5)]",
-  gold: "border-[color-mix(in_srgb,var(--muga-gold)_45%,transparent)] text-muga-gold-ink bg-[color-mix(in_srgb,var(--muga-gold)_10%,transparent)]",
-  red: "border-[color-mix(in_srgb,var(--naga-red)_45%,transparent)] text-naga-red-ink bg-[color-mix(in_srgb,var(--naga-red)_9%,transparent)]",
-  teal: "border-[color-mix(in_srgb,var(--deep-teal)_45%,transparent)] text-deep-teal-ink bg-[color-mix(in_srgb,var(--deep-teal)_9%,transparent)]",
-  onDark: "border-[rgb(255_255_255/0.22)] text-night-text-soft bg-transparent",
-};
+export type ChipTone = "neutral" | "clay" | "ember" | "sage" | "onDark";
 
 /**
- * Small metadata pill: durations, difficulty, meal plans, altitude, seat
- * counts. Never interactive — for interactive filters use `FilterChip`.
+ * Metadata pills: durations, difficulty, meal plans, altitude, seat counts.
+ *
+ * Tinted grounds with no border. The old set drew a coloured hairline *and* a
+ * tinted fill, which at 12px is two signals doing one job — and eight of them
+ * in a row under a card turned into a fence. A soft ground alone is enough to
+ * separate a chip from body copy.
  */
+const TONE: Record<ChipTone, string> = {
+  neutral: "bg-[rgb(46_42_36/0.055)] text-ink-soft",
+  clay: "bg-[color-mix(in_srgb,var(--clay)_22%,transparent)] text-clay-ink",
+  ember: "bg-[color-mix(in_srgb,var(--ember)_13%,transparent)] text-ember-ink",
+  sage: "bg-[color-mix(in_srgb,var(--sage)_20%,transparent)] text-sage-ink",
+  onDark: "bg-[rgb(242_237_229/0.1)] text-night-text-soft",
+};
+
 export function Chip({
   children,
   tone = "neutral",
@@ -27,7 +30,7 @@ export function Chip({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-[var(--radius-control)] border px-2.5 py-1",
+        "inline-flex items-center gap-1.5 rounded-[var(--radius-control)] px-3 py-1.5",
         "font-sans text-12 leading-none whitespace-nowrap",
         TONE[tone],
         className,
@@ -60,11 +63,11 @@ export function FilterChip({
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        "inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-control)] border px-4",
+        "inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-control)] px-5",
         "font-sans text-14 transition-colors duration-[var(--dur-micro)] ease-brand",
         active
-          ? "border-ink bg-ink text-paper"
-          : "border-[var(--ink-hairline-strong)] text-ink-soft hover:border-ink hover:text-ink",
+          ? "bg-ink text-paper"
+          : "bg-[rgb(46_42_36/0.05)] text-ink-soft hover:bg-[rgb(46_42_36/0.09)] hover:text-ink",
         className,
       )}
     >

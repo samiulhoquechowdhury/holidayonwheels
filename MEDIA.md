@@ -32,8 +32,21 @@ To retire the mocks:
    `remotePatterns` from `next.config.ts`, and delete `src/lib/image-loader.ts`.
    That hands optimisation back to Next, which is what you want the moment the
    files are ours.
-3. The hero clip is streamed from a remote CDN (`showcase.heroFilm.src`). The
-   real encode goes in `public/media/` and must meet section 1 below.
+3. Two hero clips are streamed from a remote CDN. Both need real encodes in
+   `public/media/` meeting section 1 below:
+
+   | Export     | Where it runs             | Subject needed                                       |
+   | ---------- | ------------------------- | ---------------------------------------------------- |
+   | `heroFilm` | Home, above the fold      | Cloud through forested ridges, Meghalaya             |
+   | `motoFilm` | `/motorcycle-tours`, hero | Rider's-eye over the handlebars on a road that bends |
+
+   `motoFilm` is the only second film on the site and it should stay that way:
+   a page that opens with video is making a claim about being worth watching,
+   and that claim gets cheaper every time it is repeated.
+
+   Both currently load the same encode on a phone as on a desktop — 5MB on
+   the motorcycle page. The `-mobile.mp4` cut in section 1 is not optional
+   when the real footage lands.
 
 Nothing else in the app changes: every consumer holds its own aspect ratio, so
 the swap causes no layout shift.

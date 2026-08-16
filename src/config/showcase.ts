@@ -35,6 +35,25 @@ export const heroFilm = {
 } as const;
 
 /**
+ * The motorcycle index's reel.
+ *
+ * Rider's-eye, over the handlebars, on a green road that keeps turning. Three
+ * reasons it is this clip and not one of the several better-lit alternatives:
+ * the point-of-view shot puts the visitor on the bike rather than watching
+ * someone else on one, the road bends — which is what the riding in this
+ * region actually is — and the grade is lush rather than the bare-tree winter
+ * light most stock motorcycle footage is shot in, so it sits beside the rest
+ * of the site's photography instead of fighting it.
+ *
+ * 720p at 5MB. The real encode has to come in under 4MB — see MEDIA.md.
+ */
+export const motoFilm = {
+  src: "https://videos.pexels.com/video-files/2519660/2519660-hd_1280_720_24fps.mp4",
+  poster: shot("1558981806-ec527fa84c39"),
+  alt: "A rider's view over the handlebars on a curving forest road",
+} as const;
+
+/**
  * The eight states, west to east — the same order the destinations rail and
  * the hero reel use, so every index of the map on this site agrees.
  */

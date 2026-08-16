@@ -6,7 +6,8 @@ import { Reveal } from "@/components/layout/Reveal";
 import { MotoCard } from "@/components/cards/ResultCard";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { getMotorcycleTours } from "@/content/motorcycle-tours";
-import { motoShots } from "@/config/showcase";
+import { motoFilm } from "@/config/showcase";
+import { HeroFilm } from "@/components/home/HeroFilm";
 
 export const metadata: Metadata = {
   title: "Motorcycle expeditions",
@@ -38,15 +39,54 @@ export default function MotorcycleToursPage() {
 
   return (
     <>
+      {/*
+        The still is dropped from the hero and a film runs under it instead,
+        the same way the home page opens. It is the right trade on this page
+        specifically: a photograph of a parked motorcycle says what is being
+        sold, and fourteen seconds of a road bending away under the
+        handlebars says why anyone would want it. Nothing else on the site
+        gets a second film.
+      */}
       <PageHero
         eyebrow={`${tours.length} expeditions`}
         title="Guided rides, with a truck behind you"
         accent="truck"
-        image={motoShots[0]}
+        media={false}
         intro="Group motorcycle expeditions across the Northeast. Every departure runs with a lead rider, a sweep rider and a support pickup — which is the difference between an expedition and a group of people on bikes hoping for the best."
-        tint="sand"
+        tint="paper"
         region="nagaland"
       />
+
+      <SectionShell tint="paper" spacing="tight" width="wide">
+        <HeroFilm
+          film={motoFilm}
+          className="aspect-[4/5] sm:aspect-[16/10] lg:aspect-[21/9]"
+        >
+          <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-4 p-5 sm:p-7 lg:p-9">
+            <span className="u-glass u-label inline-flex items-center gap-3 rounded-full px-5 py-3 text-ink">
+              <span
+                aria-hidden="true"
+                className="size-1.5 rounded-full bg-naga"
+              />
+              Lead rider, sweep rider, support truck
+            </span>
+
+            <span className="u-glass flex items-center gap-5 rounded-[var(--radius-card)] px-5 py-3.5 sm:px-6 sm:py-4">
+              <span>
+                <span className="u-label block text-ink-faint">
+                  Highest pass crossed
+                </span>
+                <span className="u-num mt-1 block font-display text-28">
+                  4,170 m
+                </span>
+              </span>
+              <span className="u-label hidden max-w-28 text-right leading-relaxed text-ink-faint sm:block">
+                oxygen carried above 4,000
+              </span>
+            </span>
+          </div>
+        </HeroFilm>
+      </SectionShell>
 
       <SectionShell tint="paper">
         <h2 className="u-label mb-8 border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">

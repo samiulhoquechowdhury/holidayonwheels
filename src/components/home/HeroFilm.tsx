@@ -30,9 +30,17 @@ import { heroFilm } from "@/config/showcase";
  * there is a page underneath it.
  */
 export function HeroFilm({
+  film = heroFilm,
   className,
   children,
 }: {
+  /**
+   * Which reel to run. Defaults to the home page's. The motorcycle index
+   * passes its own, and any page can — the loading contract below is the
+   * valuable part of this component and it should not be reimplemented per
+   * page just to change the source.
+   */
+  film?: { src: string; poster: string; alt: string };
   className?: string;
   /** Glass cards resting on the film. Inside the frame so they scale with it. */
   children?: React.ReactNode;
@@ -87,8 +95,8 @@ export function HeroFilm({
       )}
     >
       <Image
-        src={heroFilm.poster}
-        alt={heroFilm.alt}
+        src={film.poster}
+        alt={film.alt}
         fill
         priority
         sizes="100vw"
@@ -104,8 +112,8 @@ export function HeroFilm({
             "absolute inset-0 size-full object-cover transition-opacity duration-[1200ms] ease-brand",
             playing ? "opacity-100" : "opacity-0",
           )}
-          src={heroFilm.src}
-          poster={heroFilm.poster}
+          src={film.src}
+          poster={film.poster}
           autoPlay
           muted
           loop

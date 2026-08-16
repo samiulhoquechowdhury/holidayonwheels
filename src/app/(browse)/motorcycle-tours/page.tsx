@@ -7,6 +7,7 @@ import { Reveal } from "@/components/layout/Reveal";
 import { MotoCard } from "@/components/cards/ResultCard";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { getMotorcycleTours } from "@/content/motorcycle-tours";
+import { motoShots } from "@/config/showcase";
 
 export const metadata: Metadata = {
   title: "Motorcycle expeditions",
@@ -41,6 +42,8 @@ export default function MotorcycleToursPage() {
       <PageHero
         eyebrow={`${tours.length} expeditions`}
         title="Guided rides, with a truck behind you"
+        accent="truck"
+        image={motoShots[0]}
         intro="Group motorcycle expeditions across the Northeast. Every departure runs with a lead rider, a sweep rider and a support pickup — which is the difference between an expedition and a group of people on bikes hoping for the best."
         tint="sand"
         region="nagaland"

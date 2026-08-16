@@ -98,7 +98,7 @@ export default async function JournalPostPage({
           <div className="mt-16 border-t border-[var(--ink-hairline)] pt-8">
             <Link
               href="/journal"
-              className="u-label text-sage-ink underline underline-offset-4"
+              className="u-label inline-flex min-h-11 items-center text-jade-ink underline underline-offset-4"
             >
               All writing
             </Link>

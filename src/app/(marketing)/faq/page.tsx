@@ -38,6 +38,7 @@ export default function FaqPage() {
       <PageHero
         eyebrow="Questions"
         title="The things people actually ask"
+        accent="actually"
         intro="If the answer you need is not here, ask us — we would rather answer it than have you guess."
         tint="shell"
         region="meghalaya"

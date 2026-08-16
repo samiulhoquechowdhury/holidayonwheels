@@ -45,6 +45,7 @@ export default function AboutPage() {
       <PageHero
         eyebrow="About"
         title="We only do the Northeast"
+        accent="only"
         intro="Eight states, one region, and no attempt to also sell you Rajasthan. Everything on this site is somewhere we run trips ourselves."
         tint="sand"
         region="assam"

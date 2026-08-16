@@ -37,7 +37,13 @@ export function StayStack() {
       <div className="u-container-wide">
         <div className="grid gap-16 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-24">
           {/* --- The stack ------------------------------------------------ */}
-          <div className="relative mx-auto aspect-[4/5] w-full max-w-md lg:max-w-none">
+          {/* The prints are rotated and translated up to 12% out of this box,
+              so the box itself is inset on a phone. Without the inset the
+              stack overhangs the gutter and gives the whole document real
+              horizontal scroll — `overflow-x: clip` on <html> now catches
+              that too, but a layer that relies on being clipped is a layer
+              that is one refactor away from escaping again. */}
+          <div className="relative mx-auto aspect-[4/5] w-[86%] max-w-md sm:w-full lg:max-w-none">
             {STACK.map((card, index) => (
               <Rise
                 key={card.rotate}

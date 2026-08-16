@@ -70,6 +70,25 @@ export function colourFor(state: StateSlug | undefined): StateColour {
 }
 
 /**
+ * The same map again, keyed by `WeaveRegion` instead of `StateSlug`.
+ *
+ * The two vocabularies disagree on exactly one member — the region is
+ * `arunachal`, the slug is `arunachal-pradesh` — and every card on the site
+ * passes the region, not the slug. Rather than make thirty call sites convert,
+ * the conversion lives here once.
+ */
+export function regionColour(region: string): StateColour {
+  const slug = region === "arunachal" ? "arunachal-pradesh" : region;
+  return (
+    stateColours[slug as StateSlug] ?? {
+      surface: "var(--clay)",
+      ink: "var(--clay-ink)",
+      tint: "bg-butter",
+    }
+  );
+}
+
+/**
  * The palette in display order, for anything that cycles through it rather
  * than looking a state up — the marquee's separators, the journey rows, the
  * figures in the proof band.

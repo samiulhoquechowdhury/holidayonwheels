@@ -61,7 +61,12 @@ export function JourneyModes() {
                     the list is the most colourful thing on the page. */}
                 <span
                   aria-hidden="true"
-                  className="absolute inset-x-[-1.5rem] inset-y-0 -z-10 origin-bottom scale-y-0 rounded-[var(--radius-card)] transition-transform duration-[var(--dur)] ease-brand group-hover:scale-y-100 group-focus-visible:scale-y-100 lg:inset-x-[-2.5rem]"
+                  // Flush with the container on a phone. The negative inset
+                  // is what lets the fill bleed past the text column on a
+                  // desktop, but at 390px the gutter is narrower than the
+                  // bleed and it pushed the document 10px wider than the
+                  // viewport.
+                  className="absolute inset-x-0 inset-y-0 -z-10 origin-bottom scale-y-0 rounded-[var(--radius-card)] transition-transform duration-[var(--dur)] ease-brand group-hover:scale-y-100 group-focus-visible:scale-y-100 sm:inset-x-[-1.5rem] lg:inset-x-[-2.5rem]"
                   style={{ backgroundColor: mode.colour }}
                 />
 

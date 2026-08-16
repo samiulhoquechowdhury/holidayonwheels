@@ -4,6 +4,7 @@ import { formatINR } from "@/lib/currency";
 import { formatMedium } from "@/lib/date";
 import { Media } from "@/components/primitives/Media";
 import { Chip } from "@/components/primitives/Chip";
+import { regionColour } from "@/config/palette";
 import type { WeaveRegion } from "@/components/layout/weave-motifs";
 
 /**
@@ -47,12 +48,13 @@ export type ResultCardProps = {
   sizes?: string;
 };
 
-const ACCENT: Record<ResultCardVariant, string> = {
-  tour: "text-clay-ink",
-  moto: "text-ember-ink",
-  stay: "text-sage-ink",
-  event: "text-ink-soft",
-};
+/*
+ * The per-variant accent colour is gone. It used to tint the eyebrow by the
+ * *kind* of result — clay for tours, ember for expeditions — which competed
+ * with the state palette for the same slot and meant the same place appeared
+ * in two different colours on two different pages. Colour on this site
+ * identifies the place, never the product category.
+ */
 
 const DEFAULT_UNIT: Record<ResultCardVariant, string> = {
   tour: "per person",
@@ -81,6 +83,7 @@ export function ResultCard({
   sizes,
 }: ResultCardProps) {
   const dark = tone === "onDark";
+  const colour = regionColour(region);
   const rule = dark
     ? "border-[var(--night-hairline)]"
     : "border-[var(--ink-hairline)]";
@@ -94,7 +97,7 @@ export function ResultCard({
        * of everything — and a column of tall frames sets a slower rhythm
        * down the page, which is the whole point of this design.
        */}
-      <div className="overflow-hidden rounded-[var(--radius-card)]">
+      <div className="relative overflow-hidden rounded-[var(--radius-card)]">
         <Media
           alt={imageAlt}
           src={imageSrc}
@@ -106,16 +109,35 @@ export function ResultCard({
           // The image scales inside the frame; the card itself never moves.
           imageClassName="transition-transform duration-[var(--dur-image)] ease-brand motion-safe:group-hover:scale-[1.04]"
         />
+
+        {/*
+         * The state's own colour, as a bar across the foot of the frame. It
+         * is the cheapest possible way to carry the palette onto a grid of
+         * forty cards: no extra element competing for attention, no chip
+         * covering the photograph, and the colour still reads at a glance
+         * when the grid is scanned rather than read.
+         */}
+        <span
+          aria-hidden="true"
+          className={cn(
+            "absolute inset-x-0 bottom-0 h-1 origin-left transition-transform duration-[var(--dur)] ease-brand",
+            "scale-x-0 group-hover:scale-x-100",
+          )}
+          style={{ backgroundColor: colour.surface }}
+        />
       </div>
 
       <div className="mt-7 flex flex-1 flex-col">
         <p
-          className={cn(
-            "u-label",
-            dark ? "text-night-text-soft" : ACCENT[variant],
-          )}
+          className="u-label flex items-center gap-2.5"
+          style={{ color: dark ? undefined : colour.ink }}
         >
-          {eyebrow}
+          <span
+            aria-hidden="true"
+            className="size-1.5 shrink-0 rounded-full"
+            style={{ backgroundColor: colour.surface }}
+          />
+          <span className={cn(dark && "text-night-text-soft")}>{eyebrow}</span>
         </p>
 
         <h3 className={cn("mt-4 text-22", dark && "text-night-text")}>

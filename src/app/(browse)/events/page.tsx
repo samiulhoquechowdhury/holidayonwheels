@@ -5,6 +5,7 @@ import { Reveal } from "@/components/layout/Reveal";
 import { EventCard } from "@/components/cards/ResultCard";
 import { getEvents } from "@/content/events";
 import { formatMonthYear } from "@/lib/date";
+import { eventShots } from "@/config/showcase";
 
 export const metadata: Metadata = {
   title: "Festivals and events",
@@ -30,6 +31,8 @@ export default function EventsPage() {
       <PageHero
         eyebrow={`${events.length} events`}
         title="Time it right"
+        accent="right"
+        image={eventShots[0]}
         intro="The region's festivals are its best argument, and most of them are fixed to a season rather than a date. Several sell their accommodation out a year ahead."
         tint="sand"
         region="mizoram"

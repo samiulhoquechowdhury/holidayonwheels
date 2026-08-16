@@ -18,6 +18,7 @@ export default function ContactPage() {
       <PageHero
         eyebrow="Contact"
         title="Tell us what you have in mind"
+        accent="mind"
         intro="Most of what we run started as somebody asking for something that was not on the site. Be specific and the reply will be useful."
         tint="sand"
         region="mizoram"
@@ -29,16 +30,16 @@ export default function ContactPage() {
 
           <aside className="lg:pt-2">
             <Eyebrow>Or directly</Eyebrow>
-            <address className="mt-5 flex flex-col gap-4 text-16 not-italic">
+            <address className="mt-5 flex flex-col gap-1 text-16 not-italic">
               <a
                 href={`mailto:${site.contact.email}`}
-                className="underline decoration-[var(--ink-hairline-strong)] underline-offset-8 hover:decoration-current"
+                className="inline-flex min-h-11 items-center underline decoration-[var(--ink-hairline-strong)] underline-offset-8 hover:decoration-current"
               >
                 {site.contact.email}
               </a>
               <a
                 href={`tel:${site.contact.phone.replace(/\s/g, "")}`}
-                className="u-num underline decoration-[var(--ink-hairline-strong)] underline-offset-8 hover:decoration-current"
+                className="u-num inline-flex min-h-11 items-center underline decoration-[var(--ink-hairline-strong)] underline-offset-8 hover:decoration-current"
               >
                 {site.contact.phone}
               </a>
@@ -46,12 +47,12 @@ export default function ContactPage() {
             </address>
 
             <Eyebrow className="mt-12">Elsewhere</Eyebrow>
-            <ul className="mt-5 flex flex-col gap-3">
+            <ul className="mt-5 flex flex-col gap-1">
               {site.social.map((link) => (
                 <li key={link.label}>
                   <OutboundLink
                     href={link.href}
-                    className="text-16 text-ink-soft transition-colors hover:text-ink"
+                    className="inline-flex min-h-11 items-center text-16 text-ink-soft transition-colors hover:text-ink"
                   >
                     {link.label}
                   </OutboundLink>

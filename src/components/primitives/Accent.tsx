@@ -12,9 +12,13 @@ import { cn } from "@/lib/cn";
  *
  *  - **One per headline.** Two accents in a line cancel each other out and
  *    the sentence starts reading as a ransom note.
- *  - **Never the first or last word.** The swap has to be surrounded by the
- *    upright face to register as a swap rather than as a different headline.
- *  - **Never a function word.** Accent the noun the sentence is about — the
+ *  - **Never the first word.** The swap needs upright type in front of it to
+ *    register as a swap rather than as a different headline altogether.
+ *  - **Prefer a word with type after it.** On a long headline the accent
+ *    should be enclosed. On a short one — "Time it *right*", "Stay in
+ *    somebody's *house*" — the last word is the only interesting one there
+ *    is, and enclosing it would mean accenting a preposition instead.
+ *  - **Never a function word.** Accent the word the sentence is about — the
  *    place, the thing being sold. "Eight *states*", not "*Eight* states".
  *  - **Never on a label, a button or a price.** It is display only; at 14px
  *    the contrast collapses and it just looks like a font failed to load.

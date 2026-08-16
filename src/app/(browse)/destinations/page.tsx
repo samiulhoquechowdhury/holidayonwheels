@@ -26,6 +26,7 @@ export default function DestinationsPage() {
       <PageHero
         eyebrow="Eight states"
         title="Where you could go"
+        accent="could"
         intro="Roughly west to east. Each of these is a different country in every way that matters to a traveller — language, food, altitude, religion and road quality."
         tint="shell"
         region="meghalaya"

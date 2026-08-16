@@ -53,7 +53,7 @@ export function Footer() {
               <p>
                 <a
                   href={`mailto:${site.contact.email}`}
-                  className="transition-colors duration-[var(--dur-micro)] hover:text-night-text"
+                  className="inline-flex min-h-9 items-center transition-colors duration-[var(--dur-micro)] hover:text-night-text"
                 >
                   {site.contact.email}
                 </a>
@@ -61,7 +61,7 @@ export function Footer() {
               <p>
                 <a
                   href={`tel:${site.contact.phone.replace(/\s/g, "")}`}
-                  className="u-num transition-colors duration-[var(--dur-micro)] hover:text-night-text"
+                  className="u-num inline-flex min-h-9 items-center transition-colors duration-[var(--dur-micro)] hover:text-night-text"
                 >
                   {site.contact.phone}
                 </a>
@@ -78,20 +78,20 @@ export function Footer() {
                 <Eyebrow tone="onDark" as="p" rule={false}>
                   {group.label}
                 </Eyebrow>
-                <ul className="mt-5 space-y-3">
+                <ul className="mt-3 space-y-1">
                   {group.links.map((link) => (
                     <li key={link.label}>
                       {link.external ? (
                         <OutboundLink
                           href={link.href}
-                          className="text-14 text-night-text-soft transition-colors duration-[var(--dur-micro)] hover:text-night-text"
+                          className="inline-flex min-h-9 items-center text-14 text-night-text-soft transition-colors duration-[var(--dur-micro)] hover:text-night-text"
                         >
                           {link.label}
                         </OutboundLink>
                       ) : (
                         <Link
                           href={link.href}
-                          className="text-14 text-night-text-soft transition-colors duration-[var(--dur-micro)] hover:text-night-text"
+                          className="inline-flex min-h-9 items-center text-14 text-night-text-soft transition-colors duration-[var(--dur-micro)] hover:text-night-text"
                         >
                           {link.label}
                         </Link>
@@ -114,7 +114,7 @@ export function Footer() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-14 text-night-text-soft transition-colors duration-[var(--dur-micro)] hover:text-night-text"
+                  className="inline-flex min-h-9 items-center text-14 text-night-text-soft transition-colors duration-[var(--dur-micro)] hover:text-night-text"
                 >
                   {link.label}
                 </Link>
@@ -127,7 +127,7 @@ export function Footer() {
                 <OutboundLink
                   href={link.href}
                   showIndicator={false}
-                  className="text-14 text-night-text-soft transition-colors duration-[var(--dur-micro)] hover:text-night-text"
+                  className="inline-flex min-h-9 items-center text-14 text-night-text-soft transition-colors duration-[var(--dur-micro)] hover:text-night-text"
                 >
                   {link.label}
                 </OutboundLink>

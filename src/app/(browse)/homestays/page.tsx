@@ -5,6 +5,7 @@ import { Reveal } from "@/components/layout/Reveal";
 import { StayCard } from "@/components/cards/ResultCard";
 import { LocatorMap } from "@/components/homestays/LocatorMap";
 import { getHomestays } from "@/content/homestays";
+import { stayShots } from "@/config/showcase";
 
 export const metadata: Metadata = {
   title: "Homestays",
@@ -20,6 +21,8 @@ export default function HomestaysPage() {
       <PageHero
         eyebrow={`${homestays.length} places to stay`}
         title="Stay in somebody's house"
+        accent="house"
+        image={stayShots[0]}
         intro="Every homestay here is owned and run by the family living in it, and they set their own rates. We take a booking commission and nothing else. Two of them have no road to them at all."
         tint="shell"
         region="arunachal"

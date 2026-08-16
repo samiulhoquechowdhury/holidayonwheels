@@ -6,6 +6,7 @@ import { Reveal } from "@/components/layout/Reveal";
 import { Media } from "@/components/primitives/Media";
 import { getJournalPosts } from "@/content/journal";
 import { formatMedium } from "@/lib/date";
+import { journalShots } from "@/config/showcase";
 
 export const metadata: Metadata = {
   title: "Journal",
@@ -21,6 +22,8 @@ export default function JournalPage() {
       <PageHero
         eyebrow="Journal"
         title="Worth reading before you book"
+        accent="reading"
+        image={journalShots[0]}
         intro="Practical writing about the region, from people who run trips in it. No listicles."
         tint="sand"
         region="sikkim"

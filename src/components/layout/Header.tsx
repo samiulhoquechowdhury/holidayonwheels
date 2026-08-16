@@ -12,9 +12,8 @@ import {
 import { Logo } from "./Logo";
 import { MenuDrawer } from "./MenuDrawer";
 import { primaryNav } from "@/config/nav";
-import { useMagnetic } from "@/components/primitives/Button";
 import { cn } from "@/lib/cn";
-import { EASE, microTransition } from "@/lib/motion";
+import { EASE } from "@/lib/motion";
 
 /**
  * Scrolled sizing, applied to the header element only. Reassigning the two
@@ -38,11 +37,14 @@ const TIGHT_BAR = {
  * mid-state, and gets out of the way, which is what the rest of this design
  * is trying to do.
  *
- * Three things respond to the pointer, all of them capped:
+ * Two things respond to the pointer:
  *  - one hairline slides between nav items, springing rather than fading, so
  *    the eye follows a single object instead of watching six labels change;
- *  - each label rolls its own duplicate up from underneath;
- *  - the trip and menu controls take a 3px magnetic pull.
+ *  - each label rolls its own duplicate up from underneath.
+ *
+ * The trip and menu controls used to take a 3px magnetic pull as well. It is
+ * gone deliberately: a control that moves as you aim at it is a control you
+ * miss, and the effect stops reading as expensive almost immediately.
  *
  * And two respond to scroll: the bar tightens past 24px, and it lifts away
  * when you scroll down past the first screen, returning the moment you scroll
@@ -112,11 +114,10 @@ export function Header() {
           <PrimaryNav pathname={pathname} reduced={Boolean(reduced)} />
 
           <div className="flex items-center gap-2 justify-self-end md:gap-3">
-            <PlanTrip reduced={Boolean(reduced)} />
+            <PlanTrip />
             <StairToggle
               ref={toggleRef}
               open={open}
-              reduced={Boolean(reduced)}
               onClick={() => setOpen((v) => !v)}
             />
           </div>
@@ -241,18 +242,9 @@ function RollingLabel({ children }: { children: React.ReactNode }) {
  * fold. Hidden below `md`, where the drawer's own "Plan a trip" button covers
  * it and the bar has no room for it.
  */
-function PlanTrip({ reduced }: { reduced: boolean }) {
-  const { ref, offset, handlers } = useMagnetic(!reduced, 3);
-
+function PlanTrip() {
   return (
-    <motion.div
-      ref={ref as React.Ref<HTMLDivElement>}
-      data-motion="magnetic"
-      animate={offset}
-      transition={microTransition}
-      className="hidden md:block"
-      {...handlers}
-    >
+    <div className="hidden md:block">
       <Link
         href="/tours"
         className={cn(
@@ -278,7 +270,7 @@ function PlanTrip({ reduced }: { reduced: boolean }) {
           <path d="M0.5 5h14M10.5 1l4 4-4 4" />
         </svg>
       </Link>
-    </motion.div>
+    </div>
   );
 }
 
@@ -291,25 +283,15 @@ function PlanTrip({ reduced }: { reduced: boolean }) {
  */
 function StairToggle({
   open,
-  reduced,
   onClick,
   ref,
 }: {
   open: boolean;
-  reduced: boolean;
   onClick: () => void;
   ref: React.Ref<HTMLButtonElement>;
 }) {
-  const { ref: pullRef, offset, handlers } = useMagnetic(!reduced, 3);
-
   return (
-    <motion.div
-      ref={pullRef as React.Ref<HTMLDivElement>}
-      data-motion="magnetic"
-      animate={offset}
-      transition={microTransition}
-      {...handlers}
-    >
+    <div>
       <button
         ref={ref}
         type="button"
@@ -357,6 +339,6 @@ function StairToggle({
           />
         </span>
       </button>
-    </motion.div>
+    </div>
   );
 }

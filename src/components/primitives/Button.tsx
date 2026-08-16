@@ -1,56 +1,82 @@
-"use client";
-
 import Link from "next/link";
-import { useRef, useState, type ComponentProps } from "react";
-import { motion, useReducedMotion, type HTMLMotionProps } from "framer-motion";
+import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
-import { microTransition } from "@/lib/motion";
 import { ArrowGlyph } from "./ArrowGlyph";
 
 /**
  * Buttons are full pills, and every one of them is quiet.
  *
- * The old set led with a large muga-gold fill. In this language the gold is a
- * signal rather than a surface: `primary` is ink — the calmest thing a
- * confident button can be — and `clay` exists for the one action per page
- * that genuinely wants warmth. A page with three gold buttons has no primary
- * action at all.
+ * The gold is a signal rather than a surface: `primary` is ink — the calmest
+ * thing a confident button can be — and `clay` exists for the one action per
+ * page that genuinely wants warmth. A page with three gold buttons has no
+ * primary action at all.
+ *
+ * **Nothing here is magnetic.** These used to chase the cursor by up to 4px.
+ * A control that moves while you aim at it is a control you miss, and on a
+ * booking flow that is a real cost for a trick that stops reading as
+ * expensive after the second visit. The pull is gone from the buttons and
+ * from the header, and it should not come back.
+ *
+ * What replaced it is the same fill the `LuxeButton` uses: a pseudo-element
+ * that rises from the bottom edge on hover (`.u-fill` in globals.css). It
+ * stays inside the control's own bounds, it runs on the compositor, and it is
+ * the one hover vocabulary shared by every control on the site.
+ *
+ * No client JavaScript at all now — this was a Framer Motion component purely
+ * to drive the magnetism, and dropping it takes the animation library off the
+ * critical path of every page that renders a button.
  */
 
 export type ButtonVariant =
   "primary" | "clay" | "secondary" | "ghost" | "moto" | "onDark";
 export type ButtonSize = "sm" | "md" | "lg";
 
+/**
+ * Each variant declares the resting surface, the colour the fill rises in
+ * (`after:`), and the label colour once it has risen.
+ */
 const VARIANT: Record<ButtonVariant, string> = {
-  // Warm ink on paper. The default, and it should stay the default.
-  primary:
-    "bg-ink text-paper border border-transparent hover:bg-[color-mix(in_srgb,var(--ink)_88%,var(--paper))]",
-  // Muga silk. One per page, for the action that is actually the point.
-  clay: "bg-clay text-clay-on border border-transparent hover:bg-clay-deep",
-  // A hairline that fills in on hover rather than changing colour.
-  secondary:
-    "bg-transparent text-ink border border-[var(--ink-hairline-strong)] hover:border-ink hover:bg-[rgb(46_42_36/0.045)]",
-  ghost:
-    "bg-transparent text-ink border border-transparent hover:bg-[rgb(46_42_36/0.06)]",
+  primary: cn(
+    "bg-ink text-paper border-transparent",
+    "after:bg-clay hover:text-clay-on focus-visible:text-clay-on",
+  ),
+  clay: cn(
+    "bg-clay text-clay-on border-transparent",
+    "after:bg-ink hover:text-paper focus-visible:text-paper",
+  ),
+  secondary: cn(
+    "bg-transparent text-ink border-[var(--ink-hairline-strong)]",
+    "after:bg-ink hover:border-ink hover:text-paper",
+    "focus-visible:border-ink focus-visible:text-paper",
+  ),
+  ghost: cn(
+    "bg-transparent text-ink border-transparent",
+    "after:bg-[rgb(46_42_36/0.07)]",
+  ),
   // Motorcycle tours and anything with a deadline on it.
-  moto: "bg-ember text-paper border border-transparent hover:bg-ember-hover",
-  onDark:
-    "bg-paper text-ink border border-transparent hover:bg-[color-mix(in_srgb,var(--paper)_86%,var(--clay))]",
+  moto: cn(
+    "bg-ember text-paper border-transparent",
+    "after:bg-ink hover:text-paper focus-visible:text-paper",
+  ),
+  onDark: cn(
+    "bg-paper text-ink border-transparent",
+    "after:bg-clay hover:text-clay-on focus-visible:text-clay-on",
+  ),
 };
 
 const SIZE: Record<ButtonSize, string> = {
   // 44px minimum tap target at every size — mobile is the primary surface.
-  // Wider than the old set: a pill needs horizontal room, or the label ends
-  // up jammed against the curve.
+  // Wider than a square button needs: a pill needs horizontal room, or the
+  // label ends up jammed against the curve.
   sm: "min-h-11 px-5 text-14",
   md: "min-h-12 px-7 text-16",
   lg: "min-h-14 px-9 text-18",
 };
 
 const BASE = cn(
-  "inline-flex items-center justify-center gap-2 select-none",
-  "rounded-[var(--radius-control)] font-sans font-medium text-center",
-  "transition-colors duration-[var(--dur-micro)] ease-brand",
+  "group/btn relative isolate inline-flex select-none items-center justify-center gap-2",
+  "u-fill overflow-hidden rounded-[var(--radius-control)] border text-center",
+  "font-sans font-medium transition-[color,border-color] duration-[var(--dur)] ease-brand",
   "disabled:pointer-events-none disabled:opacity-45",
 );
 
@@ -65,44 +91,7 @@ function surface({ variant = "primary", size = "md", block }: SurfaceProps) {
   return cn(BASE, VARIANT[variant], SIZE[size], block && "w-full");
 }
 
-/**
- * Magnetic pull, capped at `limit` px, desktop pointer only. Touch never
- * triggers it (there is no hover to trigger from) and reduced motion switches
- * it off entirely rather than shortening it.
- *
- * Exported because the header's menu and CTA plates use the same pull — the
- * cap is the whole character of the effect, and two implementations of it
- * would drift apart.
- */
-export function useMagnetic(enabled: boolean, limit = 4) {
-  const ref = useRef<HTMLElement>(null);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-
-  const handlers = enabled
-    ? {
-        onPointerMove: (event: React.PointerEvent) => {
-          if (event.pointerType !== "mouse") return;
-          const el = ref.current;
-          if (!el) return;
-          const rect = el.getBoundingClientRect();
-          const dx = event.clientX - (rect.left + rect.width / 2);
-          const dy = event.clientY - (rect.top + rect.height / 2);
-          setOffset({
-            x: Math.max(-limit, Math.min(limit, (dx / rect.width) * limit * 2)),
-            y: Math.max(
-              -limit,
-              Math.min(limit, (dy / rect.height) * limit * 2),
-            ),
-          });
-        },
-        onPointerLeave: () => setOffset({ x: 0, y: 0 }),
-      }
-    : {};
-
-  return { ref, offset: enabled ? offset : { x: 0, y: 0 }, handlers };
-}
-
-export type ButtonProps = SurfaceProps & HTMLMotionProps<"button">;
+export type ButtonProps = SurfaceProps & ComponentProps<"button">;
 
 export function Button({
   variant,
@@ -112,31 +101,19 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const reduced = useReducedMotion();
-  const { ref, offset, handlers } = useMagnetic(!reduced);
-
   return (
-    <motion.button
-      ref={ref as React.Ref<HTMLButtonElement>}
-      data-motion="magnetic"
+    <button
       className={cn(surface({ variant, size, block }), className)}
-      animate={offset}
-      transition={microTransition}
-      {...handlers}
       {...props}
     >
       {children}
-    </motion.button>
+    </button>
   );
 }
 
-// Created once at module scope. Building it inside the component would make a
-// new component type on every render and remount the link.
-const MotionLink = motion.create(Link);
-
 export type ButtonLinkProps = SurfaceProps &
-  ComponentProps<typeof MotionLink> & {
-    href: ComponentProps<typeof Link>["href"];
+  Omit<ComponentProps<typeof Link>, "className"> & {
+    className?: string;
   };
 
 /** Same surface as `Button`, rendered as a link. Use for navigation. */
@@ -148,21 +125,13 @@ export function ButtonLink({
   children,
   ...props
 }: ButtonLinkProps) {
-  const reduced = useReducedMotion();
-  const { ref, offset, handlers } = useMagnetic(!reduced);
-
   return (
-    <MotionLink
-      ref={ref as React.Ref<HTMLAnchorElement>}
-      data-motion="magnetic"
+    <Link
       className={cn(surface({ variant, size, block }), className)}
-      animate={offset}
-      transition={microTransition}
-      {...handlers}
       {...props}
     >
       {children}
-    </MotionLink>
+    </Link>
   );
 }
 
@@ -217,8 +186,8 @@ export function TextLink({
 }
 
 /**
- * The one arrow in the system now lives in its own module so server
- * components can draw it without pulling Framer Motion in with it. Re-exported
+ * The one arrow in the system lives in its own module so server components
+ * can draw it without pulling an animation library in with it. Re-exported
  * here because thirty call sites already import it from this file.
  */
 export { ArrowGlyph } from "./ArrowGlyph";

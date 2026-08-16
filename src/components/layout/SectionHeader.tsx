@@ -2,6 +2,7 @@ import { cn } from "@/lib/cn";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { TextLink } from "@/components/primitives/Button";
 import { Reveal } from "./Reveal";
+import { AccentedTitle } from "@/components/primitives/AccentedTitle";
 
 /**
  * Eyebrow, headline, optional intro and a link out to the index. Every
@@ -15,6 +16,7 @@ import { Reveal } from "./Reveal";
 export function SectionHeader({
   eyebrow,
   title,
+  accent,
   intro,
   link,
   tone = "light",
@@ -23,6 +25,11 @@ export function SectionHeader({
 }: {
   eyebrow: string;
   title: string;
+  /**
+   * One word from `title`, set in the accent italic. Same rule as `PageHero`:
+   * one word, never a clause, and never the first or last word of the line.
+   */
+  accent?: string;
   intro?: string;
   link?: { href: string; label: string };
   tone?: "light" | "onDark";
@@ -51,7 +58,9 @@ export function SectionHeader({
         >
           {eyebrow}
         </Eyebrow>
-        <h2 className="mt-6 text-36 lg:text-48">{title}</h2>
+        <h2 className="mt-6 text-36 lg:text-48">
+          <AccentedTitle title={title} accent={accent} />
+        </h2>
         {intro ? (
           <p
             className={cn(

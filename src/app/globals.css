@@ -95,6 +95,21 @@
 
   html {
     -webkit-text-size-adjust: 100%;
+    /*
+     * The backstop against sideways scroll, and it has to be on `html` — not
+     * only on `body`.
+     *
+     * `body { overflow-x: clip }` alone reads like it solves this and does
+     * not: the *document element* is still the scrolling box, so a child that
+     * overhangs still produces real, draggable horizontal scroll on a phone
+     * even though the body clips its painting. That is exactly what happened
+     * here — a rotated photograph in the homestays section gave every mobile
+     * visitor 10px of horizontal drift on the home page.
+     *
+     * `clip` rather than `hidden` on purpose: `hidden` would make this a
+     * scroll container and break `position: sticky` on the booking panels.
+     */
+    overflow-x: clip;
   }
 
   body {

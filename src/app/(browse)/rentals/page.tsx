@@ -10,6 +10,7 @@ import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { OutboundLink } from "@/components/primitives/OutboundLink";
 import { BEEPDRIVE_URL } from "@/config/external";
 import { getFeaturedMotorcycleTours } from "@/content/motorcycle-tours";
+import { journeyShots } from "@/config/showcase";
 
 export const metadata: Metadata = {
   title: "Car and bike hire",
@@ -33,6 +34,8 @@ export default function RentalsPage() {
       <PageHero
         eyebrow="Operated by Beep Drive"
         title="Take the wheel yourself"
+        accent="wheel"
+        image={journeyShots.solo}
         intro="Self-drive car and motorcycle hire across the region is run by our partner Beep Drive rather than booked here. It opens in a new tab and is paid for separately."
         tint="shell"
         region="tripura"

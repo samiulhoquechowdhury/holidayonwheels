@@ -7,7 +7,6 @@ import {
 } from "@/components/layout/DetailLayout";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
-import { WeaveBand } from "@/components/layout/WeaveBand";
 import { Reveal } from "@/components/layout/Reveal";
 import { BookingWidget } from "@/components/booking/BookingWidget";
 import { ItineraryTimeline } from "@/components/booking/ItineraryTimeline";
@@ -219,8 +218,7 @@ export default async function MotorcycleTourDetailPage({
 
       {related.length > 0 ? (
         <>
-          <WeaveBand region="nagaland" height={32} opacity={0.45} />
-          <SectionShell tint="sand" pattern="nagaland" patternOpacity={0.03}>
+          <SectionShell tint="sand">
             <SectionHeader
               eyebrow="Also worth a look"
               title="Other expeditions on this ground"

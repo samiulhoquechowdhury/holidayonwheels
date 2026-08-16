@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
-import { WeaveBand } from "@/components/layout/WeaveBand";
 import { Reveal } from "@/components/layout/Reveal";
 import { Media } from "@/components/primitives/Media";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
@@ -68,11 +67,7 @@ export default async function DestinationDetailPage({
       />
 
       {/* Editorial opening */}
-      <SectionShell
-        tint="paper"
-        pattern={destination.region}
-        patternOpacity={0.025}
-      >
+      <SectionShell tint="paper">
         <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
           <Reveal>
             <p className="text-22 text-ink-soft">{destination.intro}</p>
@@ -156,12 +151,7 @@ export default async function DestinationDetailPage({
 
       {tours.length > 0 ? (
         <>
-          <WeaveBand region={destination.region} height={32} opacity={0.45} />
-          <SectionShell
-            tint="sand"
-            pattern={destination.region}
-            patternOpacity={0.03}
-          >
+          <SectionShell tint="sand">
             <SectionHeader
               eyebrow="Guided tours"
               title={`Trips through ${destination.name}`}
@@ -186,12 +176,7 @@ export default async function DestinationDetailPage({
 
       {motos.length > 0 ? (
         <>
-          <WeaveBand region={destination.region} height={36} opacity={0.5} />
-          <SectionShell
-            tint="night"
-            pattern={destination.region}
-            patternOpacity={0.05}
-          >
+          <SectionShell tint="night">
             <SectionHeader
               tone="onDark"
               eyebrow="Motorcycle expeditions"
@@ -218,12 +203,7 @@ export default async function DestinationDetailPage({
 
       {stays.length > 0 ? (
         <>
-          <WeaveBand region={destination.region} height={32} opacity={0.45} />
-          <SectionShell
-            tint="shell"
-            pattern={destination.region}
-            patternOpacity={0.03}
-          >
+          <SectionShell tint="shell">
             <SectionHeader
               eyebrow="Homestays"
               title={`Where to stay in ${destination.name}`}
@@ -248,12 +228,7 @@ export default async function DestinationDetailPage({
 
       {events.length > 0 ? (
         <>
-          <WeaveBand region={destination.region} height={32} opacity={0.45} />
-          <SectionShell
-            tint="sand"
-            pattern={destination.region}
-            patternOpacity={0.03}
-          >
+          <SectionShell tint="sand">
             <SectionHeader
               eyebrow="Festivals and events"
               title={`What happens in ${destination.name}`}

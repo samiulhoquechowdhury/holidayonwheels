@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { DetailLayout, DetailSections } from "@/components/layout/DetailLayout";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
-import { WeaveBand } from "@/components/layout/WeaveBand";
 import { Reveal } from "@/components/layout/Reveal";
 import { StayBookingWidget } from "@/components/booking/StayBookingWidget";
 import { StayCard, TourCard } from "@/components/cards/ResultCard";
@@ -176,8 +175,7 @@ export default async function HomestayDetailPage({
 
       {tours.length > 0 ? (
         <>
-          <WeaveBand region={stay.region} height={32} opacity={0.45} />
-          <SectionShell tint="sand" pattern={stay.region} patternOpacity={0.03}>
+          <SectionShell tint="sand">
             <SectionHeader
               eyebrow="Guided trips nearby"
               title={`Tours through ${getDestinationName(stay.state)}`}
@@ -203,8 +201,7 @@ export default async function HomestayDetailPage({
 
       {nearby.length > 0 ? (
         <>
-          <WeaveBand region="neutral" height={28} opacity={0.4} />
-          <SectionShell tint="shell" pattern="neutral" patternOpacity={0.03}>
+          <SectionShell tint="shell">
             <SectionHeader
               eyebrow="Also in this state"
               title="Other houses nearby"

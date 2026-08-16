@@ -42,13 +42,13 @@ export default async function ToursPage({
         accent="Northeast"
         media={false}
         intro="Fixed departures and private trips across all eight states. Every one includes a guide from the region, all ground transport, and any permits you need."
-        tint="sand"
+        tint="paper"
         region="assam"
       >
         <SearchBar className="max-w-3xl" />
       </PageHero>
 
-      <SectionShell tint="paper">
+      <SectionShell tint="paper" spacing="tight">
         <ToursBrowser
           tours={tours}
           destinations={destinations}

@@ -1,35 +1,44 @@
 import { cn } from "@/lib/cn";
-import { WeavePattern } from "./WeavePattern";
-import type { WeaveRegion } from "./weave-motifs";
 
 /**
- * Owns section surface, background texture and vertical rhythm. Every section
- * on the site renders through this — that is the point. Without it, surface
- * and padding logic gets copy-pasted into thirty files and drifts.
+ * Owns section surface and vertical rhythm. Every section on the site renders
+ * through this — that is the point. Without it, surface and padding logic gets
+ * copy-pasted into thirty files and drifts.
  *
- * Four surfaces, down from seven. The old system cycled five tints so no two
- * adjacent sections matched, which meant the page was always changing colour
- * and never resting. This one keeps most of the site on `paper` and separates
- * sections with space and hairlines instead. `sand` is an event — twice a
- * page at most — and `night` happens once.
+ * **The weave texture is gone.** Every section used to be able to draw a
+ * regional motif behind its content at 2–5% opacity, with decorated bands
+ * between sections. Two problems, and the second is the fatal one: it put a
+ * busy field behind photography that is now doing the same job far better,
+ * and it dated the design — a patterned background is the single clearest
+ * signal that a layout was made to fill space rather than to be read. The
+ * page is now separated by surface, colour and air alone.
+ *
+ * The motifs themselves survive in `weave-motifs.ts`, where `Media` still
+ * uses them to draw its no-image placeholder. That is the one place a woven
+ * pattern still earns its keep.
+ *
+ * Eight surfaces: four neutrals and four tints from the state palette. Most
+ * of the site stays on `paper`; a tint is an event, and `night` happens once
+ * per page at most.
  */
 
-export type SectionTint = "paper" | "shell" | "sand" | "night";
+export type SectionTint =
+  "paper" | "shell" | "sand" | "night" | "mint" | "blush" | "lilac" | "butter";
 
 const TINT_CLASS: Record<SectionTint, string> = {
   paper: "bg-paper text-ink",
   shell: "bg-shell text-ink",
   sand: "bg-sand text-ink",
   night: "bg-night text-night-text is-dark",
+  mint: "bg-mint text-ink",
+  blush: "bg-blush text-ink",
+  lilac: "bg-lilac text-ink",
+  butter: "bg-butter text-ink",
 };
 
 type SectionShellProps = {
   children: React.ReactNode;
   tint?: SectionTint;
-  /** Region motif for the background texture. Omit for a bare surface. */
-  pattern?: WeaveRegion;
-  patternScale?: number;
-  patternOpacity?: number;
   /** `normal` is the 104/176px rhythm; `tight` halves it; `flush` removes it. */
   spacing?: "normal" | "tight" | "flush";
   /** Content column width. `wide` is for full-bleed media rows. */
@@ -58,12 +67,6 @@ const WIDTH_CLASS = {
 export function SectionShell({
   children,
   tint = "paper",
-  pattern,
-  patternScale = 7,
-  // A tenth of what it was. The weave is a texture you notice on the second
-  // visit, not a pattern you read — at the old 0.045 it competed with the
-  // type for a design whose whole argument is empty space.
-  patternOpacity = 0.022,
   spacing = "normal",
   width = "content",
   as: Tag = "section",
@@ -83,13 +86,6 @@ export function SectionShell({
       )}
       {...rest}
     >
-      {pattern ? (
-        <WeavePattern
-          region={pattern}
-          scale={patternScale}
-          opacity={tint === "night" ? patternOpacity * 2 : patternOpacity}
-        />
-      ) : null}
       <div className={cn("relative", WIDTH_CLASS[width], innerClassName)}>
         {children}
       </div>

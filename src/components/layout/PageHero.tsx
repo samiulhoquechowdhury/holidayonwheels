@@ -80,8 +80,11 @@ export function PageHero({
       tint={tint}
       spacing="flush"
       className={cn(
-        "pt-[calc(var(--header-h)+3.5rem)] pb-14",
-        "lg:pt-[calc(var(--header-h)+7rem)] lg:pb-20",
+        // No bottom padding: the closing rule *is* the boundary, and the
+        // next section brings its own top padding. With padding here as well
+        // every inner page opened with ~176px of dead space under the rule.
+        "pt-[calc(var(--header-h)+3.5rem)] pb-0",
+        "lg:pt-[calc(var(--header-h)+7rem)]",
       )}
     >
       <div

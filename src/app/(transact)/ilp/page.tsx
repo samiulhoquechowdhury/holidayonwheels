@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
-import { WeaveBand } from "@/components/layout/WeaveBand";
 import { Reveal } from "@/components/layout/Reveal";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { ButtonLink } from "@/components/primitives/Button";
@@ -51,7 +50,7 @@ export default function ILPPage() {
 
       {/* Which states, at a glance — the question everyone actually arrives
           with, answered before anything else. */}
-      <SectionShell tint="paper" pattern="manipur" patternOpacity={0.025}>
+      <SectionShell tint="paper">
         <SectionHeader
           eyebrow="At a glance"
           title="Which states need what"
@@ -112,8 +111,7 @@ export default function ILPPage() {
         </p>
       </SectionShell>
 
-      <WeaveBand region="manipur" height={32} opacity={0.45} />
-      <SectionShell tint="shell" pattern="manipur" patternOpacity={0.03}>
+      <SectionShell tint="shell">
         <SectionHeader
           eyebrow="How we handle it"
           title="Four steps, none of them yours"
@@ -139,8 +137,7 @@ export default function ILPPage() {
         </Reveal>
       </SectionShell>
 
-      <WeaveBand region="nagaland" height={28} opacity={0.4} />
-      <SectionShell tint="sand" pattern="nagaland" patternOpacity={0.03}>
+      <SectionShell tint="sand">
         <SectionHeader
           eyebrow="Questions"
           title="What people usually ask"

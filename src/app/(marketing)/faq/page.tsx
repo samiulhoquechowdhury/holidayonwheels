@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionShell } from "@/components/layout/SectionShell";
-import { WeaveBand } from "@/components/layout/WeaveBand";
 import { Reveal } from "@/components/layout/Reveal";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { ButtonLink } from "@/components/primitives/Button";
@@ -95,13 +94,7 @@ export default function FaqPage() {
         </div>
       </SectionShell>
 
-      <WeaveBand region="manipur" height={28} opacity={0.4} />
-      <SectionShell
-        tint="shell"
-        pattern="manipur"
-        patternOpacity={0.03}
-        spacing="tight"
-      >
+      <SectionShell tint="shell" spacing="tight">
         <Reveal className="max-w-2xl">
           <Eyebrow tone="sage">Still stuck</Eyebrow>
           <h2 className="mt-5 text-36">Ask us the awkward one.</h2>

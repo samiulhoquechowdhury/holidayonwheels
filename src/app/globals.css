@@ -484,6 +484,24 @@
     animation: route-fade var(--dur-route) var(--ease);
   }
 
+  /*
+   * A horizontally scrollable row with no visible scrollbar — the state chip
+   * rows on the destinations and tours pages.
+   *
+   * Only ever on a row that is *obviously* scrollable from its content being
+   * cut off mid-chip. Hiding the bar on something whose overflow is not
+   * visually implied is how a filter row ends up with three options nobody
+   * ever finds.
+   */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
   /* ---- Marquee ----------------------------------------------------------- */
 
   /*

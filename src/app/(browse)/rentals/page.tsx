@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
-import { WeaveBand } from "@/components/layout/WeaveBand";
 import { Reveal } from "@/components/layout/Reveal";
 import { RentalsOutbound } from "@/components/home/RentalsOutbound";
 import { MotoCard } from "@/components/cards/ResultCard";
@@ -69,8 +68,7 @@ export default function RentalsPage() {
 
       {/* The disambiguation. Riders looking for a guided route land here more
           often than not, and this stops them clicking out by mistake. */}
-      <WeaveBand region="nagaland" height={36} opacity={0.5} />
-      <SectionShell tint="night" pattern="nagaland" patternOpacity={0.05}>
+      <SectionShell tint="night">
         <SectionHeader
           tone="onDark"
           eyebrow="Looking for something else?"

@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { SectionShell } from "@/components/layout/SectionShell";
-import { WeaveBand } from "@/components/layout/WeaveBand";
-import { WeavePattern } from "@/components/layout/WeavePattern";
 import { Reveal } from "@/components/layout/Reveal";
 import { Button, ButtonLink } from "@/components/primitives/Button";
 import { Chip, FilterChip } from "@/components/primitives/Chip";
@@ -10,7 +8,6 @@ import { PriceTag } from "@/components/primitives/PriceTag";
 import { Media } from "@/components/primitives/Media";
 import { OutboundLink } from "@/components/primitives/OutboundLink";
 import { ResultCard } from "@/components/cards/ResultCard";
-import { weaveMotifs, weaveRegions } from "@/components/layout/weave-motifs";
 import { BEEPDRIVE_URL } from "@/config/external";
 
 export const metadata: Metadata = {
@@ -43,40 +40,14 @@ export default function DevPage() {
         </p>
       </SectionShell>
 
-      {/* ---- Weave motifs ------------------------------------------------ */}
-      <Spec title="WeaveBand" note="The signature divider. One per region.">
-        <ul className="flex flex-col gap-8">
-          {weaveRegions.map((region) => (
-            <li key={region}>
-              <p className="u-label mb-3 text-ink-soft">
-                {weaveMotifs[region].label} — {weaveMotifs[region].tradition}
-              </p>
-              <div className="border-y border-[var(--ink-hairline)]">
-                <WeaveBand region={region} height={36} opacity={0.55} />
-              </div>
-            </li>
-          ))}
-        </ul>
-      </Spec>
-
-      <Spec
-        title="WeavePattern"
-        note="The same motifs as a background wash, at 3–6% and 5–8× scale."
-      >
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {weaveRegions.slice(0, 8).map((region) => (
-            <li
-              key={region}
-              className="relative isolate h-40 overflow-hidden rounded-[var(--radius-media)] bg-sand"
-            >
-              <WeavePattern region={region} scale={6} opacity={0.06} />
-              <p className="relative p-4 text-14">
-                {weaveMotifs[region].label}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </Spec>
+      {/*
+        The WeaveBand and WeavePattern specs used to live here. Both
+        components are gone: the woven background wash competed with the
+        photography that replaced it, and a patterned ground is the clearest
+        signal a layout was made to fill space rather than to be read. The
+        motifs themselves survive in `weave-motifs.ts`, where `Media` uses
+        them to draw its no-image placeholder.
+      */}
 
       {/* ---- Type -------------------------------------------------------- */}
       <Spec
@@ -322,7 +293,6 @@ function Spec({
 }) {
   return (
     <>
-      <WeaveBand region="neutral" height={24} opacity={0.3} />
       <SectionShell tint={tint} spacing="tight">
         <h2
           className={tint === "night" ? "text-28 text-night-text" : "text-28"}

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
-import { WeaveBand } from "@/components/layout/WeaveBand";
 import { Reveal } from "@/components/layout/Reveal";
 import { MotoCard } from "@/components/cards/ResultCard";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
@@ -68,8 +67,7 @@ export default function MotorcycleToursPage() {
         </ul>
       </SectionShell>
 
-      <WeaveBand region="nagaland" height={36} opacity={0.5} />
-      <SectionShell tint="night" pattern="nagaland" patternOpacity={0.05}>
+      <SectionShell tint="night">
         <SectionHeader
           tone="onDark"
           eyebrow="The support vehicle"

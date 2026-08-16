@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { SectionShell } from "@/components/layout/SectionShell";
-import { WeaveBand } from "@/components/layout/WeaveBand";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { ButtonLink } from "@/components/primitives/Button";
 
@@ -18,8 +17,6 @@ export default function NotFound() {
     <>
       <SectionShell
         tint="shell"
-        pattern="neutral"
-        patternOpacity={0.04}
         spacing="flush"
         className="pt-[calc(var(--header-h)+5rem)] pb-20 lg:pt-[calc(var(--header-h)+8rem)] lg:pb-28"
       >
@@ -36,8 +33,6 @@ export default function NotFound() {
           Back to the start
         </ButtonLink>
       </SectionShell>
-
-      <WeaveBand region="neutral" height={28} opacity={0.4} />
 
       <SectionShell tint="paper" spacing="tight">
         <Eyebrow className="mb-6">Or go straight to</Eyebrow>

@@ -8,7 +8,9 @@ import {
 } from "@/components/search/FilterRail";
 import { ResultsGrid, EmptyResults } from "@/components/search/ResultsGrid";
 import { TourCard } from "@/components/cards/ResultCard";
-import { Reveal } from "@/components/layout/Reveal";
+import { Rise } from "@/components/motion/Rise";
+import { stateColours } from "@/config/palette";
+import { cn } from "@/lib/cn";
 import type { TourSummary } from "@/content/tours";
 import type { Destination } from "@/content/types";
 
@@ -144,6 +146,18 @@ export function ToursBrowser({
     setState({ type: [], state: [], duration: [], difficulty: [] });
   }
 
+  /** Flat list of what is currently applied, for the chip row. */
+  const active = useMemo(() => {
+    const out: { group: string; value: string; label: string }[] = [];
+    for (const group of groups) {
+      for (const value of state[group.id] ?? []) {
+        const option = group.options.find((o) => o.value === value);
+        if (option) out.push({ group: group.id, value, label: option.label });
+      }
+    }
+    return out;
+  }, [groups, state]);
+
   return (
     <div className="grid gap-10 lg:grid-cols-[260px_1fr] lg:gap-16">
       <FilterRail
@@ -155,9 +169,67 @@ export function ToursBrowser({
       />
 
       <div className="min-w-0">
-        <div className="mb-10 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--ink-hairline)] pb-5">
-          <h2 className="u-label text-ink-soft">
+        {/*
+         * The fastest path to the most common filter, before the rail.
+         * "Which state" is the first question most people arrive with, and
+         * making them find it inside a checkbox group is the difference
+         * between filtering and giving up. The chips carry each state's own
+         * colour, so this row reads as the same object as the jump bar on the
+         * destinations page.
+         */}
+        <div className="mb-8">
+          <p className="u-label text-ink-faint">Jump to a state</p>
+          <ul className="-mx-[var(--gutter)] mt-3 flex scrollbar-none gap-2 overflow-x-auto px-[var(--gutter)] pb-1 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0">
+            {destinations.map((destination) => {
+              const on = (state.state ?? []).includes(destination.slug);
+              const colour = stateColours[destination.slug];
+              return (
+                <li key={destination.slug} className="shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => toggle("state", destination.slug)}
+                    aria-pressed={on}
+                    className={cn(
+                      "u-label flex min-h-9 items-center gap-2.5 rounded-full border px-4",
+                      "transition-colors duration-[var(--dur-micro)] ease-brand",
+                      on
+                        ? "border-transparent text-night-text"
+                        : "border-[var(--ink-hairline)] hover:border-[var(--ink-hairline-strong)]",
+                    )}
+                    style={{
+                      backgroundColor: on ? colour.surface : undefined,
+                      color: on ? undefined : colour.ink,
+                    }}
+                  >
+                    {!on ? (
+                      <span
+                        aria-hidden="true"
+                        className="size-2 shrink-0 rounded-full"
+                        style={{ backgroundColor: colour.surface }}
+                      />
+                    ) : null}
+                    <span className="whitespace-nowrap">
+                      {destination.name}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        {/*
+         * Sticky, because the alternative is scrolling back past forty cards
+         * to change the sort or to find out how many results you are looking
+         * at. It sits under the header, and it is the only sticky thing on
+         * the page.
+         */}
+        <div className="sticky top-[var(--header-h)] z-20 -mx-1 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--ink-hairline)] bg-paper/92 px-1 py-4 backdrop-blur-md">
+          {/* Announced when the count changes — a filter that silently
+              rewrites the page is unusable with a screen reader. */}
+          <h2 className="u-label text-ink-soft" aria-live="polite">
             {results.length} {results.length === 1 ? "trip" : "trips"}
+            {active.length > 0 ? ` of ${tours.length}` : ""}
           </h2>
           <div className="flex items-center gap-3">
             <label htmlFor="sort" className="u-label text-ink-soft">
@@ -178,23 +250,60 @@ export function ToursBrowser({
           </div>
         </div>
 
-        {results.length > 0 ? (
-          <ResultsGrid count={results.length}>
-            {results.map((tour, index) => (
-              <li key={tour.slug}>
-                <Reveal delay={Math.min(index, 5) * 0.04}>
-                  <TourCard
-                    tour={tour}
-                    priority={index < 3}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 400px"
-                  />
-                </Reveal>
+        {/*
+         * What is currently applied, and how to undo any one of it. The rail
+         * already holds the checkboxes, but on a phone the rail is collapsed
+         * behind a button — without this row a visitor can filter themselves
+         * down to two results with no visible explanation of why.
+         */}
+        {active.length > 0 ? (
+          <ul className="mt-6 flex flex-wrap items-center gap-2">
+            {active.map((item) => (
+              <li key={`${item.group}-${item.value}`}>
+                <button
+                  type="button"
+                  onClick={() => toggle(item.group, item.value)}
+                  className="u-label group flex min-h-9 items-center gap-2 rounded-full bg-ink px-4 text-paper transition-colors duration-[var(--dur-micro)] ease-brand hover:bg-clay hover:text-clay-on"
+                >
+                  {item.label}
+                  <span aria-hidden="true" className="text-[13px] leading-none">
+                    ×
+                  </span>
+                  <span className="u-sr-only">— remove this filter</span>
+                </button>
               </li>
             ))}
-          </ResultsGrid>
-        ) : (
-          <EmptyResults onClear={clear} />
-        )}
+            <li>
+              <button
+                type="button"
+                onClick={clear}
+                className="u-label min-h-9 px-3 text-ink-faint underline underline-offset-4 transition-colors hover:text-ink"
+              >
+                Clear all
+              </button>
+            </li>
+          </ul>
+        ) : null}
+
+        <div className="mt-10">
+          {results.length > 0 ? (
+            <ResultsGrid count={results.length}>
+              {results.map((tour, index) => (
+                <li key={tour.slug}>
+                  <Rise delay={Math.min(index, 5) * 0.04} distance={20}>
+                    <TourCard
+                      tour={tour}
+                      priority={index < 3}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 400px"
+                    />
+                  </Rise>
+                </li>
+              ))}
+            </ResultsGrid>
+          ) : (
+            <EmptyResults onClear={clear} />
+          )}
+        </div>
       </div>
     </div>
   );

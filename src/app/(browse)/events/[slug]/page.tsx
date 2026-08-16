@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { DetailLayout, DetailSections } from "@/components/layout/DetailLayout";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
-import { WeaveBand } from "@/components/layout/WeaveBand";
 import { Reveal } from "@/components/layout/Reveal";
 import { TicketPicker } from "@/components/booking/TicketPicker";
 import { EventCard, StayCard } from "@/components/cards/ResultCard";
@@ -129,12 +128,7 @@ export default async function EventDetailPage({
 
       {stays.length > 0 ? (
         <>
-          <WeaveBand region={event.region} height={32} opacity={0.45} />
-          <SectionShell
-            tint="shell"
-            pattern={event.region}
-            patternOpacity={0.03}
-          >
+          <SectionShell tint="shell">
             <SectionHeader
               eyebrow="Where to stay"
               title={`Homestays in ${getDestinationName(event.state)}`}
@@ -160,8 +154,7 @@ export default async function EventDetailPage({
 
       {others.length > 0 ? (
         <>
-          <WeaveBand region="neutral" height={28} opacity={0.4} />
-          <SectionShell tint="shell" pattern="neutral" patternOpacity={0.03}>
+          <SectionShell tint="shell">
             <SectionHeader
               eyebrow="Also in this state"
               title="Other events nearby"

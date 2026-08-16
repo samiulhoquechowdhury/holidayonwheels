@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
-import { WeaveBand } from "@/components/layout/WeaveBand";
 import { Reveal } from "@/components/layout/Reveal";
 import { Media } from "@/components/primitives/Media";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
@@ -51,7 +50,7 @@ export default function AboutPage() {
         region="assam"
       />
 
-      <SectionShell tint="paper" pattern="assam" patternOpacity={0.025}>
+      <SectionShell tint="paper">
         <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
           <Reveal>
             <p className="text-22 text-ink-soft">
@@ -96,8 +95,7 @@ export default function AboutPage() {
         </div>
       </SectionShell>
 
-      <WeaveBand region="meghalaya" height={32} opacity={0.45} />
-      <SectionShell tint="shell" pattern="meghalaya" patternOpacity={0.035}>
+      <SectionShell tint="shell">
         <SectionHeader
           eyebrow="How we work"
           title="Four things we will not compromise on"
@@ -115,8 +113,7 @@ export default function AboutPage() {
         </ul>
       </SectionShell>
 
-      <WeaveBand region="sikkim" height={32} opacity={0.45} />
-      <SectionShell tint="shell" pattern="sikkim" patternOpacity={0.035}>
+      <SectionShell tint="shell">
         <Reveal className="max-w-2xl">
           <Eyebrow>Talk to us</Eyebrow>
           <h2 className="mt-5 text-36">

@@ -10,6 +10,7 @@ import { ResultsGrid, EmptyResults } from "@/components/search/ResultsGrid";
 import { TourCard } from "@/components/cards/ResultCard";
 import { Rise } from "@/components/motion/Rise";
 import { stateColours } from "@/config/palette";
+import { PARTY_TYPES, matchesParty, type PartyType } from "@/lib/party";
 import { cn } from "@/lib/cn";
 import type { TourSummary } from "@/content/tours";
 import type { Destination } from "@/content/types";
@@ -58,28 +59,17 @@ export function ToursBrowser({
       {
         id: "type",
         label: "Travelling as",
-        options: [
-          {
-            value: "couple",
-            label: "A couple",
-            count: count(tours, "type", "couple"),
-          },
-          {
-            value: "honeymoon",
-            label: "Honeymoon",
-            count: count(tours, "type", "honeymoon"),
-          },
-          {
-            value: "group",
-            label: "Small group",
-            count: count(tours, "type", "group"),
-          },
-          {
-            value: "solo",
-            label: "On my own",
-            count: count(tours, "type", "solo"),
-          },
-        ],
+        /*
+         * The planner's five, not the catalogue's four. `matchesParty` is
+         * what reconciles them — "family" is derived rather than authored,
+         * and it is derived in exactly one place so this rail and the planner
+         * can never disagree about which trips suit a family.
+         */
+        options: PARTY_TYPES.map((option) => ({
+          value: option.id,
+          label: option.label,
+          count: tours.filter((tour) => matchesParty(tour, option.id)).length,
+        })),
       },
       {
         id: "state",
@@ -311,16 +301,8 @@ export function ToursBrowser({
 
 /* ---------------------------------------------------------------------- */
 
-function count(
-  tours: TourSummary[],
-  key: "type" | "difficulty",
-  value: string,
-): number {
-  return tours.filter((tour) =>
-    key === "type"
-      ? tour.types.includes(value as TourSummary["types"][number])
-      : tour.difficulty === value,
-  ).length;
+function count(tours: TourSummary[], key: "difficulty", value: string): number {
+  return tours.filter((tour) => tour[key] === value).length;
 }
 
 function inDurationBand(nights: number, band: string): boolean {
@@ -342,10 +324,7 @@ export function filterAndSort(
 
     // Within a group the filters are OR; across groups they are AND. That is
     // what people expect and what makes the result count feel honest.
-    if (
-      types.length &&
-      !types.some((t) => tour.types.includes(t as TourSummary["types"][number]))
-    )
+    if (types.length && !types.some((t) => matchesParty(tour, t as PartyType)))
       return false;
     if (
       states.length &&

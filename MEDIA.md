@@ -21,6 +21,7 @@ It is temporary and it is deliberately confined to three files:
 | File                      | What it holds                                              |
 | ------------------------- | ---------------------------------------------------------- |
 | `src/config/showcase.ts`  | Every mock URL, grouped by section, with the subject brief |
+| `src/content/routes.ts`   | No media, but names every place-day the planner can draft  |
 | `src/lib/image-loader.ts` | Sends resizing to the stock host instead of our optimiser  |
 | `next.config.ts`          | The `remotePatterns` allow-list and the loader wiring      |
 
@@ -50,6 +51,39 @@ To retire the mocks:
 
 Nothing else in the app changes: every consumer holds its own aspect ratio, so
 the swap causes no layout shift.
+
+### The eight state frames are now the most-seen images on the site
+
+`stateShots` used to appear on the destinations index and nowhere else. The
+trip planner opens `/tours` with all eight of them as cards, which makes them
+the first photography most visitors see and raises the bar on how wrong a
+placeholder is allowed to be.
+
+Four of the eight are recognisably somewhere else. In priority order:
+
+| State   | What the placeholder actually is | Wanted                                   |
+| ------- | -------------------------------- | ---------------------------------------- |
+| Tripura | _(replaced — was the Taj Mahal)_ | Ujjayanta Palace, or the Unakoti reliefs |
+| Manipur | The Karaweik barge, Yangon       | Phumdis on Loktak, or Ima Keithel        |
+| Mizoram | Mount Bromo, Indonesia           | Aizawl along its ridge, or Reiek Tlang   |
+| Assam   | A rowing boat on an alpine lake  | A country boat on the Brahmaputra        |
+
+The Tripura frame was swapped for a generic street scene in the interim,
+because the Taj Mahal is not a placeholder — it is a claim, and it is the
+first thing anyone who knows the country would notice on a card headed
+"Tripura". The other three are wrong but not _famous_, so they can wait for
+the shoot.
+
+Every one of these crops to 4:5 on the planner card and 4:5 again on the
+destinations index, so a single portrait frame per state covers both.
+
+### One new mock: the family card
+
+`journeyShots.family` was added for the planner's party step. It is the only
+one of the five that cannot be carried by a landscape — a card that promises
+"shorter driving days, rooms that connect" and shows nobody under thirty is
+not making the promise. Two adults and two children on a village path, or at
+a homestay table. Not a resort pool.
 
 ---
 

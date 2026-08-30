@@ -64,7 +64,11 @@ export const stateShots: Record<string, string> = {
   nagaland: shot("1516450360452-9312f5e86fc7"),
   manipur: shot("1490077476659-095159692ab5"),
   mizoram: shot("1523592121529-f6dde35f079e"),
-  tripura: shot("1548013146-72479768bada"),
+  // Was an unmistakable frame of the Taj Mahal. A generic stand-in is a
+  // placeholder; a landmark two thousand kilometres away, on a card headed
+  // "Tripura", is a claim — and it is the first thing anyone who knows the
+  // country would notice. See MEDIA.md for the rest of this list.
+  tripura: shot("1601050690597-df0568f70950"),
   sikkim: shot("1571401835393-8c5f35328320"),
 };
 
@@ -85,10 +89,18 @@ export const tourShots = [
   shot("1483728642387-6c3bdd6c93e5"), // dusk over a dark range
 ];
 
-/** How you travel. Four, matching the four tour types. */
+/**
+ * How you travel. Five, matching the planner's party types.
+ *
+ * `family` is the odd one out and the one to re-shoot first: the other four
+ * can carry a landscape with a person in it, but a family card that does not
+ * visibly contain a child is not making the promise the card is there to
+ * make. Two adults and two children on a village path, not a resort pool.
+ */
 export const journeyShots = {
   couple: shot("1501785888041-af3ef285b470"),
   honeymoon: shot("1439853949127-fa647821eba0"),
+  family: shot("1478131143081-80f7f84ca84d"),
   group: shot("1503220317375-aaad61436b1b"),
   solo: shot("1558981806-ec527fa84c39"),
 } as const;

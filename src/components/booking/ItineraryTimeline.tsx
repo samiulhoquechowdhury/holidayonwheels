@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/cn";
+import { formatShort, formatWeekday } from "@/lib/date";
 import { Chip } from "@/components/primitives/Chip";
 import type { ItineraryDay, MealPlan } from "@/content/types";
 
@@ -12,6 +13,13 @@ import type { ItineraryDay, MealPlan } from "@/content/types";
  * Uses native `<details>` semantics via a button + region pair rather than
  * `<details>` itself, because the summary needs to carry chips and a rule
  * line that `<summary>` handles badly across browsers.
+ *
+ * Pass `dates` — one ISO string per day, in order — and the day column
+ * carries the real date under the day number. A catalogue tour has no dates
+ * until a departure is chosen, so it renders without; a planned trip always
+ * has them, and on a planned trip the date is the more useful of the two
+ * numbers. It is the same component either way rather than a second timeline,
+ * because two of these would have drifted apart by the second change.
  */
 
 const MEAL_LABEL: Record<MealPlan, string> = {
@@ -23,9 +31,12 @@ const MEAL_LABEL: Record<MealPlan, string> = {
 
 export function ItineraryTimeline({
   days,
+  dates,
   className,
 }: {
   days: ItineraryDay[];
+  /** One ISO date per day, in order. Omit for an undated catalogue tour. */
+  dates?: string[];
   className?: string;
 }) {
   const [open, setOpen] = useState<number[]>([1]);
@@ -69,8 +80,16 @@ export function ItineraryTimeline({
                   aria-controls={panelId}
                   className="flex w-full items-start gap-4 py-5 text-left sm:gap-6"
                 >
-                  <span className="u-label u-num mt-1 w-14 shrink-0 text-ink-faint sm:w-16">
-                    Day {day.day}
+                  <span className="mt-1 w-14 shrink-0 sm:w-16">
+                    <span className="u-label u-num block text-ink-faint">
+                      Day {day.day}
+                    </span>
+                    {dates?.[day.day - 1] ? (
+                      <span className="u-num mt-1 block text-12 text-ink-soft">
+                        {formatWeekday(dates[day.day - 1])}{" "}
+                        {formatShort(dates[day.day - 1])}
+                      </span>
+                    ) : null}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-18 font-medium sm:text-22">

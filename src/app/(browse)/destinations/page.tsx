@@ -6,7 +6,7 @@ import { SplitReveal } from "@/components/motion/SplitReveal";
 import { Rise } from "@/components/motion/Rise";
 import { ParallaxMedia } from "@/components/motion/Parallax";
 import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
-import { StateJumpBar } from "@/components/destinations/StateJumpBar";
+import { JumpBar } from "@/components/layout/JumpBar";
 import { MonthStrip } from "@/components/destinations/MonthStrip";
 import { getDestinations } from "@/content/destinations";
 import { getTours } from "@/content/tours";
@@ -36,7 +36,8 @@ export const metadata: Metadata = {
  *    and jump chip all take that state's colour from the shared palette, so
  *    the reader learns the code by the second block.
  *  - **A jump bar**, because the page is nine screens long and the eighth
- *    state was previously unreachable without scrolling past seven.
+ *    state was previously unreachable without scrolling past seven. It is the
+ *    shared `JumpBar` — the events index uses the same one for months.
  *  - **A month strip** in place of a line of prose listing the good months —
  *    the single most useful upgrade on the page, and the only one that makes
  *    two states comparable at a glance.
@@ -59,7 +60,15 @@ export default function DestinationsPage() {
         region="meghalaya"
       />
 
-      <StateJumpBar destinations={destinations} />
+      <JumpBar
+        label="Jump to a state"
+        items={destinations.map((destination) => ({
+          id: destination.slug,
+          label: destination.name,
+          colour: stateColours[destination.slug].surface,
+          ink: stateColours[destination.slug].ink,
+        }))}
+      />
 
       {destinations.map((destination, index) => (
         <StateBlock

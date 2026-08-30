@@ -75,14 +75,14 @@ export function LocatorMap({
                 cx={x}
                 cy={y}
                 r="5"
-                className="fill-sage"
+                className="fill-jade"
                 opacity="0.85"
               />
               <circle
                 cx={x}
                 cy={y}
                 r="11"
-                className="fill-sage"
+                className="fill-jade"
                 opacity="0.12"
               />
             </g>
@@ -95,12 +95,20 @@ export function LocatorMap({
       <ul className="mt-6 flex flex-col gap-2 border-t border-[var(--ink-hairline)] pt-5">
         {homestays.map((stay) => (
           <li key={stay.slug}>
+            {/*
+              Stacked, not two columns.
+              Side by side, the name and the locality were fighting over a
+              320px rail and the name lost: nine of the twelve rendered as
+              "The Mishing stilt …", "Riv…", "T…". A locator whose list you
+              cannot read is not a locator. The name now gets the full width
+              and the locality sits under it as the caption it always was.
+            */}
             <Link
               href={`/homestays/${stay.slug}`}
-              className="flex min-h-11 items-baseline justify-between gap-3 text-14 transition-colors hover:text-sage-ink"
+              className="flex min-h-11 flex-col justify-center py-1 text-14 transition-colors hover:text-jade-ink"
             >
-              <span className="min-w-0 truncate">{stay.name}</span>
-              <span className="u-label shrink-0 text-ink-faint">
+              <span className="leading-snug">{stay.name}</span>
+              <span className="u-label mt-0.5 text-ink-faint">
                 {stay.locality}
               </span>
             </Link>

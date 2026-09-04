@@ -4,6 +4,15 @@ import {
   type DayKey,
 } from "@/content/day-library";
 import { getRoute, type RouteLeg } from "@/content/routes";
+import {
+  GATEWAY_POINTS,
+  TRANSFER_DAY_KM,
+  VEHICLE_OPTIONS,
+  optionsForPlace,
+  type ActivityOption,
+  type StayOption,
+  type TransferOption,
+} from "@/content/day-options";
 import { getDestinationBySlug } from "@/content/destinations";
 import { getToursByState } from "@/content/tours";
 import { matchesParty, type PartyType } from "./party";
@@ -35,6 +44,32 @@ import type { ItineraryDay, StateSlug } from "@/content/types";
 
 /** One day of a planned trip: a library day, dated. */
 export type PlannedDay = ItineraryDay & { date: string };
+
+/**
+ * What the traveller can change about one day.
+ *
+ * Resolved here rather than in the browser so the rules live next to the
+ * itinerary they apply to: a departure day has no stay, a day that covers no
+ * distance is not offered a vehicle, and a day spent where you already are —
+ * a rest day, whose library entry sleeps "As per itinerary" — inherits the
+ * previous night's place rather than falling through to the generic list.
+ */
+export type DayOptions = {
+  day: number;
+  /** The place this day's stays and activities belong to. */
+  place: string | null;
+  /** Null on a day with no transfer decision to make. */
+  transfer: {
+    legend: string;
+    note: string;
+    options: TransferOption[];
+    /** Pre-selected. Always the one the trip price already covers. */
+    defaultId: string;
+  } | null;
+  /** Empty on the departure day. You sleep nowhere on the day you fly home. */
+  stays: StayOption[];
+  activities: ActivityOption[];
+};
 
 export type QuoteLine = {
   label: string;
@@ -107,6 +142,8 @@ export type TripPlan = {
   /** Route days this length could not fit, by title. */
   notIncluded: string[];
   requiresILP: boolean;
+  /** One entry per day, in order, aligned with `days`. */
+  dayOptions: DayOptions[];
   /** What the state's own road network is good for. From the route. */
   routeNote: string;
   quote: PlanQuote;
@@ -424,6 +461,63 @@ export function planTrip(input: PlanInput): TripPlan {
   const plannedEnd = addDays(input.startDate, plannedNights);
   const clamped = days.length < dayCount;
 
+  /* --- What each day can be changed to --------------------------------- */
+
+  /*
+   * The place you are *in* on a given day, which is not always the place the
+   * day says it sleeps. A rest day's library entry sleeps "As per itinerary"
+   * because it is reused across forty tours; a departure day sleeps nowhere
+   * at all. Both inherit the previous night, so a rest day in Sohra offers
+   * Sohra's caves and a departure morning in Gangtok offers Gangtok's
+   * ropeway, rather than either falling through to the generic list.
+   */
+  const places: (string | null)[] = [];
+  days.forEach((day, index) => {
+    const literal =
+      day.stay && day.stay !== "As per itinerary" ? day.stay : null;
+    places.push(literal ?? places[index - 1] ?? null);
+  });
+
+  const gateway = GATEWAY_POINTS[input.state];
+  const dayOptions: DayOptions[] = days.map((day, index) => {
+    const isFirst = index === 0;
+    const isLast = index === days.length - 1;
+    const place = places[index];
+
+    let transfer: DayOptions["transfer"] = null;
+    if (isFirst) {
+      transfer = {
+        legend: "Where shall we meet you?",
+        note: "None of these changes the price. It changes which building we are standing outside, which is the part we actually need.",
+        options: gateway.pickups,
+        defaultId: gateway.pickups[0].id,
+      };
+    } else if (isLast) {
+      transfer = {
+        legend: "Where shall we leave you?",
+        note: "Tell us the flight or the train and we will build the last morning backwards from it.",
+        options: gateway.drops,
+        defaultId: gateway.drops[0].id,
+      };
+    } else if ((day.distanceKm ?? 0) >= TRANSFER_DAY_KM) {
+      transfer = {
+        legend: `Getting there — ${day.distanceKm} km`,
+        note: "A private vehicle is already in the price. These are the days long enough that the vehicle itself starts to matter.",
+        options: VEHICLE_OPTIONS,
+        defaultId: VEHICLE_OPTIONS[0].id,
+      };
+    }
+
+    const options = optionsForPlace(place);
+    return {
+      day: day.day,
+      place,
+      transfer,
+      stays: isLast ? [] : options.stays,
+      activities: options.activities,
+    };
+  });
+
   /* --- What we did, and why ------------------------------------------- */
 
   const shaping: string[] = [];
@@ -529,6 +623,7 @@ export function planTrip(input: PlanInput): TripPlan {
       .filter((leg) => leg.key !== "restDay")
       .map((leg) => dayLibrary[leg.key].title),
     requiresILP: Boolean(destination?.requiresILP),
+    dayOptions,
     routeNote: route.note,
     quote: buildPlanQuote({
       state: input.state,

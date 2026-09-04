@@ -60,12 +60,15 @@ const STEPS: { id: Step; label: string; question: string }[] = [
 export function TripPlanner({
   states,
   today,
+  eyebrow,
   initialState,
   initialParty,
 }: {
   states: PlannerState[];
   /** Rendered on the server, so "earliest date" cannot differ on hydration. */
   today: string;
+  /** The line above the rail. The planner opens the page, so it needs one. */
+  eyebrow?: string;
   /** From `?state=` — the home page's state index links straight in here. */
   initialState?: string;
   /** From `?type=` — so do the four journey tiles. */
@@ -210,6 +213,16 @@ export function TripPlanner({
 
   return (
     <div>
+      {eyebrow ? (
+        <p className="u-label mb-8 flex items-center gap-4 text-ink-faint">
+          <span
+            aria-hidden="true"
+            className="h-0.5 w-12 shrink-0 rounded-full bg-clay"
+          />
+          {eyebrow}
+        </p>
+      ) : null}
+
       <StepRail
         current={step}
         reached={reached}
@@ -230,12 +243,21 @@ export function TripPlanner({
         }}
       />
 
-      <h3
+      {/*
+       * The page's `h1`, and it changes with the step.
+       *
+       * The tours index used to open with a hero whose headline was the h1
+       * and whose job was to introduce a list. There is no list at the top of
+       * this page any more — there is a question — so the question is the
+       * heading, and the document outline follows what is actually on screen
+       * rather than describing something that was removed.
+       */}
+      <h1
         ref={headingRef}
         tabIndex={-1}
         // Focusing the heading makes the browser scroll it into view, and
         // without this it lands under the fixed header plate.
-        className="mt-12 max-w-3xl scroll-mt-[calc(var(--header-h)+2.5rem)] text-36 outline-none lg:text-64"
+        className="mt-8 max-w-3xl scroll-mt-[calc(var(--header-h)+2.5rem)] text-36 outline-none lg:text-64"
       >
         {step === "state" ? (
           <>
@@ -258,7 +280,7 @@ export function TripPlanner({
             Here is what we would <Accent>do</Accent>
           </>
         )}
-      </h3>
+      </h1>
 
       <div className="mt-10 lg:mt-14">
         {step === "state" ? (
@@ -360,6 +382,10 @@ export function TripPlanner({
 
         {step === "plan" && plan ? (
           <PlannerResult
+            // Re-keyed per plan so the day-by-day form starts fresh. Without
+            // it, a Sikkim lodge chosen on day 3 survives into a re-planned
+            // Meghalaya trip, where that option does not exist.
+            key={plan.reference}
             plan={plan}
             sent={sent}
             onSend={() => setSent(true)}

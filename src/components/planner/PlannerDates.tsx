@@ -2,30 +2,32 @@
 
 import { cn } from "@/lib/cn";
 import { addDays, formatLong, nightsBetween, parseISO } from "@/lib/date";
+import { DateRangeCalendar } from "./DateRangeCalendar";
 import type { PlannerState } from "./types";
 
 /**
  * When.
  *
- * Two native date inputs and nothing clever. A custom calendar would have to
- * re-implement keyboard traversal, locale, and the phone's own date wheel —
- * all of which the platform already does better than a booking form ever
- * does, and any of which failing is a dead end rather than a rough edge.
+ * The step is a calendar and a running total, and the total is the point: the
+ * planner builds the itinerary from the *length*, so the length has to be
+ * visible while the dates are being chosen rather than after. The range is
+ * drawn as the cursor sweeps and the nights count moves with it.
  *
- * What the step actually adds is arithmetic and advice:
+ * Around that, three things the picker itself cannot know:
  *
- *  - **Length is derived and shown as it is typed.** "6 nights · 7 days" is
- *    the number the traveller is really choosing, and it is the number the
- *    itinerary is built from, so it is on screen before they commit.
- *  - **Three presets, drawn from the route itself.** The shortest the state
- *    is worth flying for, a middle, and the longest the road holds. That is
- *    a genuine recommendation, not three round numbers.
+ *  - **Three presets drawn from the route.** The shortest length the state is
+ *    worth flying for, a middle, and the longest the road actually holds.
+ *    That is a recommendation with a reason behind it rather than three round
+ *    numbers.
  *  - **The month is checked against the state.** Meghalaya in June is a real
- *    holiday and also monsoon, and being told so here — before an itinerary
+ *    holiday and also monsoon. Being told so here — before an itinerary
  *    exists — is worth more than being told after a quote.
+ *  - **Nothing blocks.** Every advisory says what we think and then gets out
+ *    of the way. The traveller picks the dates; the planner plans them.
  *
- * None of it blocks. The traveller can pick any dates they like; the planner
- * tells them what it thinks and then plans what they asked for.
+ * The permit lead time and the longest trip we will draft are enforced by the
+ * calendar rather than validated after the fact — an impossible range is
+ * better prevented than rejected.
  */
 
 const MONTHS = [
@@ -42,6 +44,11 @@ const MONTHS = [
   "November",
   "December",
 ];
+
+/** Matches the server action's own ceiling, so the two cannot disagree. */
+const MAX_LEAD_DAYS = 540;
+/** 21 days is the longest single-state trip the planner will attempt. */
+const MAX_NIGHTS = 20;
 
 export function PlannerDates({
   state,
@@ -63,6 +70,7 @@ export function PlannerDates({
   // that long, and offering a date we could not deliver is worse than not
   // offering it.
   const earliest = addDays(today, 14);
+  const latest = addDays(today, MAX_LEAD_DAYS);
   const nights = start && end ? nightsBetween(start, end) : 0;
   const dayCount = nights > 0 ? nights + 1 : 0;
 
@@ -80,52 +88,33 @@ export function PlannerDates({
   const tooShort = dayCount > 0 && dayCount < state.minDays;
 
   return (
-    <div className="grid gap-12 lg:grid-cols-[1fr_360px] lg:gap-16">
+    <div className="grid gap-12 lg:grid-cols-[1fr_340px] lg:gap-16">
       <div className="min-w-0">
-        <div className="grid gap-6 sm:grid-cols-2">
-          <div>
-            <label htmlFor="plan-start" className="u-label block text-ink-soft">
-              Arriving
-            </label>
-            <input
-              id="plan-start"
-              type="date"
-              value={start}
-              min={earliest}
-              onChange={(event) => {
-                const value = event.target.value;
-                onStartChange(value);
-                // Keep the range valid rather than silently allowing an end
-                // before its start. Nudging it is friendlier than an error.
-                if (value && (!end || end <= value)) {
-                  onEndChange(addDays(value, state.minDays - 1));
-                }
-              }}
-              className="u-num mt-2 min-h-13 w-full rounded-[var(--radius-input)] border border-transparent bg-paper px-4 text-16 transition-colors duration-[var(--dur-micro)] ease-brand hover:border-[var(--ink-hairline-strong)] focus:border-ink focus:bg-plate focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="plan-end" className="u-label block text-ink-soft">
-              Flying home
-            </label>
-            <input
-              id="plan-end"
-              type="date"
-              value={end}
-              min={start ? addDays(start, 2) : addDays(earliest, 2)}
-              disabled={!start}
-              onChange={(event) => onEndChange(event.target.value)}
-              className="u-num mt-2 min-h-13 w-full rounded-[var(--radius-input)] border border-transparent bg-paper px-4 text-16 transition-colors duration-[var(--dur-micro)] ease-brand hover:border-[var(--ink-hairline-strong)] focus:border-ink focus:bg-plate focus:outline-none disabled:opacity-50"
-            />
-          </div>
+        <div className="rounded-[var(--radius-panel)] border border-[var(--ink-hairline)] bg-paper p-6 sm:p-8">
+          <DateRangeCalendar
+            start={start}
+            end={end}
+            onChange={(nextStart, nextEnd) => {
+              onStartChange(nextStart);
+              onEndChange(nextEnd);
+            }}
+            earliest={earliest}
+            latest={latest}
+            maxNights={MAX_NIGHTS}
+            bestMonths={state.bestMonths}
+            colour={state.colour}
+            ink={state.ink}
+            stateName={state.name}
+          />
         </div>
 
         {/* The presets. Lengths this road is actually good at, in its own
             words, rather than a row of round numbers. */}
         <div className="mt-8">
           <p className="u-label text-ink-faint">
-            Or take the length we would suggest
+            {start
+              ? "Or take the length we would suggest"
+              : "Pick an arrival day first, then these set the length for you"}
           </p>
           <ul className="mt-3 flex flex-wrap gap-2">
             {presets.map((preset, index) => {
@@ -209,7 +198,7 @@ export function PlannerDates({
 
       {/* The readout. The one number the whole step exists to produce. */}
       <aside className="lg:pt-1">
-        <div className="rounded-[var(--radius-panel)] border border-[var(--ink-hairline)] p-7">
+        <div className="rounded-[var(--radius-panel)] border border-[var(--ink-hairline)] p-7 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
           <p className="u-label text-ink-faint">That is</p>
           {dayCount > 0 ? (
             <>
@@ -242,9 +231,19 @@ export function PlannerDates({
                 </div>
               </dl>
             </>
+          ) : start ? (
+            <>
+              <p className="u-num mt-3 font-display text-28 leading-tight">
+                {formatLong(start)}
+              </p>
+              <p className="mt-3 text-16 text-ink-soft">
+                Now pick the day you fly home, or take one of the lengths we
+                suggest below the calendar.
+              </p>
+            </>
           ) : (
             <p className="mt-3 text-16 text-ink-soft">
-              Pick an arrival date and we will suggest the length.
+              Pick the day you arrive and we will suggest the length.
             </p>
           )}
         </div>

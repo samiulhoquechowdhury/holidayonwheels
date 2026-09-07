@@ -14,13 +14,20 @@ import { Eyebrow } from "@/components/primitives/Eyebrow";
  * full display line and a real call to action first, then drops to the
  * navigation underneath a hairline — so the last thing on every page is an
  * invitation, and the directory is where you go if you declined it.
+ *
+ * `u-container-wide`, matching the header. Both are the page's frame rather
+ * than a column of prose inside it, so both take the frame's width: the
+ * wordmark at the top of the page and the wordmark at the bottom have to
+ * start at the same x, and on `u-container` they did not. Below 1280 the two
+ * containers are identical — only the gutter applies — so this was invisible
+ * on every phone and laptop and 190px out on a 1728px display.
  */
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="is-dark bg-night text-night-text">
-      <div className="u-container py-24 lg:py-36">
+      <div className="u-container-wide py-24 lg:py-36">
         {/* ---- The invitation ------------------------------------------- */}
         <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:items-end lg:gap-20">
           <div>
@@ -47,7 +54,17 @@ export function Footer() {
         {/* ---- The directory -------------------------------------------- */}
         <div className="mt-20 grid gap-14 border-t border-[var(--night-hairline)] pt-16 lg:mt-28 lg:grid-cols-[1fr_2fr] lg:gap-20">
           <div>
-            <Logo tone="paper" />
+            {/*
+             * `surface="plate"` is not decoration — it is the only thing that
+             * makes the mark legible here. The supplied artwork is black
+             * letterforms with white detail *inside* them, so on the night
+             * ground the letters went to near-black on near-black and only
+             * the orange hub of the wheel survived. `tone` does not help:
+             * it colours the typographic fallback, and this build ships the
+             * PNG. `Logo`'s own documentation says the dark ground needs the
+             * opaque sheet; the footer just never passed it.
+             */}
+            <Logo tone="paper" surface="plate" />
             <address className="mt-8 space-y-2 text-14 text-night-text-soft not-italic">
               <p>{site.contact.address}</p>
               <p>

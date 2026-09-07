@@ -49,6 +49,22 @@ export function Logo({
           // fetched eagerly. It is small enough not to compete with the hero
           // poster for the LCP slot.
           priority
+          /*
+           * Served exactly as it sits in `public/`, and this says so.
+           *
+           * The custom loader in `lib/image-loader.ts` hands Unsplash URLs to
+           * imgix and returns everything else untouched — which is right, but
+           * it means the returned URL for a local file ignores the `width`
+           * Next passed in. Next notices, and warns "has a loader property
+           * that does not implement width" on every route, because this mark
+           * is in the header of every route. `unoptimized` is the accurate
+           * declaration rather than a way to silence it: this file genuinely
+           * is not being resized, and at 621×240 it does not need to be.
+           *
+           * When the real photography lands and the custom loader goes, this
+           * comes off with it — see MEDIA.md.
+           */
+          unoptimized
           sizes="140px"
           className="h-7 w-auto md:h-8"
         />

@@ -45,6 +45,7 @@ export function ChoiceCard({
   index,
   selected,
   onSelect,
+  priority = false,
 }: {
   label: string;
   copy: string;
@@ -60,6 +61,13 @@ export function ChoiceCard({
   index?: number;
   selected: boolean;
   onSelect: () => void;
+  /**
+   * Set on the cards in the first row. The planner is the top of `/tours`
+   * with no hero above it, so the first card's photograph is the page's LCP
+   * element — and lazy-loading the thing the browser measures LCP against is
+   * how a page scores badly for a reason that is entirely self-inflicted.
+   */
+  priority?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
@@ -82,6 +90,7 @@ export function ChoiceCard({
           src={image}
           alt={alt}
           fill
+          priority={priority}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 260px"
           className={cn(
             "object-cover transition-transform duration-[var(--dur-image)] ease-brand",

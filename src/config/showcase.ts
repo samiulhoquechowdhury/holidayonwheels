@@ -200,42 +200,72 @@ export const editorial = {
  * The moment a call site is given a real `src`, this is bypassed for it. When
  * every call site has one, delete this map.
  */
+/**
+ * Two more frames every region can fall back on.
+ *
+ * Not for variety's sake. A destination page renders its hero, its editorial
+ * still and six or seven cards, *all* from the same region — so with two
+ * options per region each one appeared four or five times on a single screen,
+ * which reads as a broken image loop rather than as a theme. It also had a
+ * second-order effect worth naming: the hero's URL appeared again further
+ * down on a lazily-loaded card, and Next matches its "this was your LCP and
+ * it is not priority" check by URL, so it warned about an image that *was*
+ * marked priority.
+ *
+ * These are deliberately unplaceable — ridge, cloud, water — so they can sit
+ * under any of the eight without claiming to be somewhere they are not. They
+ * go when the real photography lands and every record has its own file.
+ */
+const REGION_FILL = [
+  shot("1518002171953-a080ee817e1f"),
+  shot("1512343879784-a960bf40e7f2"),
+];
+
 const REGION_MOCKS: Record<string, string[]> = {
   assam: [
     shot("1476514525535-07fb3b4ae5f1"),
     shot("1590050752117-238cb0fb12b1"),
+    ...REGION_FILL,
   ],
   meghalaya: [
     shot("1470071459604-3b5ec3a7fe05"),
     shot("1609920658906-8223bd289001"),
+    ...REGION_FILL,
   ],
   arunachal: [
     shot("1544735716-392fe2489ffa"),
     shot("1626621341517-bbf3d9990a23"),
+    ...REGION_FILL,
   ],
   nagaland: [
     shot("1516450360452-9312f5e86fc7"),
     shot("1547153760-18fc86324498"),
+    ...REGION_FILL,
   ],
   manipur: [
     shot("1490077476659-095159692ab5"),
     shot("1533900298318-6b8da08a523e"),
+    ...REGION_FILL,
   ],
   mizoram: [
     shot("1523592121529-f6dde35f079e"),
     shot("1449158743715-0a90ebb6d2d8"),
+    ...REGION_FILL,
   ],
   tripura: [
     shot("1548013146-72479768bada"),
     shot("1477587458883-47145ed94245"),
+    ...REGION_FILL,
   ],
   sikkim: [
     shot("1571401835393-8c5f35328320"),
     shot("1501785888041-af3ef285b470"),
+    ...REGION_FILL,
   ],
   neutral: [
     shot("1483728642387-6c3bdd6c93e5"),
     shot("1533130061792-64b345e4a833"),
+    ...REGION_FILL,
   ],
 };
 

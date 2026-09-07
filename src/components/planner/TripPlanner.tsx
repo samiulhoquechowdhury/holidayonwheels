@@ -299,6 +299,9 @@ export function TripPlanner({
                 <li key={state.slug}>
                   <ChoiceCard
                     index={index + 1}
+                    // Four across at `lg`, two on a phone — so the first four
+                    // cover the first row at every width.
+                    priority={index < 4}
                     label={state.name}
                     copy={state.tagline}
                     meta={[
@@ -344,9 +347,10 @@ export function TripPlanner({
               itinerary at all.
             </p>
             <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 lg:gap-6">
-              {PARTY_TYPES.map((option) => (
+              {PARTY_TYPES.map((option, index) => (
                 <li key={option.id}>
                   <ChoiceCard
+                    priority={index < 4}
                     label={option.label}
                     copy={option.copy}
                     meta={option.changes}

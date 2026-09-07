@@ -134,6 +134,18 @@ export function PageHero({
               src={image}
               alt=""
               fill
+              /*
+               * This is the LCP element on most inner pages — it is the only
+               * photograph above the fold and it is beside the title — and
+               * without `priority` it was queued behind everything else and
+               * Next warned about it on every route that renders a hero.
+               *
+               * The home page is the exception and does not use this
+               * component: its LCP is the headline, set on flat paper above
+               * the film, which is why `HeroFilm` reasons about the poster
+               * separately.
+               */
+              priority
               sizes="(max-width: 1024px) 100vw, 42vw"
               className="object-cover"
             />

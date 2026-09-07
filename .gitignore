@@ -15,6 +15,12 @@
 
 # next.js
 /.next/
+# This project lives on an NTFS-3G mount. Killing `next start` while it holds
+# build files leaves a `.fuse_hidden*` stub behind, which makes `rm -rf .next`
+# fail with ENOTEMPTY and the *next* build silently corrupt — it reports
+# success while writing a tree with no BUILD_ID and missing CSS. The recovery
+# is to move the directory aside and rebuild; these are the leftovers of that.
+/.next.old.*/
 /out/
 
 # production

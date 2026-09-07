@@ -103,17 +103,53 @@ export function Header() {
         )}
       >
         {/*
-         * `1fr auto 1fr` centres the nav against the viewport rather than
-         * against the space left over by the logo, so it stays put as the
-         * mark or the menu label changes width. No transform involved, which
-         * keeps it honest under reduced motion.
+         * Flex, not a three-column grid, and the change fixed two real bugs.
+         *
+         * It was `grid-cols-[1fr_auto_1fr]`, to centre the nav against the
+         * viewport rather than against the space left over beside the logo.
+         * Two things went wrong with that:
+         *
+         *  1. **The controls were not on the right below `xl`.** A
+         *     `display: none` element is not a grid item at all, so with the
+         *     nav hidden there were only two items to place: the mark took
+         *     column one and the trip and menu buttons took column *two*,
+         *     leaving column three empty. `justify-self-end` then pinned
+         *     them to the right of the middle track. At 768px that put them
+         *     203px short of the edge and at 390px it left the menu button
+         *     sitting in the centre of the bar. It was wrong at every width
+         *     from 360 to 1279 — which is to say on every phone and most
+         *     laptops.
+         *
+         *  2. **The nav was never actually centred where it showed.** The
+         *     two `1fr` tracks only tie when the things in them do; the
+         *     controls are 265px against the mark's 91, so the right track
+         *     took its min-content and the nav settled 5px off centre with
+         *     16px of clearance to the buttons, against 180px on the other
+         *     side. Viewport-centring cannot be balanced while the two
+         *     flanks are that different in width — it is geometry, not
+         *     tuning.
+         *
+         * `justify-between` hands the free space out equally, so the nav is
+         * centred between its two neighbours rather than against the glass,
+         * and the controls sit hard against the right edge at every width. No
+         * transform, so it is honest under reduced motion.
+         *
+         * **`u-container-wide`, not `u-container`.** The header frames the
+         * page, so it has to agree with the page's own edge, and the wide
+         * column is what the home page, the destination and trip heroes, the
+         * jump bars and the planner are all built in. On `u-container` the
+         * bar was drawn to the 1180px reading measure instead: at 1440 the
+         * mark sat 50px inside the hero it was sitting above, and at 1728
+         * it sat 190px inside — the logo indented from the headline beneath
+         * it and the menu button indented from the line ending in "2026".
+         * A reading measure is for paragraphs; chrome takes the frame.
          */}
-        <div className="u-container grid grid-cols-[1fr_auto_1fr] items-center gap-4 py-[var(--header-pad)] transition-[padding] duration-[var(--dur)] ease-brand">
-          <Logo className="justify-self-start" />
+        <div className="u-container-wide flex items-center justify-between gap-4 py-[var(--header-pad)] transition-[padding] duration-[var(--dur)] ease-brand">
+          <Logo />
 
           <PrimaryNav pathname={pathname} reduced={Boolean(reduced)} />
 
-          <div className="flex items-center gap-2 justify-self-end md:gap-3">
+          <div className="flex shrink-0 items-center gap-2 md:gap-3">
             <PlanTrip />
             <StairToggle
               ref={toggleRef}
@@ -164,7 +200,7 @@ function PrimaryNav({
   const marked = hovered ?? current;
 
   return (
-    <nav aria-label="Primary" className="hidden justify-self-center xl:block">
+    <nav aria-label="Primary" className="hidden shrink-0 xl:block">
       <ul
         onPointerLeave={() => setHovered(null)}
         className="flex items-center gap-1"

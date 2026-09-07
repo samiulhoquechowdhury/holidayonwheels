@@ -202,6 +202,8 @@ export function TripPlanner({
   }
 
   const nights = start && end ? nightsBetween(start, end) : 0;
+  /** The two steps whose primary action is a button rather than a card tap. */
+  const hasPinnedAction = step === "dates" || step === "travellers";
   const canContinue =
     step === "state"
       ? Boolean(stateSlug)
@@ -212,7 +214,8 @@ export function TripPlanner({
           : true;
 
   return (
-    <div>
+    // Room for the pinned action bar below `lg`, on the steps that have one.
+    <div className={cn(hasPinnedAction && "max-lg:pb-24")}>
       {eyebrow ? (
         <p className="u-label mb-8 flex items-center gap-4 text-ink-faint">
           <span
@@ -303,6 +306,22 @@ export function TripPlanner({
                       `${state.tripCount} ${state.tripCount === 1 ? "trip" : "trips"}`,
                       ...(state.requiresILP ? ["Permit"] : []),
                     ]}
+                    // The facts somebody actually picks a state on, behind a
+                    // disclosure rather than on the face of the card: all of
+                    // this on all eight at once is unreadable, and none of it
+                    // makes the choice a guess.
+                    details={[
+                      { label: "Fly into", value: state.gateway },
+                      {
+                        label: "Best months",
+                        value: state.bestMonths.join(", "),
+                      },
+                      {
+                        label: "Known for",
+                        value: state.knownFor.slice(0, 3).join(", "),
+                      },
+                      { label: "The road", value: state.routeNote },
+                    ]}
                     image={state.image}
                     alt={`${state.name} — ${state.knownFor.slice(0, 2).join(", ")}`}
                     colour={state.colour}
@@ -335,7 +354,6 @@ export function TripPlanner({
                     alt={option.alt}
                     colour={option.colour}
                     ink={option.ink}
-                    aspect="3/4"
                     selected={party === option.id}
                     onSelect={() => chooseParty(option.id)}
                   />
@@ -404,9 +422,36 @@ export function TripPlanner({
         </p>
       ) : null}
 
-      {/* --- Moving between steps ------------------------------------- */}
+      {/* --- Moving between steps -------------------------------------
+       *
+       * Pinned to the bottom of the screen on a phone, in flow from `lg`.
+       *
+       * The step content is up to eight cards tall, so in flow the primary
+       * action sat below all of them: on the state step you had to scroll
+       * past every option you had just rejected to reach "Continue". Pinning
+       * it puts the way forward within a thumb's reach at all times, which is
+       * the single biggest thing this flow was missing on mobile.
+       *
+       * `fixed`, not `sticky`. Every section on this site renders through
+       * `SectionShell`, whose root sets `overflow: hidden` to contain the
+       * bleeds — and an `overflow: hidden` ancestor stops a sticky element
+       * sticking to the viewport. Fixed is the honest way to get this
+       * behaviour inside that container; the matching bottom padding on the
+       * planner keeps the bar from covering the last row of content.
+       */}
       {step !== "plan" ? (
-        <div className="mt-14 flex flex-wrap items-center gap-4 border-t border-[var(--ink-hairline)] pt-8">
+        <div
+          className={cn(
+            "mt-14 flex flex-wrap items-center gap-4 border-t border-[var(--ink-hairline)] pt-8",
+            // Only pinned where it carries an action. Choosing a state or a
+            // party advances the step on the tap itself, so on those two
+            // screens this row is a hint and nothing else — and a hint pinned
+            // across the bottom of a phone is 60px of the viewport spent
+            // saying what the user is already doing.
+            hasPinnedAction &&
+              "max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:z-40 max-lg:mt-0 max-lg:flex-nowrap max-lg:justify-between max-lg:bg-paper/95 max-lg:px-[var(--gutter)] max-lg:py-3 max-lg:backdrop-blur-md",
+          )}
+        >
           {step !== "state" ? (
             <button
               type="button"

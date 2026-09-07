@@ -47,8 +47,11 @@ export function SignatureJourneys() {
             </SplitReveal>
           </div>
           <Rise delay={0.15}>
+            {/* "All trips" until `/tours` stopped being an index. It is the
+                planner now, so the label has to promise what it delivers —
+                a list nobody can reach is worse than no link. */}
             <LuxeButtonLink href="/tours" variant="ghost">
-              All trips
+              Plan your own
             </LuxeButtonLink>
           </Rise>
         </div>
@@ -88,20 +91,26 @@ export function SignatureJourneys() {
 
           {/* The fourth tile is not a trip. A solid clay panel closing the
               grid does two things a fourth photograph cannot: it stops the
-              bento reading as an incomplete row, and it puts the catalogue
-              link where the eye already is. */}
+              bento reading as an incomplete row, and it puts the way into
+              the planner where the eye already is.
+
+              It used to say "Browse the catalogue", which was true when
+              `/tours` was forty-seven cards and a filter rail. It is a
+              planner now, and the three trips above are the answer for
+              somebody who wants one we already run — so this tile is the
+              answer for everybody else, and it says so. */}
           <li className="lg:col-span-3">
             <Link
               href="/tours"
               className="group flex h-full min-h-56 flex-col justify-between rounded-[var(--radius-card)] bg-clay p-7 text-clay-on transition-colors duration-[var(--dur)] ease-brand hover:bg-clay-deep"
             >
-              <span className="u-label">Everything else</span>
+              <span className="u-label">Not quite it?</span>
               <span>
                 <span className="block font-display text-36 leading-[var(--leading-display)]">
-                  47 routes across the eight
+                  Build one around your dates
                 </span>
                 <span className="mt-6 flex items-center justify-between">
-                  <span className="u-label">Browse the catalogue</span>
+                  <span className="u-label">Start planning</span>
                   <ArrowButton tone="ink" />
                 </span>
               </span>

@@ -104,7 +104,8 @@ export function PlannerResult({
   }
 
   return (
-    <div>
+    // Room for the pinned summary below `lg`, until the enquiry is sent.
+    <div className={cn(!sent && "max-lg:pb-24")}>
       {/* --- What this is --------------------------------------------- */}
       <div className="flex flex-wrap items-end justify-between gap-8 border-b border-[var(--ink-hairline)] pb-10">
         <div className="min-w-0">
@@ -437,6 +438,40 @@ export function PlannerResult({
           </div>
         )}
       </div>
+
+      {/*
+       * The pinned summary, phones only.
+       *
+       * The itinerary above it is the length of the trip — six to nine days
+       * of prose, each with three decisions on it — so in flow the total and
+       * the send button are several screens below the day somebody is
+       * actually reading. Two things then go wrong: the number stops moving
+       * where you can see it while you change rooms, and the way to finish is
+       * somewhere you have to go looking for.
+       *
+       * Pinning both fixes both. It carries the live total, so every choice
+       * on every day is answered in the same place, and the action that ends
+       * the flow is always one tap away. It goes as soon as the enquiry is
+       * sent — there is nothing left to do with it then.
+       *
+       * `fixed` rather than `sticky` for the same reason as the step bar:
+       * `SectionShell` sets `overflow: hidden`, which stops sticky sticking.
+       */}
+      {!sent ? (
+        <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-4 border-t border-[var(--ink-hairline)] bg-paper/95 px-[var(--gutter)] py-3 backdrop-blur-md lg:hidden">
+          <span className="min-w-0">
+            <span className="u-label block text-ink-faint">
+              {extras.total > 0 ? "Total, with your extras" : "Total"}
+            </span>
+            <span className="u-num block truncate text-18">
+              {formatINR(grandTotal)}
+            </span>
+          </span>
+          <LuxeButton variant="clay" onClick={onSend} className="shrink-0">
+            Send
+          </LuxeButton>
+        </div>
+      ) : null}
     </div>
   );
 }

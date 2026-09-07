@@ -7,6 +7,7 @@ import { Rise } from "@/components/motion/Rise";
 import { ParallaxMedia } from "@/components/motion/Parallax";
 import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
 import { JumpBar } from "@/components/layout/JumpBar";
+import { StatesHeader } from "@/components/destinations/StatesHeader";
 import { MonthStrip } from "@/components/destinations/MonthStrip";
 import { getDestinations } from "@/content/destinations";
 import { getTours } from "@/content/tours";
@@ -49,6 +50,19 @@ export default function DestinationsPage() {
   const destinations = getDestinations();
   const tours = getTours();
 
+  const tripCounts = Object.fromEntries(
+    destinations.map((destination) => [
+      destination.slug,
+      tours.filter((tour) => tour.states.includes(destination.slug)).length,
+    ]),
+  );
+  const colours = Object.fromEntries(
+    destinations.map((destination) => [
+      destination.slug,
+      stateColours[destination.slug],
+    ]),
+  );
+
   return (
     <>
       <PageHero
@@ -60,6 +74,26 @@ export default function DestinationsPage() {
         region="meghalaya"
       />
 
+      {/*
+       * The index, at the size the subject deserves. Everything below is the
+       * detail behind one of these eight names, so the names come first and
+       * come big — see `StatesHeader` for why the 36px chips that used to do
+       * this job were the wrong size for the most important question on the
+       * page.
+       */}
+      <SectionShell tint="paper" width="wide" spacing="tight">
+        <StatesHeader
+          destinations={destinations}
+          colours={colours}
+          tripCounts={tripCounts}
+        />
+      </SectionShell>
+
+      {/*
+       * And the slim version, which sticks. The index above answers "which
+       * eight"; this answers "take me to another one" once you are four
+       * screens into the detail and the index has scrolled away.
+       */}
       <JumpBar
         label="Jump to a state"
         items={destinations.map((destination) => ({
@@ -75,10 +109,7 @@ export default function DestinationsPage() {
           key={destination.slug}
           destination={destination}
           index={index}
-          tripCount={
-            tours.filter((tour) => tour.states.includes(destination.slug))
-              .length
-          }
+          tripCount={tripCounts[destination.slug] ?? 0}
         />
       ))}
     </>

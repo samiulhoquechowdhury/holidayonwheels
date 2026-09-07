@@ -8,6 +8,7 @@ import { Media } from "@/components/primitives/Media";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { Chip } from "@/components/primitives/Chip";
 import { ButtonLink } from "@/components/primitives/Button";
+import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
 import {
   TourCard,
   MotoCard,
@@ -64,7 +65,28 @@ export default async function DestinationDetailPage({
         intro={destination.tagline}
         tint={destination.tint}
         region={destination.region}
-      />
+      >
+        {/*
+         * The page's one action, and it carries the state with it — the
+         * planner reads `?state=` and opens on "who is travelling" with
+         * where already answered. Without this the chain from the home
+         * page's state index dead-ends in an article: you could read about
+         * Meghalaya and then had to start the planner from scratch and pick
+         * it again.
+         */}
+        <div className="flex flex-wrap gap-3">
+          <LuxeButtonLink href={`/tours?state=${destination.slug}`} size="lg">
+            Plan a trip to {destination.name}
+          </LuxeButtonLink>
+          {tours.length > 0 ? (
+            <LuxeButtonLink href="#trips" variant="ghost" size="lg">
+              {tours.length === 1
+                ? "See the trip we run here"
+                : `See the ${tours.length} we already run`}
+            </LuxeButtonLink>
+          ) : null}
+        </div>
+      </PageHero>
 
       {/* Editorial opening */}
       <SectionShell tint="paper">
@@ -151,11 +173,23 @@ export default async function DestinationDetailPage({
 
       {tours.length > 0 ? (
         <>
-          <SectionShell tint="sand">
+          <SectionShell
+            tint="sand"
+            id="trips"
+            // Clears the fixed header, so the in-page jump from the hero
+            // lands on the heading rather than under the bar.
+            className="scroll-mt-[var(--header-h)]"
+          >
             <SectionHeader
               eyebrow="Guided tours"
               title={`Trips through ${destination.name}`}
-              link={{ href: "/tours", label: "All trips" }}
+              // Was `/tours` labelled "All trips", which stopped being true
+              // when that page became the planner. It carries the state now,
+              // so the link answers the first question on the way through.
+              link={{
+                href: `/tours?state=${destination.slug}`,
+                label: "Plan your own",
+              }}
               align="split"
             />
             <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">

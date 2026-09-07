@@ -79,7 +79,7 @@ export function ClosingCard() {
                 Ask us a question
               </LuxeButtonLink>
               <LuxeButtonLink href="/tours" variant="clay" size="lg">
-                Browse the catalogue
+                Start planning
               </LuxeButtonLink>
             </div>
 

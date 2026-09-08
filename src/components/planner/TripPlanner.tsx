@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { cn } from "@/lib/cn";
-import { nightsBetween } from "@/lib/date";
+import { formatRange, nightsBetween } from "@/lib/date";
 import { Accent } from "@/components/primitives/Accent";
 import { LuxeButton } from "@/components/primitives/LuxeButton";
 import { ChoiceCard } from "./ChoiceCard";
@@ -13,7 +13,12 @@ import {
   type TravellerDraft,
 } from "./PlannerTravellers";
 import { PlannerResult } from "./PlannerResult";
-import { PARTY_TYPES, isPartyType, type PartyType } from "@/lib/party";
+import {
+  PARTY_TYPES,
+  isPartyType,
+  partyDef,
+  type PartyType,
+} from "@/lib/party";
 import { planTripAction } from "@/app/(browse)/tours/plan-actions";
 import type { PlannerState } from "./types";
 import type { TripPlan } from "@/lib/plan";
@@ -396,6 +401,12 @@ export function TripPlanner({
                 value={draft}
                 onChange={setDraft}
                 errors={errors}
+                summary={{
+                  state: chosenState.name,
+                  party: partyDef(party).label,
+                  dates: formatRange(start, end),
+                  nights,
+                }}
               />
             </div>
           </>

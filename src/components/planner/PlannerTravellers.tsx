@@ -34,19 +34,6 @@ import { partyDef, type PartyType } from "@/lib/party";
  * nothing should not be on the form; this one changes two things.
  */
 
-/**
- * Every field on this step overrides its own ground.
- *
- * `Field`'s controls are recessed rather than outlined — a filled `--shell`
- * shell with no border at rest — which is exactly right on the paper the rest
- * of the site's forms sit on, and invisible here, because the planner sits on
- * `--shell` itself. Lifting the fields to paper keeps the primitive's design
- * intact and inverts the relationship: on this section the input is the
- * *lighter* surface. The alternative was giving every control on the site a
- * resting border to survive one section, which is a worse trade.
- */
-const ON_SHELL = "bg-paper";
-
 export type TravellerDraft = {
   adults: number;
   children: number;
@@ -74,10 +61,13 @@ export function PlannerTravellers({
   value,
   onChange,
   errors,
+  summary,
 }: {
   value: TravellerDraft;
   onChange: (next: TravellerDraft) => void;
   errors: Record<string, string>;
+  /** What the three answered steps came to, for the panel to confirm. */
+  summary: { state: string; party: string; dates: string; nights: number };
 }) {
   const [namesOpen, setNamesOpen] = useState(false);
   const companionCount = Math.max(0, value.adults + value.children - 1);
@@ -99,11 +89,11 @@ export function PlannerTravellers({
   }
 
   return (
-    <div className="grid gap-12 lg:grid-cols-[1fr_360px] lg:gap-16">
-      <div className="flex min-w-0 flex-col gap-12">
+    <div className="grid gap-10 lg:grid-cols-[1fr_340px] lg:gap-16">
+      <div className="flex min-w-0 flex-col gap-10">
         <fieldset>
           <legend className="text-22">How many of you</legend>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+          <div className="mt-5 border-t border-[var(--ink-hairline)]">
             <Stepper
               id="plan-adults"
               label="Adults"
@@ -125,16 +115,16 @@ export function PlannerTravellers({
           </div>
 
           {value.children > 0 ? (
-            <div className="mt-8">
+            <div className="mt-6">
               <p className="u-label text-ink-soft">
                 How old will they be when you travel?
               </p>
               <p className="mt-2 max-w-prose text-14 text-ink-faint">
-                It changes the itinerary, not the paperwork — we hold the high
-                passes and the long climbs back for parties with young children,
-                and price under-twelves lower.
+                It changes the itinerary rather than the paperwork: we hold the
+                high passes back for parties with young children, and price
+                under-twelves lower.
               </p>
-              <ul className="mt-4 flex flex-wrap gap-3">
+              <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {value.childAges.map((age, index) => (
                   <li key={index}>
                     <label
@@ -153,7 +143,7 @@ export function PlannerTravellers({
                           ),
                         })
                       }
-                      className={cn("mt-2 w-28", ON_SHELL)}
+                      className="mt-2 w-full"
                     >
                       <option value="">Age</option>
                       {Array.from({ length: 18 }, (_, i) => (
@@ -187,7 +177,6 @@ export function PlannerTravellers({
             >
               <TextInput
                 id="plan-name"
-                className={ON_SHELL}
                 autoComplete="name"
                 value={value.lead.name}
                 error={errors["plan-name"]}
@@ -210,7 +199,6 @@ export function PlannerTravellers({
             >
               <TextInput
                 id="plan-email"
-                className={ON_SHELL}
                 hasHint
                 type="email"
                 inputMode="email"
@@ -232,7 +220,6 @@ export function PlannerTravellers({
             >
               <TextInput
                 id="plan-phone"
-                className={ON_SHELL}
                 type="tel"
                 inputMode="tel"
                 autoComplete="tel"
@@ -277,7 +264,6 @@ export function PlannerTravellers({
                       >
                         <TextInput
                           id={`plan-companion-${index}`}
-                          className={ON_SHELL}
                           value={value.companions[index] ?? ""}
                           onChange={(event) => {
                             const next = Array.from(
@@ -304,26 +290,60 @@ export function PlannerTravellers({
         >
           <TextArea
             id="plan-notes"
-            className={ON_SHELL}
             hasHint
+            // Three rows, not the primitive's five. This is an optional
+            // sentence about a birthday or a bad knee, and a box the depth of
+            // a letter asks for one.
+            rows={3}
+            className="min-h-24"
             value={value.notes}
             onChange={(event) => set({ notes: event.target.value })}
           />
         </Field>
       </div>
 
-      <aside className="lg:pt-1">
-        <div className="rounded-[var(--radius-panel)] border border-[var(--ink-hairline)] p-7">
-          <p className="u-label text-ink-faint">Party</p>
-          <p className="u-num mt-3 font-display text-48 leading-none">
-            {value.adults + value.children}
+      {/*
+       * First on a phone, beside the form from `lg`. Stacked, the panel
+       * lands below every field — which is the one place a summary cannot do
+       * its job, because by then the form is filled and the answers it is
+       * confirming are four screens up.
+       */}
+      <aside className="max-lg:order-first lg:pt-1">
+        {/*
+         * The last screen before the itinerary is generated, so this panel
+         * stopped being a headcount and became the check. It repeats the
+         * three answers already given — where, who, when — because this is
+         * the moment somebody wants to confirm them without losing the form
+         * they are halfway through filling in, and the step rail above shows
+         * them at 12px in a row that scrolls sideways on a phone.
+         */}
+        <div className="rounded-[var(--radius-panel)] border border-[var(--ink-hairline)] p-7 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
+          <p className="u-label text-ink-faint">About to plan</p>
+
+          <p className="mt-3 font-display text-28 leading-[var(--leading-display)]">
+            {summary.nights} nights in {summary.state}
           </p>
-          <p className="mt-2 text-16 text-ink-soft">
-            {value.adults} {value.adults === 1 ? "adult" : "adults"}
-            {value.children > 0
-              ? `, ${value.children} ${value.children === 1 ? "child" : "children"}`
-              : ""}
-          </p>
+
+          <dl className="mt-6 flex flex-col gap-3 border-t border-[var(--ink-hairline)] pt-5">
+            <div className="flex items-baseline justify-between gap-4">
+              <dt className="u-label text-ink-faint">Dates</dt>
+              <dd className="u-num text-right text-14">{summary.dates}</dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-4">
+              <dt className="u-label text-ink-faint">Travelling as</dt>
+              <dd className="text-right text-14">{summary.party}</dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-4">
+              <dt className="u-label text-ink-faint">Party</dt>
+              <dd className="u-num text-right text-14">
+                {value.adults} {value.adults === 1 ? "adult" : "adults"}
+                {value.children > 0
+                  ? `, ${value.children} ${value.children === 1 ? "child" : "children"}`
+                  : ""}
+              </dd>
+            </div>
+          </dl>
+
           {value.adults + value.children >= 4 ? (
             <p className="mt-5 border-t border-[var(--ink-hairline)] pt-5 text-14 text-ink-soft">
               A party this size clears our first group band, so the per-person
@@ -367,24 +387,27 @@ function Stepper({
   onChange: (next: number) => void;
 }) {
   return (
-    <div>
-      <label htmlFor={id} className="u-label block text-ink-soft">
-        {label}
-      </label>
-      <p className="mt-2 text-14 text-ink-faint">{hint}</p>
-      <div className="mt-3 flex items-stretch">
+    <div className="flex items-center justify-between gap-6 border-b border-[var(--ink-hairline)] py-4">
+      <span className="min-w-0">
+        <label htmlFor={id} className="u-label block">
+          {label}
+        </label>
+        <span className="mt-1 block text-14 text-ink-faint">{hint}</span>
+      </span>
+
+      <span className="flex shrink-0 items-center gap-1">
         <StepButton
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={value <= min}
           label={`One fewer ${label.toLowerCase()}`}
-          side="left"
         >
           –
         </StepButton>
         <output
           id={id}
           htmlFor={id}
-          className="u-num flex min-h-12 flex-1 items-center justify-center border-y border-[var(--ink-hairline-strong)] text-18"
+          className="u-num w-9 text-center text-22"
+          aria-live="polite"
         >
           {value}
         </output>
@@ -392,11 +415,10 @@ function Stepper({
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={value >= max}
           label={`One more ${label.toLowerCase()}`}
-          side="right"
         >
           +
         </StepButton>
-      </div>
+      </span>
     </div>
   );
 }
@@ -406,13 +428,11 @@ function StepButton({
   onClick,
   disabled,
   label,
-  side,
 }: {
   children: React.ReactNode;
   onClick: () => void;
   disabled: boolean;
   label: string;
-  side: "left" | "right";
 }) {
   return (
     <button
@@ -421,12 +441,10 @@ function StepButton({
       disabled={disabled}
       aria-label={label}
       className={cn(
-        "min-h-12 w-12 shrink-0 border border-[var(--ink-hairline-strong)] text-18",
-        "transition-colors duration-[var(--dur-micro)] ease-brand",
-        "hover:bg-[rgb(46_42_36/0.05)] disabled:opacity-40 disabled:hover:bg-transparent",
-        side === "left"
-          ? "rounded-l-[var(--radius-control)]"
-          : "rounded-r-[var(--radius-control)]",
+        "grid size-11 shrink-0 place-items-center rounded-full border text-18",
+        "border-[var(--ink-hairline-strong)] transition-colors duration-[var(--dur-micro)] ease-brand",
+        "hover:bg-[rgb(46_42_36/0.05)]",
+        "disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent",
       )}
     >
       {children}

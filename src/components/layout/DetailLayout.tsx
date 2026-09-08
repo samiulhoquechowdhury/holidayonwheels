@@ -143,7 +143,7 @@ export function DetailSections({
     <div className={cn("min-w-0", className)}>
       <nav
         aria-label="On this page"
-        className="sticky top-[var(--header-h)] z-10 -mx-[var(--gutter)] mb-16 overflow-x-auto border-b border-[var(--ink-hairline)] bg-paper px-[var(--gutter)]"
+        className="u-under-header sticky z-10 -mx-[var(--gutter)] mb-16 overflow-x-auto border-b border-[var(--ink-hairline)] bg-paper px-[var(--gutter)]"
       >
         <ul className="flex gap-8">
           {sections.map((section) => (

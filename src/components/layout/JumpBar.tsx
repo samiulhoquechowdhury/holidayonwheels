@@ -53,7 +53,7 @@ export function JumpBar({
     <nav
       aria-label={label}
       className={cn(
-        "sticky top-[var(--header-h)] z-30 border-y border-[var(--ink-hairline)]",
+        "u-under-header sticky z-30 border-y border-[var(--ink-hairline)]",
         "bg-paper/92 backdrop-blur-md",
         className,
       )}
@@ -66,13 +66,23 @@ export function JumpBar({
          * is room, and a row that clips its last chip when it does not have
          * to reads as broken.
          */}
-        <ul className="-mx-[var(--gutter)] flex scrollbar-none gap-2 overflow-x-auto px-[var(--gutter)] py-3 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0">
+        {/*
+         * The fade on the right edge is the only thing telling a phone that
+         * five more states exist past the screen. A row that clips mid-chip
+         * hints at it; a row that happens to clip *between* chips looks
+         * finished, and those two cases are indistinguishable to the person
+         * holding the phone. From `lg` the row wraps and the mask comes off.
+         */}
+        <ul className="-mx-[var(--gutter)] flex scrollbar-none gap-2 overflow-x-auto [mask-image:linear-gradient(to_right,black_calc(100%-2.5rem),transparent)] px-[var(--gutter)] py-2 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:[mask-image:none] lg:px-0 lg:py-3">
           {items.map((item) => (
             <li key={item.id} className="shrink-0">
               <a
                 href={`#${item.id}`}
                 className={cn(
-                  "u-label flex min-h-9 items-center gap-2.5 rounded-full border px-4",
+                  // 44px on a phone, where this is a tap target; the desktop
+                  // row can be tighter because it is a pointer target and
+                  // there are eight of them wrapping.
+                  "u-label flex min-h-11 items-center gap-2.5 rounded-full border px-4 lg:min-h-9",
                   "border-[var(--ink-hairline)] transition-colors duration-[var(--dur-micro)] ease-brand",
                   "hover:border-[var(--ink-hairline-strong)]",
                 )}

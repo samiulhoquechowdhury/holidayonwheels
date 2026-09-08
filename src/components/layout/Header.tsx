@@ -84,6 +84,24 @@ export function Header() {
     if (open) setLifted(false);
   }, [open]);
 
+  /*
+   * Publish the lifted state to the document, so anything pinned beneath the
+   * header can close the gap when the header is not there.
+   *
+   * An attribute on the root rather than a prop or a context: the things that
+   * need it are sticky bars several levels down inside server components on
+   * unrelated routes, and none of them should have to become client
+   * components — or thread a boolean through four layers — to know that the
+   * bar above them has gone. See `.u-under-header` in globals.css.
+   */
+  useEffect(() => {
+    const root = document.documentElement;
+    if (lifted) root.setAttribute("data-header", "lifted");
+    else if (tight) root.setAttribute("data-header", "tight");
+    else root.removeAttribute("data-header");
+    return () => root.removeAttribute("data-header");
+  }, [lifted, tight]);
+
   return (
     <>
       <motion.header

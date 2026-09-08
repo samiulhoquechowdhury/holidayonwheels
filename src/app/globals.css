@@ -485,6 +485,47 @@
   }
 
   /*
+   * A bar that sticks directly beneath the header.
+   *
+   * The header is `position: fixed` and lifts away on scroll-down, so a bar
+   * pinned at a flat `top: var(--header-h)` kept its 86px offset to a header
+   * that was no longer there — leaving the bar hovering with a band of the
+   * page scrolling through the gap above it. On a phone, where the header is
+   * a larger share of the screen, it read as a rendering fault.
+   *
+   * `Header` stamps `data-header="lifted"` on the root while it is away, so
+   * the bar closes the gap and rides the top edge, then drops back when the
+   * header returns. The duration matches the header's own 0.45s so the two
+   * move as one object rather than as a chase.
+   */
+  .u-under-header {
+    top: var(--header-h);
+    transition: top 0.45s var(--ease);
+  }
+
+  /*
+   * The header tightens past 24px of scroll, and it does that by reassigning
+   * the two size tokens *locally* — deliberately, so that every `top:` offset
+   * on the page keeps resolving against the resting height and nothing jumps.
+   * The cost is that a bar pinned flush underneath is then 14px adrift of a
+   * header that has shrunk. This is the one element that wants the live
+   * height, so it derives it from the same tokens rather than measuring.
+   */
+  :root[data-header="tight"] .u-under-header {
+    top: calc(var(--plate-h-tight) + var(--header-pad-tight) * 2);
+  }
+
+  :root[data-header="lifted"] .u-under-header {
+    top: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .u-under-header {
+      transition: none;
+    }
+  }
+
+  /*
    * A horizontally scrollable row with no visible scrollbar — the state chip
    * rows on the destinations and tours pages.
    *

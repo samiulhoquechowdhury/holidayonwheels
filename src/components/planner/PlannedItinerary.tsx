@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { formatINR } from "@/lib/currency";
-import { formatShort, formatWeekday } from "@/lib/date";
+import { formatLong, formatShort, formatWeekday } from "@/lib/date";
 import { Chip } from "@/components/primitives/Chip";
 import { summariseDay, type DaySelection, type Selections } from "@/lib/extras";
 import type { DayOptions, PlannedDay } from "@/lib/plan";
@@ -85,12 +85,35 @@ export function PlannedItinerary({
   const [open, setOpen] = useState<number[]>([1]);
   const allOpen = open.length === days.length;
 
+  /*
+   * One day at a time, unless "Open every day" was asked for.
+   *
+   * An open day is the day's writing plus up to three decisions on it, and
+   * two of those open at once is more than a screen of scrolling between a
+   * heading and the next one. Opening a day therefore closes the others —
+   * which is what an accordion is for, and what makes the closed rows above
+   * and below it useful as context rather than as a wall to get past.
+   */
   const toggle = (day: number) =>
     setOpen((current) =>
-      current.includes(day)
-        ? current.filter((d) => d !== day)
-        : [...current, day],
+      current.includes(day) ? current.filter((d) => d !== day) : [day],
     );
+
+  /*
+   * Open a day from the strip and bring it to the top of the screen.
+   *
+   * The scroll has to wait a frame: the day being closed collapses at the
+   * same moment, and measuring before that happens scrolls to where the
+   * target used to be. `scroll-mt` on the row clears the header.
+   */
+  function jumpTo(day: number) {
+    setOpen([day]);
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`plan-dayrow-${day}`)
+        ?.scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+  }
 
   return (
     <div className={cn("min-w-0", className)}>
@@ -109,10 +132,73 @@ export function PlannedItinerary({
         </button>
       </div>
 
+      {/*
+       * A day strip, once the trip is long enough to need one.
+       *
+       * Only one day is open at a time, so moving from day two to day seven
+       * means closing one accordion and finding another five rows further
+       * down — which on a phone is most of a screen of scrolling to reach a
+       * decision you already know you want to change. The strip is the same
+       * device the destinations index uses for states, at the scale this
+       * list needs it.
+       */}
+      {days.length > 4 ? (
+        <div className="-mx-[var(--gutter)] mb-6 flex scrollbar-none gap-1.5 overflow-x-auto px-[var(--gutter)] pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
+          {days.map((day) => {
+            const isOpen = open.includes(day.day);
+            return (
+              <button
+                key={day.day}
+                type="button"
+                onClick={() => jumpTo(day.day)}
+                aria-current={isOpen ? "true" : undefined}
+                aria-label={`Day ${day.day}, ${formatLong(day.date)}`}
+                className={cn(
+                  "u-label flex min-h-9 shrink-0 items-center gap-2 rounded-full border px-3.5",
+                  "transition-colors duration-[var(--dur-micro)] ease-brand",
+                  isOpen
+                    ? "border-transparent text-night-text"
+                    : "border-[var(--ink-hairline)] hover:border-[var(--ink-hairline-strong)]",
+                )}
+                style={
+                  isOpen
+                    ? { backgroundColor: colour }
+                    : {
+                        color: summariseDay(
+                          dayOptions[day.day - 1],
+                          selections[day.day],
+                        )
+                          ? ink
+                          : undefined,
+                      }
+                }
+              >
+                {/*
+                 * The date alone. With the day number beside it the chip read
+                 * "1 5 Oct", which is two numbers running together and a
+                 * moment's parsing every time; the row it opens says "Day 1"
+                 * in full. The number survives in the accessible name, where
+                 * it is context rather than clutter.
+                 */}
+                <span className="u-num whitespace-nowrap">
+                  {formatShort(day.date)}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
       <ol className="flex flex-col">
         {days.map((day, index) => {
           const options = dayOptions[index];
           const selection = selections[day.day];
+          // A pickup point is a pickup point — none of them costs anything,
+          // so that group carries no price column at all. A day with a
+          // vehicle upgrade on it does.
+          const transferPriced = Boolean(
+            options?.transfer?.options.some((t) => t.price > 0),
+          );
           const isOpen = open.includes(day.day);
           const panelId = `plan-day-${day.day}`;
           const summary = options ? summariseDay(options, selection) : null;
@@ -120,7 +206,8 @@ export function PlannedItinerary({
           return (
             <li
               key={day.day}
-              className="border-t border-[var(--ink-hairline)] last:border-b"
+              id={`plan-dayrow-${day.day}`}
+              className="scroll-mt-[calc(var(--header-h)+1rem)] border-t border-[var(--ink-hairline)] last:border-b"
             >
               <h4>
                 <button
@@ -244,9 +331,11 @@ export function PlannedItinerary({
                             title={option.name}
                             blurb={option.blurb}
                             price={
-                              option.price === 0
-                                ? "Included"
-                                : `+${formatINR(option.price)}`
+                              transferPriced
+                                ? option.price === 0
+                                  ? "Included"
+                                  : `+${formatINR(option.price)}`
+                                : undefined
                             }
                             priceNote={
                               option.price === 0 ? undefined : "for the party"
@@ -284,9 +373,12 @@ export function PlannedItinerary({
                                 ? `/homestays/${option.homestaySlug}`
                                 : undefined
                             }
+                            // The included room is already tagged "In the
+                            // price"; saying it twice on one row is one word
+                            // doing one job.
                             price={
                               option.supplement === 0
-                                ? "Included"
+                                ? undefined
                                 : `+${formatINR(option.supplement)}`
                             }
                             priceNote={
@@ -374,7 +466,12 @@ function OptionGroup({
     <fieldset className="min-w-0">
       <legend className="u-label">{legend}</legend>
       <p className="mt-2 max-w-prose text-14 text-ink-faint">{note}</p>
-      <div className="mt-4 flex flex-col gap-2.5">{children}</div>
+      {/*
+       * Two-up from `sm`. Four pickup points stacked is 400px of scrolling
+       * for one question; side by side it is 200px, and a radio group is
+       * exactly the case where seeing all the options at once is the point.
+       */}
+      <div className="mt-4 grid gap-2.5 sm:grid-cols-2">{children}</div>
     </fieldset>
   );
 }
@@ -414,7 +511,12 @@ function OptionRow({
   tag?: string;
   /** Renders a link out to the page for this option, where one exists. */
   href?: string;
-  price: string;
+  /**
+   * Omit where every option in the group costs the same. Four rows reading
+   * "Included" down the right-hand edge is a column of identical words: it
+   * takes the space of information without being any.
+   */
+  price?: string;
   priceNote?: string;
   colour: string;
   ink: string;
@@ -423,7 +525,7 @@ function OptionRow({
     <label
       htmlFor={id}
       className={cn(
-        "group/opt relative flex cursor-pointer items-start gap-4 rounded-[var(--radius-input)] border p-4",
+        "group/opt relative flex cursor-pointer items-start gap-3.5 rounded-[var(--radius-input)] border px-4 py-3.5",
         "transition-[border-color,background-color] duration-[var(--dur-micro)] ease-brand",
         "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-sage",
         checked
@@ -476,32 +578,34 @@ function OptionRow({
 
       <span className="min-w-0 flex-1">
         {/*
-         * The price sits in the title's own row, not in a third column.
-         * A fixed right-hand column costs about a third of a 390px screen,
-         * and it was spending it on "+₹3,500" while pushing "The vehicle we
-         * already booked" into four wrapped lines. Here it wraps under the
-         * title on a phone and sits right-aligned beside it from `sm`.
+         * Title, then tag and price on one meta line beneath it — not a
+         * right-hand price column.
+         *
+         * The column worked while these rows were full width. Two-up they are
+         * half that, and "A river-facing room at Uzan Bazar" against a
+         * right-aligned "+₹2,200 / per person, per night" left the price
+         * stranded on a line of its own, aligned to nothing. In the text flow
+         * it wraps like the rest of the sentence and reads at any width.
          */}
-        <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="text-16 font-medium">{title}</span>
-            {tag ? <span className="u-label text-ink-faint">{tag}</span> : null}
-          </span>
+        <span className="block text-16 font-medium">{title}</span>
 
-          <span className="flex shrink-0 items-baseline gap-2 sm:flex-col sm:items-end sm:gap-1">
-            <span
-              className={cn("u-num text-14", !checked && "text-ink-soft")}
-              style={checked ? { color: ink } : undefined}
-            >
-              {price}
-            </span>
-            {priceNote ? (
-              <span className="text-12 text-ink-faint">{priceNote}</span>
+        {tag || price ? (
+          <span className="u-label mt-1.5 flex flex-wrap items-baseline gap-x-2 text-ink-faint">
+            {tag ? <span>{tag}</span> : null}
+            {tag && price ? <span aria-hidden="true">·</span> : null}
+            {price ? (
+              <span
+                className="u-num"
+                style={checked ? { color: ink } : undefined}
+              >
+                {price}
+                {priceNote ? ` ${priceNote}` : ""}
+              </span>
             ) : null}
           </span>
-        </span>
+        ) : null}
 
-        <span className="mt-1.5 block text-14 text-ink-soft">{blurb}</span>
+        <span className="mt-2 block text-14 text-ink-soft">{blurb}</span>
         {href ? (
           // Stops the click reaching the label, which would toggle the
           // option the visitor was only trying to read about.

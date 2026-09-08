@@ -58,17 +58,23 @@ export const motoFilm = {
  * the hero reel use, so every index of the map on this site agrees.
  */
 export const stateShots: Record<string, string> = {
-  assam: shot("1476514525535-07fb3b4ae5f1"),
+  // River, country boat, palms — the closest thing in the pool to the
+  // Brahmaputra. Was a rowing boat on Lago di Braies in the Dolomites.
+  assam: shot("1590050752117-238cb0fb12b1"),
   meghalaya: shot("1470071459604-3b5ec3a7fe05"),
   "arunachal-pradesh": shot("1544735716-392fe2489ffa"),
   nagaland: shot("1516450360452-9312f5e86fc7"),
-  manipur: shot("1490077476659-095159692ab5"),
-  mizoram: shot("1523592121529-f6dde35f079e"),
-  // Was an unmistakable frame of the Taj Mahal. A generic stand-in is a
-  // placeholder; a landmark two thousand kilometres away, on a card headed
-  // "Tripura", is a claim — and it is the first thing anyone who knows the
-  // country would notice. See MEDIA.md for the rest of this list.
-  tripura: shot("1601050690597-df0568f70950"),
+  // A covered market, which is at least the right subject: Ima Keithel is
+  // the thing Imphal is known for. Was the Karaweik barge in Yangon.
+  manipur: shot("1533900298318-6b8da08a523e"),
+  // A dusk ridge line, for a state of ridge-top towns. Was Mount Bromo,
+  // which is a volcano in Java.
+  mizoram: shot("1483728642387-6c3bdd6c93e5"),
+  // Forest and low hills, for the Jampui ridge. This one has now been wrong
+  // twice — first the Taj Mahal, then a plate of samosas — because both
+  // times the frame was chosen from a filename and a comment rather than by
+  // looking at it. Every entry in this map has now been looked at.
+  tripura: shot("1449158743715-0a90ebb6d2d8"),
   sikkim: shot("1571401835393-8c5f35328320"),
 };
 
@@ -212,13 +218,18 @@ export const editorial = {
  * it is not priority" check by URL, so it warned about an image that *was*
  * marked priority.
  *
- * These are deliberately unplaceable — ridge, cloud, water — so they can sit
- * under any of the eight without claiming to be somewhere they are not. They
- * go when the real photography lands and every record has its own file.
+ * These are deliberately unplaceable — a lit ridge and a night range — so
+ * they can sit under any of the eight without claiming to be somewhere they
+ * are not. They go when the real photography lands and every record has its
+ * own file.
+ *
+ * The first pair here were a photograph of a pair of trainers on a black
+ * background and a tropical beach, because they were picked from an image id
+ * without anyone looking at the image. Both of these have been looked at.
  */
 const REGION_FILL = [
-  shot("1518002171953-a080ee817e1f"),
-  shot("1512343879784-a960bf40e7f2"),
+  shot("1533130061792-64b345e4a833"),
+  shot("1519681393784-d120267933ba"),
 ];
 
 const REGION_MOCKS: Record<string, string[]> = {

@@ -10,6 +10,15 @@ import { cn } from "@/lib/cn";
  * picture, a name, one line of argument, and a few facts — and two components
  * would have grown apart by the second round of copy edits.
  *
+ * ### Three rows, not five
+ *
+ * It carried a "Choose" label under everything else, and the whole card is
+ * the control — so that row said, on all eight cards at once, what the cursor
+ * and the hover state already said, and cost 60px of height for it. Selection
+ * is legible without it: the tick, the coloured border and `aria-pressed`.
+ * The disclosure went the same way at `lg`. What is left is the picture, the
+ * name, the line of argument and the three facts you actually choose on.
+ *
  * ### The picture is deliberately not the card
  *
  * It was a 4:5 portrait, which on a phone made each card most of a screen and
@@ -49,8 +58,12 @@ export function ChoiceCard({
 }: {
   label: string;
   copy: string;
-  /** Two or three facts. Never more — they are read at a glance or not read. */
-  meta: string[];
+  /**
+   * Two or three facts, joined into one line. Omit where the card's own copy
+   * already says them — a caps restatement of the sentence directly above it
+   * is noise wearing the costume of data.
+   */
+  meta?: string[];
   /** Behind the "More" disclosure. Omit and no disclosure is rendered. */
   details?: { label: string; value: string }[];
   image: string;
@@ -156,24 +169,35 @@ export function ChoiceCard({
           <span className="mt-2 block text-14 text-ink-soft">{copy}</span>
         </button>
 
-        <div className="mt-4 flex flex-wrap items-end gap-x-3 gap-y-1.5">
-          {meta.map((item) => (
+        {/*
+         * One flowing line, not three flex items each with its own bullet.
+         *
+         * At two cards across a 390px screen each of these is 163px wide,
+         * which is narrower than "4–9 days" plus a bullet plus a gap — so
+         * every fact took a line to itself and the meta ran three lines tall
+         * on a card whose whole job is to be scanned. As running text
+         * separated by middots it wraps like the sentence it is.
+         */}
+        {meta && meta.length > 0 ? (
+          <p className="u-label mt-4 text-ink-faint lg:mt-auto lg:pt-4">
             <span
-              key={item}
-              className="u-label flex items-center gap-1.5 text-ink-faint"
-            >
-              <span
-                aria-hidden="true"
-                className="mt-[0.42em] size-1 shrink-0 rounded-full"
-                style={{ backgroundColor: selected ? colour : "currentColor" }}
-              />
-              {item}
-            </span>
-          ))}
-        </div>
+              aria-hidden="true"
+              className="mr-2 inline-block size-1 translate-y-[-0.15em] rounded-full align-middle"
+              style={{ backgroundColor: selected ? colour : "currentColor" }}
+            />
+            {meta.join(" · ")}
+          </p>
+        ) : null}
 
+        {/*
+         * Phones only. It was asked for as a way to get at a state's detail
+         * on a small screen, and that is the screen where it earns its row:
+         * at `lg` these cards sit four across with the destinations page one
+         * click away, and a "More" on each of the eight is a row of chrome on
+         * every card that nobody opens.
+         */}
         {details && details.length > 0 ? (
-          <div className="relative z-10 mt-4">
+          <div className="relative z-10 mt-4 lg:hidden">
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
@@ -205,16 +229,6 @@ export function ChoiceCard({
             </dl>
           </div>
         ) : null}
-
-        <p
-          className={cn(
-            "u-label mt-auto pt-5 transition-colors duration-[var(--dur-micro)] ease-brand",
-            selected ? "" : "text-ink-faint",
-          )}
-          style={selected ? { color: ink } : undefined}
-        >
-          {selected ? "Chosen" : "Choose"}
-        </p>
       </div>
     </div>
   );

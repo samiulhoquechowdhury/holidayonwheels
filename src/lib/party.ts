@@ -29,8 +29,6 @@ export type PartyDef = {
   label: string;
   /** The line that decides it for someone hovering between two cards. */
   copy: string;
-  /** What the choice actually changes. Three, never four. */
-  changes: string[];
   defaultAdults: number;
   defaultChildren: number;
   /** From the state palette, so the row of cards is not monochrome. */
@@ -45,7 +43,6 @@ export const PARTY_TYPES: PartyDef[] = [
     id: "couple",
     label: "The two of us",
     copy: "A private vehicle, later starts, and rooms worth staying in.",
-    changes: ["Private vehicle", "Twin or double", "Nothing before nine"],
     defaultAdults: 2,
     defaultChildren: 0,
     colour: "var(--jade)",
@@ -57,7 +54,6 @@ export const PARTY_TYPES: PartyDef[] = [
     id: "honeymoon",
     label: "Honeymoon",
     copy: "Unhurried and entirely private, with the best room in every house.",
-    changes: ["Best room held", "Entirely private", "One night set aside"],
     defaultAdults: 2,
     defaultChildren: 0,
     colour: "var(--plum)",
@@ -69,7 +65,6 @@ export const PARTY_TYPES: PartyDef[] = [
     id: "family",
     label: "Family",
     copy: "Shorter driving days, rooms that connect, and nothing at altitude.",
-    changes: ["Shorter road days", "Connecting rooms", "No high passes"],
     defaultAdults: 2,
     defaultChildren: 2,
     colour: "var(--sky)",
@@ -81,7 +76,6 @@ export const PARTY_TYPES: PartyDef[] = [
     id: "group",
     label: "A group of us",
     copy: "Capped numbers, one guide from the state, and the rate spread further.",
-    changes: ["Party rate applies", "Guide from the state", "Capped numbers"],
     defaultAdults: 6,
     defaultChildren: 0,
     colour: "var(--naga)",
@@ -93,7 +87,6 @@ export const PARTY_TYPES: PartyDef[] = [
     id: "solo",
     label: "On my own",
     copy: "A single room as standard, and a guide who is genuinely company.",
-    changes: ["Single room", "Guide throughout", "Supplement upfront"],
     defaultAdults: 1,
     defaultChildren: 0,
     colour: "var(--marigold)",

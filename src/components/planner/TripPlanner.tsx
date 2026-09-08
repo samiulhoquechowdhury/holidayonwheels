@@ -353,7 +353,6 @@ export function TripPlanner({
                     priority={index < 4}
                     label={option.label}
                     copy={option.copy}
-                    meta={option.changes}
                     image={option.image}
                     alt={option.alt}
                     colour={option.colour}

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { SectionShell } from "@/components/layout/SectionShell";
-import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
 import { TripPlanner } from "@/components/planner/TripPlanner";
 import type { PlannerState } from "@/components/planner/types";
 import { getTours, getTourSummaries } from "@/content/tours";
@@ -100,7 +99,12 @@ export default async function ToursPage({
         width="wide"
         id="plan"
         spacing="flush"
-        className="pt-[calc(var(--header-h)+3rem)] pb-[var(--section-pad)] lg:pt-[calc(var(--header-h)+4.5rem)]"
+        // `overflow-visible` overrides the shell's clipping. An `overflow:
+        // hidden` ancestor stops `position: sticky` working, and the price
+        // panel beside the itinerary has to stay in view while the days
+        // scroll. `html` already clips horizontal overflow site-wide, so
+        // nothing bleeds sideways without it.
+        className="overflow-visible pt-[calc(var(--header-h)+3rem)] pb-[var(--section-pad)] lg:pt-[calc(var(--header-h)+4.5rem)]"
       >
         <TripPlanner
           states={plannerStates}
@@ -112,18 +116,6 @@ export default async function ToursPage({
           initialState={one("state")}
           initialParty={one("type")}
         />
-      </SectionShell>
-
-      <SectionShell tint="night" spacing="tight">
-        <div className="flex flex-wrap items-center justify-between gap-8">
-          <p className="max-w-xl text-22 text-night-text lg:text-28">
-            Nothing here quite it? Say what you are after in your own words and
-            a person will answer.
-          </p>
-          <LuxeButtonLink href="/contact" variant="onDark">
-            Write to us instead
-          </LuxeButtonLink>
-        </div>
       </SectionShell>
     </>
   );

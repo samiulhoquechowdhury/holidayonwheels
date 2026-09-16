@@ -37,6 +37,10 @@ export function SmoothScroll() {
 
     lenis.on("scroll", ScrollTrigger.update);
 
+    // Published so programmatic scrolls (see `lib/scroll.ts`) go through the
+    // same engine as the wheel, instead of being overwritten by it mid-ease.
+    window.__lenis = lenis;
+
     // GSAP's ticker reports seconds; Lenis wants milliseconds.
     const tick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);
@@ -45,6 +49,7 @@ export function SmoothScroll() {
     return () => {
       gsap.ticker.remove(tick);
       gsap.ticker.lagSmoothing(500, 33);
+      if (window.__lenis === lenis) delete window.__lenis;
       lenis.destroy();
     };
   }, []);

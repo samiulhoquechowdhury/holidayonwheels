@@ -79,6 +79,29 @@ export const stateShots: Record<string, string> = {
 };
 
 /**
+ * One frame per kind of room, for the stay options in the itinerary.
+ *
+ * Keyed by `StayOption["kind"]` rather than written out on each of the sixty
+ * stays, because these are placeholders: sixty lines pointing at six
+ * photographs is sixty lines to delete when the real ones arrive, and a
+ * `kind` already says what sort of room it is. A specific entry can still
+ * override it — `stay()` takes an explicit image — which is how the real
+ * photography will land, one property at a time.
+ *
+ * Every one of these has been looked at. Two of the candidates were a
+ * tropical resort pool and a four-poster over an infinity pool, which are the
+ * wrong hemisphere for a homestay in the Khasi hills; they are not here.
+ */
+export const roomShots: Record<string, string> = {
+  included: shot("1631049307264-da0ec9d70304"), // a plain, modern hotel room
+  hotel: shot("1618773928121-c32242e63f39"), // warmer, lamps lit
+  homestay: shot("1611892440504-42a792e24d32"), // timber, lived-in
+  heritage: shot("1590490360182-c33d57733427"), // period room, drapes, sofa
+  lodge: shot("1445019980597-93fa8acb246c"), // beds facing the mountains
+  camp: shot("1596394516093-501ba68a0ba6"), // a bed on a deck above water
+};
+
+/**
  * Featured trips, by position rather than by state.
  *
  * Deliberately not keyed off `stateShots`: two of the three featured tours

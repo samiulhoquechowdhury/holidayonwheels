@@ -20,6 +20,7 @@ import {
   type Selections,
 } from "@/lib/extras";
 import type { TripPlan } from "@/lib/plan";
+import { glideToElement } from "@/lib/scroll";
 
 /**
  * The itinerary, and the form it turned into.
@@ -99,6 +100,20 @@ export function PlannerResult({
   const grandTotal = plan.quote.total + extras.total;
   const deposit = Math.round((grandTotal * 0.25) / 500) * 500;
 
+  /*
+   * Confirm, then bring the confirmation into view. From the pinned bar on a
+   * phone the confirm block can be several days up the page, and a request
+   * that succeeds somewhere off-screen looks exactly like one that did
+   * nothing.
+   */
+  function send() {
+    onSend();
+    requestAnimationFrame(() => {
+      const block = document.getElementById("plan-confirm");
+      if (block) glideToElement(block);
+    });
+  }
+
   function setDay(day: number, next: DaySelection) {
     setSelections((current) => ({ ...current, [day]: next }));
   }
@@ -169,28 +184,120 @@ export function PlannerResult({
             heads={heads}
           />
 
-          {plan.notIncluded.length > 0 ? (
-            <div className="mt-12 rounded-[var(--radius-card)] bg-paper p-7">
-              <h4 className="u-label text-ink-faint">
-                On this road but not in these dates
-              </h4>
-              <ul className="mt-4 flex flex-col gap-2">
-                {plan.notIncluded.map((title) => (
-                  <li key={title} className="flex gap-3 text-16 text-ink-soft">
-                    <span aria-hidden="true" className="text-clay">
-                      —
-                    </span>
-                    {title}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-5 text-14 text-ink-faint">
-                Each of these is a day. Add {plan.notIncluded.length}{" "}
-                {plan.notIncluded.length === 1 ? "night" : "nights"} and they
-                come back in the order listed.
-              </p>
-            </div>
-          ) : null}
+          {/*
+           * Confirm, directly under the last day.
+           *
+           * It used to be the last thing on the page, below the price
+           * reasoning and a row of fixed departures — so having made every
+           * choice, the visitor had to scroll past two unrelated sections to
+           * find out how to finish, and plenty of people reasonably assume a
+           * page that ends in "other trips" has nothing left to submit. The
+           * action belongs where the choosing ends. It repeats the trip and
+           * the live total beside the button, so what is being confirmed is
+           * on screen at the moment it is confirmed.
+           *
+           * "Confirm booking", and the line under it says plainly that no
+           * payment is taken and the price is confirmed in writing — which is
+           * true, and which is the thing anyone hesitating over that button
+           * wants to know.
+           */}
+          <div
+            id="plan-confirm"
+            className="mt-6 scroll-mt-[calc(var(--header-h)+1rem)] rounded-[var(--radius-card)] border bg-paper p-5 sm:p-6"
+            style={{ borderColor: colour }}
+          >
+            {sent ? (
+              <div>
+                <Chip tone="sage">Booking request received</Chip>
+                <p className="mt-5 font-display text-28 leading-[var(--leading-display)] sm:text-36">
+                  We have it.
+                </p>
+                <p className="mt-4 max-w-prose text-16 text-ink-soft">
+                  Your reference is{" "}
+                  <span className="u-num text-ink">{plan.reference}</span>.
+                  Someone who has driven this route will confirm availability
+                  and the final price in writing within one working day —
+                  usually the same day.
+                </p>
+                <p className="u-num mt-4 text-14 text-ink-faint">
+                  {formatLong(plan.startDate)} · {plan.dayCount} days ·{" "}
+                  {plan.stateName} · {formatINR(grandTotal)}
+                </p>
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <LuxeButtonLink href="/destinations" variant="ghost">
+                    Look at the other states
+                  </LuxeButtonLink>
+                  <button
+                    type="button"
+                    onClick={onRestart}
+                    className="u-label min-h-11 px-2 text-ink-faint underline underline-offset-4 transition-colors hover:text-ink"
+                  >
+                    Plan another trip
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+                  <div className="min-w-0">
+                    <p className="u-label text-ink-faint">Your trip</p>
+                    <p className="mt-2 font-display text-22 leading-[var(--leading-display)] sm:text-28">
+                      {plan.nights} nights in {plan.stateName}
+                    </p>
+                    <p className="u-num mt-1.5 text-14 text-ink-soft">
+                      {formatRange(plan.startDate, plan.endDate)} ·{" "}
+                      {party.label} · {plan.adults}{" "}
+                      {plan.adults === 1 ? "adult" : "adults"}
+                      {plan.children > 0
+                        ? `, ${plan.children} ${plan.children === 1 ? "child" : "children"}`
+                        : ""}
+                    </p>
+                  </div>
+                  <div className="text-left sm:text-right">
+                    <p className="u-label text-ink-faint">
+                      {extras.total > 0 ? "Total, with your choices" : "Total"}
+                    </p>
+                    <p className="u-num mt-1 text-28">
+                      {formatINR(grandTotal)}
+                    </p>
+                  </div>
+                </div>
+
+                {/*
+                 * A normal-sized button, at the end of a row — not a
+                 * full-width slab. At column width a large block button was
+                 * the heaviest object on the screen, heavier than the total it
+                 * sits under, and a submit that shouts reads as a commitment
+                 * nobody was ready to make. The reassurance sits beside it,
+                 * where the eye goes just before the click.
+                 */}
+                <div className="mt-5 flex flex-col gap-3 border-t border-[var(--ink-hairline)] pt-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+                  <p className="text-14 text-ink-faint lg:max-w-xs">
+                    No payment now — we confirm availability and the final price
+                    in writing within a day.{" "}
+                    <button
+                      type="button"
+                      onClick={onChangeDates}
+                      className="underline underline-offset-4 transition-colors hover:text-ink"
+                    >
+                      Change the dates
+                    </button>
+                  </p>
+                  <LuxeButton
+                    variant="clay"
+                    onClick={send}
+                    // Desktop only. Below `lg` the pinned bar at the foot of the
+                    // screen carries this same button, and two "Confirm
+                    // booking" buttons on one phone screen reads as two
+                    // different things to press.
+                    className="shrink-0 max-lg:hidden"
+                  >
+                    Confirm booking
+                  </LuxeButton>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* --- The money, the reasoning, and the next move -------------- */}
@@ -198,7 +305,7 @@ export function PlannerResult({
             that upgrades six nights and adds four activities grows this panel
             past the screen, and a sticky element taller than the viewport
             pins its top and hides its total. */}
-        <aside className="flex flex-col gap-8 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:max-h-[calc(100dvh-var(--header-h)-3rem)] lg:scrollbar-none lg:self-start lg:overflow-y-auto lg:pr-1">
+        <aside className="u-sticky-panel flex flex-col gap-8 lg:self-start lg:pr-1">
           <div
             className="rounded-[var(--radius-panel)] border bg-paper p-7"
             style={{ borderColor: colour }}
@@ -381,64 +488,6 @@ export function PlannerResult({
         </div>
       ) : null}
 
-      {/* --- What happens next --------------------------------------- */}
-      <div className="mt-16 border-t border-[var(--ink-hairline)] pt-12">
-        {sent ? (
-          <div className="max-w-2xl">
-            <Chip tone="sage">Sent</Chip>
-            <h3 className="mt-6 text-36">We have it.</h3>
-            <p className="mt-5 text-18 text-ink-soft">
-              Quote <span className="u-num">{plan.reference}</span> and someone
-              who has driven this route will reply within one working day —
-              usually the same day. They will come back with the same days,
-              costed properly, and the two or three things they would change.
-            </p>
-            <p className="u-num mt-6 text-16 text-ink-soft">
-              {formatLong(plan.startDate)} · {plan.dayCount} days ·{" "}
-              {plan.stateName}
-              {extras.daysTouched > 0
-                ? ` · your choices on ${extras.daysTouched} ${extras.daysTouched === 1 ? "day" : "days"}`
-                : ""}
-            </p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <LuxeButtonLink href="/destinations" variant="ghost">
-                Look at the other states
-              </LuxeButtonLink>
-              <button
-                type="button"
-                onClick={onRestart}
-                className="u-label min-h-13 px-3 text-ink-faint underline underline-offset-4 transition-colors hover:text-ink"
-              >
-                Plan another
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-wrap items-center justify-between gap-8">
-            <p className="max-w-xl text-18 text-ink-soft">
-              Send it and a person reads it — the days, the rooms you picked and
-              everything you added. No deposit, no card, and no obligation on
-              either side.
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <LuxeButton variant="clay" size="lg" onClick={onSend}>
-                Send this to us
-              </LuxeButton>
-              <button
-                type="button"
-                onClick={onChangeDates}
-                className={cn(
-                  "u-label min-h-13 px-3 text-ink-faint underline underline-offset-4",
-                  "transition-colors hover:text-ink",
-                )}
-              >
-                Change the dates
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
       {/*
        * The pinned summary, phones only.
        *
@@ -467,8 +516,8 @@ export function PlannerResult({
               {formatINR(grandTotal)}
             </span>
           </span>
-          <LuxeButton variant="clay" onClick={onSend} className="shrink-0">
-            Send
+          <LuxeButton variant="clay" onClick={send} className="shrink-0">
+            Confirm booking
           </LuxeButton>
         </div>
       ) : null}

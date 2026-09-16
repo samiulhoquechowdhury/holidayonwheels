@@ -526,6 +526,57 @@
   }
 
   /*
+   * A side panel that stays in view while the column beside it scrolls — the
+   * price panel next to the itinerary.
+   *
+   * It sits a gap below the header and follows it: when the header tightens
+   * the panel rises with it, and when the header lifts away on scroll-down
+   * the panel moves up to the top of the screen instead of leaving a band of
+   * empty space where the header used to be. Its height is capped to what is
+   * left of the viewport, so a panel taller than the screen scrolls inside
+   * itself rather than pinning its top and hiding its total.
+   *
+   * Desktop only. On a phone the panel stacks under the itinerary and the
+   * pinned total bar does this job.
+   *
+   * Note that sticky needs every ancestor to leave overflow alone — an
+   * `overflow: hidden` anywhere above it quietly turns this into a static
+   * block. The planner's section opts out of `SectionShell`'s clipping for
+   * exactly that reason.
+   */
+  @media (min-width: 64rem) {
+    .u-sticky-panel {
+      --sticky-gap: 1.5rem;
+      --sticky-top: calc(var(--header-h) + var(--sticky-gap));
+      position: sticky;
+      top: var(--sticky-top);
+      max-height: calc(100dvh - var(--sticky-top) - var(--sticky-gap));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: none;
+      transition:
+        top 0.45s var(--ease),
+        max-height 0.45s var(--ease);
+    }
+
+    :root[data-header="tight"] .u-sticky-panel {
+      --sticky-top: calc(
+        var(--plate-h-tight) + var(--header-pad-tight) * 2 + var(--sticky-gap)
+      );
+    }
+
+    :root[data-header="lifted"] .u-sticky-panel {
+      --sticky-top: var(--sticky-gap);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .u-sticky-panel {
+      transition: none;
+    }
+  }
+
+  /*
    * A horizontally scrollable row with no visible scrollbar — the state chip
    * rows on the destinations and tours pages.
    *

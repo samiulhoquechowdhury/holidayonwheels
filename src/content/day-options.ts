@@ -1,3 +1,4 @@
+import { roomShots } from "@/config/showcase";
 import type { StateSlug } from "./types";
 
 /**
@@ -53,6 +54,12 @@ export type StayOption = {
   supplement: number;
   /** Set where this is one of ours, so the card can link to it. */
   homestaySlug?: string;
+  /**
+   * The room, photographed. Defaults to the placeholder for its `kind` — see
+   * `roomShots` — and is overridden per property as the real photography
+   * arrives.
+   */
+  image: string;
 };
 
 export type ActivityOption = {
@@ -85,7 +92,16 @@ const stay = (
   blurb: string,
   supplement: number,
   homestaySlug?: string,
-): StayOption => ({ id, name, kind, blurb, supplement, homestaySlug });
+  image?: string,
+): StayOption => ({
+  id,
+  name,
+  kind,
+  blurb,
+  supplement,
+  homestaySlug,
+  image: image ?? roomShots[kind],
+});
 
 const doing = (
   id: string,

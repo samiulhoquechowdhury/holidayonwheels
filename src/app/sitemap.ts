@@ -5,6 +5,7 @@ import { getMotorcycleTours } from "@/content/motorcycle-tours";
 import { getHomestays } from "@/content/homestays";
 import { getEvents } from "@/content/events";
 import { getDestinations } from "@/content/destinations";
+import { getActivities } from "@/content/activities";
 import { getJournalPosts } from "@/content/journal";
 import { getPolicies } from "@/content/site-content";
 
@@ -21,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "", priority: 1 },
     { path: "/destinations", priority: 1 },
     { path: "/motorcycle-tours", priority: 0.9 },
+    { path: "/activities", priority: 0.8 },
     { path: "/homestays", priority: 0.8 },
     { path: "/events", priority: 0.8 },
     { path: "/ilp", priority: 0.7 },
@@ -56,6 +58,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.7,
+    })),
+    ...getActivities().map((activity) => ({
+      url: `${base}/activities/${activity.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
     ...getHomestays().map((stay) => ({
       url: `${base}/homestays/${stay.slug}`,

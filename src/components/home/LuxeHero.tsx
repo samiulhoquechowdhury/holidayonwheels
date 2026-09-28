@@ -3,6 +3,7 @@ import { HeroFilm } from "./HeroFilm";
 import { Accent } from "@/components/primitives/Accent";
 import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
 import { headlineChips, faces } from "@/config/showcase";
+import { LocalClock } from "./LocalClock";
 import { formatINR } from "@/lib/currency";
 import { cn } from "@/lib/cn";
 
@@ -44,7 +45,7 @@ export function LuxeHero({ fromPrice }: { fromPrice: number }) {
           <span className="hidden sm:block">
             Eight states · Permits handled
           </span>
-          <span className="u-num">{new Date().getFullYear()}</span>
+          <LocalClock />
         </div>
 
         {/* --- The statement -------------------------------------------- */}

@@ -24,6 +24,7 @@ export type NavGroup = {
  */
 export const primaryNav: NavLink[] = [
   { label: "Destinations", href: "/destinations" },
+  { label: "Activities", href: "/activities" },
   { label: "Motorcycle tours", href: "/motorcycle-tours" },
   { label: "Homestays", href: "/homestays" },
   { label: "Events", href: "/events" },
@@ -44,6 +45,7 @@ export const footerNav: NavGroup[] = [
     links: [
       { label: "Destinations", href: "/destinations" },
       { label: "Plan a trip", href: "/destinations#plan" },
+      { label: "Things to do", href: "/activities" },
       { label: "Motorcycle tours", href: "/motorcycle-tours" },
       { label: "Homestays", href: "/homestays" },
       { label: "Events", href: "/events" },

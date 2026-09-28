@@ -102,6 +102,36 @@ export const roomShots: Record<string, string> = {
 };
 
 /**
+ * One frame per day activity, keyed by slug.
+ *
+ * Every one of these is a frame already in this file and already looked at —
+ * no new ids were guessed. That is not fussiness: the last two attempts at
+ * picking placeholders by id produced a plate of samosas under "Tripura" and
+ * a pair of trainers on a black background, and a batch fetched for this page
+ * came back as the Taj Mahal, a Balinese temple, Mount Fuji and a dog with a
+ * chew toy.
+ *
+ * Two are stand-ins that need naming in the brief rather than quietly
+ * shipping: `kamakhya-dawn` and `hajo-trail` both use a hilltop shrine that
+ * is Buddhist, not the Shakta and Vaishnavite sites they label. They read
+ * correctly as "a temple on a hill" at card size and wrongly to anybody who
+ * knows either place. See MEDIA.md.
+ */
+export const activityShots: Record<string, string> = {
+  "brahmaputra-sunset-cruise": shot("1590050752117-238cb0fb12b1"), // river, boat
+  "umananda-island": shot("1501785888041-af3ef285b470"), // water and a boat
+  "kamakhya-dawn": shot("1544735716-392fe2489ffa"), // a shrine on a spur
+  "pobitora-safari": shot("1523592121529-f6dde35f079e"), // a figure in tall grass
+  "deepor-beel-birding": shot("1503220317375-aaad61436b1b"), // still water at dawn
+  "sualkuchi-silk": shot("1547153760-18fc86324498"), // craft and colour
+  "chandubi-lake": shot("1609920658906-8223bd289001"), // water under forest
+  "guwahati-food-walk": shot("1533900298318-6b8da08a523e"), // a market in full swing
+  "madan-kamdev": shot("1449158743715-0a90ebb6d2d8"), // stone and trees
+  "hajo-trail": shot("1571401835393-8c5f35328320"), // prayer flags on a hill
+  "guwahati-ropeway": shot("1483728642387-6c3bdd6c93e5"), // the river at dusk
+};
+
+/**
  * Featured trips, by position rather than by state.
  *
  * Deliberately not keyed off `stateShots`: two of the three featured tours

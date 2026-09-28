@@ -5,6 +5,7 @@ import { formatMedium } from "@/lib/date";
 import { Media } from "@/components/primitives/Media";
 import { Chip } from "@/components/primitives/Chip";
 import { regionColour } from "@/config/palette";
+import { activityShots } from "@/config/showcase";
 import type { WeaveRegion } from "@/components/layout/weave-motifs";
 
 /**
@@ -16,7 +17,7 @@ import type { WeaveRegion } from "@/components/layout/weave-motifs";
  * forty of these ships no client JavaScript at all.
  */
 
-export type ResultCardVariant = "tour" | "moto" | "stay" | "event";
+export type ResultCardVariant = "tour" | "moto" | "stay" | "event" | "activity";
 
 export type ResultCardProps = {
   variant: ResultCardVariant;
@@ -61,6 +62,7 @@ const DEFAULT_UNIT: Record<ResultCardVariant, string> = {
   moto: "per rider",
   stay: "per night",
   event: "per ticket",
+  activity: "per person",
 };
 
 export function ResultCard({
@@ -241,9 +243,22 @@ export function ResultCard({
    thing describes itself, so that logic lives once rather than in every
    index page. */
 
-import type { MotorcycleTour, Homestay, NEEvent } from "@/content/types";
+import type {
+  MotorcycleTour,
+  Homestay,
+  NEEvent,
+  Activity,
+} from "@/content/types";
 import { type TourSummary } from "@/content/tours";
 import { getDestinationName } from "@/content/destinations";
+
+const ACTIVITY_LABEL: Record<Activity["category"], string> = {
+  water: "On the water",
+  wildlife: "Wildlife",
+  heritage: "Heritage",
+  culture: "Craft and culture",
+  food: "Food",
+};
 
 const DIFFICULTY_LABEL = {
   easy: "Easy",
@@ -289,6 +304,34 @@ export function TourCard({
           : "Next season on request"
       }
       noteUrgent={Boolean(nextOpen && nextOpen.status === "filling")}
+      priority={priority}
+      sizes={sizes}
+    />
+  );
+}
+
+export function ActivityCard({
+  activity,
+  priority,
+  sizes,
+}: {
+  activity: Activity;
+  priority?: boolean;
+  sizes?: string;
+}) {
+  return (
+    <ResultCard
+      variant="activity"
+      href={`/activities/${activity.slug}`}
+      title={activity.name}
+      strapline={activity.strapline}
+      eyebrow={activity.locality}
+      price={activity.fromPrice}
+      imageAlt={activity.heroAlt}
+      imageSrc={activity.image ?? activityShots[activity.slug]}
+      region="assam"
+      chips={[activity.durationLabel, ACTIVITY_LABEL[activity.category]]}
+      note={activity.bestTime}
       priority={priority}
       sizes={sizes}
     />

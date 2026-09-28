@@ -219,6 +219,42 @@ export type NEEvent = {
   featured?: boolean;
 };
 
+export type ActivityCategory =
+  "water" | "wildlife" | "heritage" | "culture" | "food";
+
+/**
+ * A day activity near Guwahati.
+ *
+ * Deliberately not a `Tour`: there is no itinerary, no departure list and no
+ * price band, because these are half-days bolted onto a trip rather than
+ * trips themselves. What they carry instead is a meeting point and a time of
+ * day, which is what somebody with a free morning actually needs to know.
+ */
+export type Activity = {
+  slug: string;
+  name: string;
+  strapline: string;
+  category: ActivityCategory;
+  /** Where it happens, and how far out of the city. */
+  locality: string;
+  /** "2 hours", "Half day" — read, not computed. */
+  durationLabel: string;
+  /** When in the day or the year it is worth doing. */
+  bestTime: string;
+  /** Per person. */
+  fromPrice: number;
+  groupSizeMax: number;
+  meetingPoint: string;
+  intro: string;
+  body: string[];
+  highlights: string[];
+  includes: string[];
+  excludes: string[];
+  heroAlt: string;
+  image?: string;
+  featured?: boolean;
+};
+
 export type JournalPost = {
   slug: string;
   title: string;

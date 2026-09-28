@@ -2,6 +2,24 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /**
+   * Where the build output goes.
+   *
+   * `next dev` and `next build` both write to `.next` by default, so running a
+   * build while a dev server is up moves the dev server's own manifests and
+   * chunks out from under it. The dev server does not notice: it keeps serving,
+   * and every request returns a 500 with nothing in the browser to say why.
+   *
+   * Point a verification build somewhere else and the two never collide:
+   *
+   *     NEXT_DIST_DIR=.next-verify pnpm build
+   *     NEXT_DIST_DIR=.next-verify pnpm start -p 3270
+   *
+   * `next start` reads this config too, so the variable has to be set for both
+   * commands or start will look in the wrong place.
+   */
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
+
+  /**
    * `/tours` was the trip planner and is now the destinations page — one tab
    * asking one question instead of two asking the same one. The redirect
    * keeps every bookmark, every share and anything the crawler has already

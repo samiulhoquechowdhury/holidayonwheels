@@ -21,6 +21,10 @@
 # success while writing a tree with no BUILD_ID and missing CSS. The recovery
 # is to move the directory aside and rebuild; these are the leftovers of that.
 /.next.old.*/
+# Output of `NEXT_DIST_DIR=.next-verify pnpm build` — a verification build kept
+# apart from `.next` so it cannot clobber a running dev server. See
+# next.config.ts.
+/.next-verify/
 /out/
 
 # production

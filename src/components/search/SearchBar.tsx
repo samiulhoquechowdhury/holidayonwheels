@@ -18,7 +18,7 @@ export function SearchBar({
   className,
   tone = "light",
   /** Where results go. Tours by default; destination pages pass their own. */
-  action = "/tours",
+  action = "/destinations",
 }: {
   className?: string;
   tone?: "light" | "onDark";

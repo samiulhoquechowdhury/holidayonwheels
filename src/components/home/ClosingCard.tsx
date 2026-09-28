@@ -78,7 +78,7 @@ export function ClosingCard() {
               <LuxeButtonLink href="/contact" variant="onDark" size="lg">
                 Ask us a question
               </LuxeButtonLink>
-              <LuxeButtonLink href="/tours" variant="clay" size="lg">
+              <LuxeButtonLink href="/destinations" variant="clay" size="lg">
                 Start planning
               </LuxeButtonLink>
             </div>

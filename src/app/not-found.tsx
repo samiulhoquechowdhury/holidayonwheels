@@ -4,7 +4,7 @@ import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { ButtonLink } from "@/components/primitives/Button";
 
 const ROUTES = [
-  { href: "/tours", label: "Guided tours" },
+  { href: "/destinations", label: "Plan a trip" },
   { href: "/motorcycle-tours", label: "Motorcycle expeditions" },
   { href: "/homestays", label: "Homestays" },
   { href: "/events", label: "Festivals and events" },

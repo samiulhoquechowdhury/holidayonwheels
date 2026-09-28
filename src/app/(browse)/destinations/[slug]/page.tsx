@@ -75,7 +75,10 @@ export default async function DestinationDetailPage({
          * it again.
          */}
         <div className="flex flex-wrap gap-3">
-          <LuxeButtonLink href={`/tours?state=${destination.slug}`} size="lg">
+          <LuxeButtonLink
+            href={`/destinations?state=${destination.slug}#plan`}
+            size="lg"
+          >
             Plan a trip to {destination.name}
           </LuxeButtonLink>
           {tours.length > 0 ? (
@@ -187,7 +190,7 @@ export default async function DestinationDetailPage({
               // when that page became the planner. It carries the state now,
               // so the link answers the first question on the way through.
               link={{
-                href: `/tours?state=${destination.slug}`,
+                href: `/destinations?state=${destination.slug}#plan`,
                 label: "Plan your own",
               }}
               align="split"

@@ -37,7 +37,7 @@ export function Footer() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3 lg:justify-end lg:pb-2">
-            <ButtonLink href="/tours" variant="onDark" size="lg">
+            <ButtonLink href="/destinations#plan" variant="onDark" size="lg">
               Plan a trip
             </ButtonLink>
             <ButtonLink

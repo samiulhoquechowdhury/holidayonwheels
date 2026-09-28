@@ -1,25 +1,29 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { PageHero } from "@/components/layout/PageHero";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import { Rise } from "@/components/motion/Rise";
 import { ParallaxMedia } from "@/components/motion/Parallax";
 import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
+import { Accent } from "@/components/primitives/Accent";
 import { JumpBar } from "@/components/layout/JumpBar";
 import { StatesHeader } from "@/components/destinations/StatesHeader";
 import { MonthStrip } from "@/components/destinations/MonthStrip";
 import { getDestinations } from "@/content/destinations";
-import { getTours } from "@/content/tours";
+import { TripPlanner } from "@/components/planner/TripPlanner";
+import type { PlannerState } from "@/components/planner/types";
+import { getTours, getTourSummaries } from "@/content/tours";
+import { getRoute, maxDaysFor } from "@/content/routes";
 import { stateColours } from "@/config/palette";
 import { stateShots } from "@/config/showcase";
 import { cn } from "@/lib/cn";
+import { toISO } from "@/lib/date";
 import type { Destination } from "@/content/types";
 
 export const metadata: Metadata = {
   title: "Destinations",
   description:
-    "Assam, Meghalaya, Arunachal Pradesh, Nagaland, Manipur, Mizoram, Tripura and Sikkim — what each one is for, and when to go.",
+    "Plan a trip across the eight states of Northeast India — pick a state, tell us who is travelling and when, and get a dated day-by-day itinerary. Plus what each state is for, and when to go.",
 };
 
 /**
@@ -46,9 +50,20 @@ export const metadata: Metadata = {
  * Order is west to east, matching the hero reel and the home index. Every
  * index of the map on this site agrees with every other.
  */
-export default function DestinationsPage() {
+export default async function DestinationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const one = (key: string) => {
+    const value = params[key];
+    return Array.isArray(value) ? value[0] : value;
+  };
+
   const destinations = getDestinations();
   const tours = getTours();
+  const summaries = getTourSummaries();
 
   const tripCounts = Object.fromEntries(
     destinations.map((destination) => [
@@ -63,55 +78,126 @@ export default function DestinationsPage() {
     ]),
   );
 
+  /*
+   * The planner's view of a state. Assembled here rather than in the client
+   * component for the usual reason — a `Destination` carries three paragraphs
+   * of body copy, and eight of them would be serialised into the payload of a
+   * page that renders one line of each.
+   */
+  const plannerStates: PlannerState[] = destinations.map((destination) => {
+    const colour = stateColours[destination.slug];
+    const route = getRoute(destination.slug);
+    return {
+      slug: destination.slug,
+      name: destination.name,
+      tagline: destination.tagline,
+      gateway: destination.gateway,
+      bestMonths: destination.bestMonths,
+      knownFor: destination.knownFor,
+      requiresILP: destination.requiresILP,
+      region: destination.region,
+      tripCount: summaries.filter((tour) =>
+        tour.states.includes(destination.slug),
+      ).length,
+      minDays: route.minDays,
+      maxDays: maxDaysFor(destination.slug),
+      routeNote: route.note,
+      image: stateShots[destination.slug] ?? "",
+      colour: colour.surface,
+      ink: colour.ink,
+    };
+  });
+
   return (
     <>
-      <PageHero
-        eyebrow="Eight states"
-        title="Where you could go"
-        accent="could"
-        intro="Roughly west to east. Each of these is a different country in every way that matters to a traveller — language, food, altitude, religion and road quality."
-        tint="paper"
-        region="meghalaya"
-      />
-
       {/*
-       * The index, at the size the subject deserves. Everything below is the
-       * detail behind one of these eight names, so the names come first and
-       * come big — see `StatesHeader` for why the 36px chips that used to do
-       * this job were the wrong size for the most important question on the
-       * page.
+       * The planner, at the top of the page it belongs to.
+       *
+       * It used to live at `/tours`, behind its own tab, which split one
+       * question across two places: "which of the eight" was the whole of the
+       * destinations page *and* the planner's first step. The tab is gone and
+       * the flow starts here, because choosing a state and planning a trip to
+       * it are the same decision.
+       *
+       * `overflow-visible` overrides the shell's clipping. An `overflow:
+       * hidden` ancestor stops `position: sticky` working, and the price panel
+       * beside the itinerary has to stay in view while the days scroll. `html`
+       * already clips horizontal overflow site-wide, so nothing bleeds
+       * sideways without it.
        */}
-      <SectionShell tint="paper" width="wide" spacing="tight">
-        <StatesHeader
-          destinations={destinations}
-          colours={colours}
-          tripCounts={tripCounts}
+      <SectionShell
+        tint="paper"
+        width="wide"
+        id="plan"
+        spacing="flush"
+        className="overflow-visible pt-[calc(var(--header-h)+3rem)] pb-[var(--section-pad)] lg:pt-[calc(var(--header-h)+4.5rem)]"
+      >
+        <TripPlanner
+          states={plannerStates}
+          eyebrow={`Built around your dates, from ${tours.length} routes we run`}
+          // Resolved on the server so the earliest selectable date is the same
+          // in the HTML and after hydration. `new Date()` in the client
+          // component would differ across a midnight boundary or a timezone.
+          today={toISO(new Date())}
+          initialState={one("state")}
+          initialParty={one("type")}
         />
       </SectionShell>
 
       {/*
-       * And the slim version, which sticks. The index above answers "which
-       * eight"; this answers "take me to another one" once you are four
-       * screens into the detail and the index has scrolled away.
+       * Everything below is reading rather than planning, and it is hidden
+       * once the planner is past its first step — see `.u-flow-hide`. Nobody
+       * choosing rooms for day four of their own itinerary wants eight
+       * encyclopaedia entries and a footer underneath it.
        */}
-      <JumpBar
-        label="Jump to a state"
-        items={destinations.map((destination) => ({
-          id: destination.slug,
-          label: destination.name,
-          colour: stateColours[destination.slug].surface,
-          ink: stateColours[destination.slug].ink,
-        }))}
-      />
+      <div className="u-flow-hide">
+        <SectionShell tint="paper" width="wide" spacing="tight">
+          <div className="border-t border-[var(--ink-hairline)] pt-12">
+            <p className="u-label flex items-center gap-4 text-ink-faint">
+              <span
+                aria-hidden="true"
+                className="h-0.5 w-12 shrink-0 rounded-full bg-clay"
+              />
+              Before you choose
+            </p>
+            <h2 className="mt-6 max-w-3xl text-36 lg:text-48">
+              What each of the eight is <Accent>for</Accent>
+            </h2>
+          </div>
 
-      {destinations.map((destination, index) => (
-        <StateBlock
-          key={destination.slug}
-          destination={destination}
-          index={index}
-          tripCount={tripCounts[destination.slug] ?? 0}
+          <div className="mt-12">
+            <StatesHeader
+              destinations={destinations}
+              colours={colours}
+              tripCounts={tripCounts}
+            />
+          </div>
+        </SectionShell>
+
+        {/*
+         * The slim index, which sticks. The one above answers "which eight";
+         * this answers "take me to another one" once you are four screens into
+         * the detail and it has scrolled away.
+         */}
+        <JumpBar
+          label="Jump to a state"
+          items={destinations.map((destination) => ({
+            id: destination.slug,
+            label: destination.name,
+            colour: stateColours[destination.slug].surface,
+            ink: stateColours[destination.slug].ink,
+          }))}
         />
-      ))}
+
+        {destinations.map((destination, index) => (
+          <StateBlock
+            key={destination.slug}
+            destination={destination}
+            index={index}
+            tripCount={tripCounts[destination.slug] ?? 0}
+          />
+        ))}
+      </div>
     </>
   );
 }
@@ -240,7 +326,7 @@ function StateBlock({
               </LuxeButtonLink>
               {tripCount > 0 ? (
                 <LuxeButtonLink
-                  href={`/tours?state=${destination.slug}`}
+                  href={`/destinations?state=${destination.slug}#plan`}
                   variant="ghost"
                 >
                   {tripCount} {tripCount === 1 ? "trip" : "trips"}

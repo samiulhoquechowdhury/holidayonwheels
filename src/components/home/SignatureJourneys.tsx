@@ -50,7 +50,7 @@ export function SignatureJourneys() {
             {/* "All trips" until `/tours` stopped being an index. It is the
                 planner now, so the label has to promise what it delivers —
                 a list nobody can reach is worse than no link. */}
-            <LuxeButtonLink href="/tours" variant="ghost">
+            <LuxeButtonLink href="/destinations" variant="ghost">
               Plan your own
             </LuxeButtonLink>
           </Rise>
@@ -101,7 +101,7 @@ export function SignatureJourneys() {
               answer for everybody else, and it says so. */}
           <li className="lg:col-span-3">
             <Link
-              href="/tours"
+              href="/destinations"
               className="group flex h-full min-h-56 flex-col justify-between rounded-[var(--radius-card)] bg-clay p-7 text-clay-on transition-colors duration-[var(--dur)] ease-brand hover:bg-clay-deep"
             >
               <span className="u-label">Not quite it?</span>

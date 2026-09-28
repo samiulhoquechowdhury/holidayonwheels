@@ -146,7 +146,7 @@ const MODES = [
     title: "Guided tours",
     copy: "A private vehicle, a guide from the state, and nothing scheduled before nine.",
     tags: ["For two", "Honeymoons", "Small groups", "Families"],
-    href: "/tours",
+    href: "/destinations",
     image: journeyShots.couple,
     colour: "var(--jade)",
     ink: "var(--jade-ink)",

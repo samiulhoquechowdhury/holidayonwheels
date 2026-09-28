@@ -180,7 +180,7 @@ export default async function HomestayDetailPage({
               eyebrow="Guided trips nearby"
               title={`Tours through ${getDestinationName(stay.state)}`}
               intro="Book the stay and the trip together and we line the transfers up between them."
-              link={{ href: "/tours", label: "All trips" }}
+              link={{ href: "/destinations#plan", label: "Plan a trip" }}
               align="split"
             />
             <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">

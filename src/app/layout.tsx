@@ -4,7 +4,6 @@ import { site } from "@/config/site";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { FooterGate } from "@/components/layout/FooterGate";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -44,9 +43,10 @@ export default function RootLayout({
         </a>
         <Header />
         <main id="main">{children}</main>
-        <FooterGate>
+        {/* Off while the planner is mid-flow — see `.u-flow-hide`. */}
+        <div className="u-flow-hide">
           <Footer />
-        </FooterGate>
+        </div>
       </body>
     </html>
   );

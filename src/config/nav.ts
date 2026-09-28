@@ -13,10 +13,17 @@ export type NavGroup = {
   links: NavLink[];
 };
 
-/** Primary header navigation. Kept to six items — the nav stays quiet. */
+/**
+ * Primary header navigation.
+ *
+ * "Tours" is deliberately absent. It used to sit beside "Destinations" and
+ * ask the same question — which of the eight states — so the two tabs split
+ * one decision across two pages, and the trip planner was behind the one
+ * whose label sounded like a catalogue. The planner now opens the
+ * destinations page, and the individual trips still live at `/tours/[slug]`.
+ */
 export const primaryNav: NavLink[] = [
   { label: "Destinations", href: "/destinations" },
-  { label: "Tours", href: "/tours" },
   { label: "Motorcycle tours", href: "/motorcycle-tours" },
   { label: "Homestays", href: "/homestays" },
   { label: "Events", href: "/events" },
@@ -36,7 +43,7 @@ export const footerNav: NavGroup[] = [
     label: "Travel",
     links: [
       { label: "Destinations", href: "/destinations" },
-      { label: "Tours", href: "/tours" },
+      { label: "Plan a trip", href: "/destinations#plan" },
       { label: "Motorcycle tours", href: "/motorcycle-tours" },
       { label: "Homestays", href: "/homestays" },
       { label: "Events", href: "/events" },

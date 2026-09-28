@@ -62,7 +62,7 @@ function NothingToBook() {
       <SectionShell tint="paper">
         <ul className="flex flex-wrap gap-4">
           {[
-            { href: "/tours", label: "Browse guided tours" },
+            { href: "/destinations", label: "Plan a trip" },
             { href: "/motorcycle-tours", label: "Browse expeditions" },
             { href: "/homestays", label: "Browse homestays" },
             { href: "/events", label: "Browse events" },

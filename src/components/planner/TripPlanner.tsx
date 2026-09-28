@@ -122,6 +122,26 @@ export function TripPlanner({
     headingRef.current?.focus();
   }, [step]);
 
+  /*
+   * Tell the page when the flow is under way.
+   *
+   * Past the first step this is a form, and the reading matter around it —
+   * the eight state write-ups below, the site footer — is a second page of
+   * things to do at the moment somebody is meant to be finishing the first.
+   * Both carry `.u-flow-hide`, and this attribute is what turns them off.
+   *
+   * An attribute on the root rather than a prop or a context, for the same
+   * reason the header publishes its own state that way: the things that need
+   * it are server components on the other side of the layout, and none of
+   * them should have to become client components to hear about it.
+   */
+  useEffect(() => {
+    const root = document.documentElement;
+    if (step === "state") root.removeAttribute("data-planner");
+    else root.setAttribute("data-planner", "flow");
+    return () => root.removeAttribute("data-planner");
+  }, [step]);
+
   // Focus the first invalid field, after React has committed `aria-invalid`.
   useEffect(() => {
     if (Object.keys(errors).length === 0) return;

@@ -1,6 +1,26 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /**
+   * `/tours` was the trip planner and is now the destinations page — one tab
+   * asking one question instead of two asking the same one. The redirect
+   * keeps every bookmark, every share and anything the crawler has already
+   * seen pointing somewhere real, and Next carries the query string across,
+   * so `/tours?state=sikkim` still opens the planner on Sikkim.
+   *
+   * Temporary rather than permanent: a 308 is cached by the browser
+   * indefinitely and this structure is a week old. Make it permanent once it
+   * has settled.
+   *
+   * Only the index moves. The forty-seven trips at `/tours/[slug]` stay where
+   * they are, and this rule does not touch them.
+   */
+  async redirects() {
+    return [
+      { source: "/tours", destination: "/destinations", permanent: false },
+    ];
+  },
+
   images: {
     /**
      * Mock photography only. Every remote host listed here is a placeholder

@@ -19,9 +19,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticRoutes = [
     { path: "", priority: 1 },
-    { path: "/tours", priority: 0.9 },
+    { path: "/destinations", priority: 1 },
     { path: "/motorcycle-tours", priority: 0.9 },
-    { path: "/destinations", priority: 0.8 },
     { path: "/homestays", priority: 0.8 },
     { path: "/events", priority: 0.8 },
     { path: "/ilp", priority: 0.7 },

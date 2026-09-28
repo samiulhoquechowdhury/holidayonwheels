@@ -215,7 +215,7 @@ export function MenuDrawer({
                 </OutboundLink>
 
                 <div className="mt-8">
-                  <ButtonLink href="/tours" size="lg" block>
+                  <ButtonLink href="/destinations#plan" size="lg" block>
                     Plan a trip
                   </ButtonLink>
                 </div>

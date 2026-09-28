@@ -167,8 +167,12 @@ export function Header() {
 
           <PrimaryNav pathname={pathname} reduced={Boolean(reduced)} />
 
+          {/*
+           * No "Plan a trip" button. Planning starts on the destinations
+           * page now — the first nav item — so a second button beside it
+           * pointing at the same place was the bar asking twice.
+           */}
           <div className="flex shrink-0 items-center gap-2 md:gap-3">
-            <PlanTrip />
             <StairToggle
               ref={toggleRef}
               open={open}
@@ -288,43 +292,6 @@ function RollingLabel({ children }: { children: React.ReactNode }) {
         {children}
       </span>
     </span>
-  );
-}
-
-/**
- * The one conversion action in the header, and the only clay fill above the
- * fold. Hidden below `md`, where the drawer's own "Plan a trip" button covers
- * it and the bar has no room for it.
- */
-function PlanTrip() {
-  return (
-    <div className="hidden md:block">
-      <Link
-        href="/tours"
-        className={cn(
-          "group inline-flex h-[var(--plate-h)] items-center gap-2.5 rounded-[var(--radius-control)] px-6",
-          "bg-clay text-14 font-medium whitespace-nowrap text-clay-on",
-          "transition-[height,background-color] duration-[var(--dur-micro)] ease-brand hover:bg-clay-deep",
-        )}
-      >
-        Plan a trip
-        {/* Nudges on hover and stops. No loop — nothing on this site animates
-            without being asked to. */}
-        <svg
-          aria-hidden="true"
-          focusable="false"
-          viewBox="0 0 16 10"
-          className="h-2.5 w-4 shrink-0 transition-transform duration-[var(--dur-micro)] ease-brand motion-safe:group-hover:translate-x-1"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.25"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M0.5 5h14M10.5 1l4 4-4 4" />
-        </svg>
-      </Link>
-    </div>
   );
 }
 

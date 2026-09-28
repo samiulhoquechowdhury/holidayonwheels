@@ -125,8 +125,8 @@ export default function DevPage() {
             <Button size="lg">Large</Button>
           </Row>
           <Row label="As a link">
-            <ButtonLink href="/tours">Browse tours</ButtonLink>
-            <ButtonLink href="/tours" variant="secondary">
+            <ButtonLink href="/destinations">Plan a trip</ButtonLink>
+            <ButtonLink href="/destinations" variant="secondary">
               Secondary link
             </ButtonLink>
           </Row>
@@ -137,7 +137,7 @@ export default function DevPage() {
         <Row label="On the night surface" dark>
           <Button variant="onDark">On dark</Button>
           <Button variant="moto">Motorcycle</Button>
-          <ButtonLink href="/tours" variant="onDark">
+          <ButtonLink href="/destinations" variant="onDark">
             Link
           </ButtonLink>
         </Row>

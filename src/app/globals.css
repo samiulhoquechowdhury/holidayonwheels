@@ -577,6 +577,21 @@
   }
 
   /*
+   * Hidden while the trip planner is past its first step.
+   *
+   * `TripPlanner` sets `data-planner="flow"` on the root. Anything wearing
+   * this class is reading matter that belongs on the page when somebody is
+   * browsing and gets in the way when they are filling in a form: the state
+   * write-ups under the planner, and the site footer.
+   *
+   * `display: none` rather than visibility or opacity — the point is that it
+   * leaves the page entirely, taking its height and its tab stops with it.
+   */
+  :root[data-planner="flow"] .u-flow-hide {
+    display: none;
+  }
+
+  /*
    * A horizontally scrollable row with no visible scrollbar — the state chip
    * rows on the destinations and tours pages.
    *

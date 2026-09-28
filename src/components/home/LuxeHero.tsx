@@ -77,7 +77,7 @@ export function LuxeHero({ fromPrice }: { fromPrice: number }) {
               and family homestays, with the Inner Line Permits handled for you.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <LuxeButtonLink href="/tours" variant="primary" size="lg">
+              <LuxeButtonLink href="/destinations" variant="primary" size="lg">
                 Plan a trip
               </LuxeButtonLink>
               <LuxeButtonLink href="/destinations" variant="ghost" size="lg">

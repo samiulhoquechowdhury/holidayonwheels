@@ -55,7 +55,7 @@ export function TourTypeTiles() {
         <li key={tile.type}>
           <Reveal delay={index * 0.06}>
             <Link
-              href={`/tours?type=${tile.type}`}
+              href={`/destinations?type=${tile.type}`}
               className="group relative block overflow-hidden rounded-[var(--radius-card)]"
             >
               <Media

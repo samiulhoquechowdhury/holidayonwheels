@@ -194,7 +194,7 @@ function EmptyBookings() {
         When you book a trip, a homestay or an event, it will appear here along
         with any permits we are processing for it.
       </p>
-      <ButtonLink href="/tours" variant="primary" className="mt-8">
+      <ButtonLink href="/destinations" variant="primary" className="mt-8">
         Find a trip
       </ButtonLink>
     </div>

@@ -1,8 +1,7 @@
 import Image from "next/image";
 import { HeroFilm } from "./HeroFilm";
 import { Accent } from "@/components/primitives/Accent";
-import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
-import { headlineChips, faces } from "@/config/showcase";
+import { headlineChips } from "@/config/showcase";
 import { LocalClock } from "./LocalClock";
 import { formatINR } from "@/lib/currency";
 import { cn } from "@/lib/cn";
@@ -68,27 +67,6 @@ export function LuxeHero({ fromPrice }: { fromPrice: number }) {
             </span>
           </span>
         </h1>
-
-        {/* --- Lede, actions, and the proof that they are real ---------- */}
-        <div className="mt-12 grid gap-10 border-t border-[var(--ink-hairline)] pt-10 lg:mt-16 lg:grid-cols-[1.1fr_auto] lg:items-start lg:gap-20">
-          <div className="max-w-2xl">
-            <p className="u-lede text-18 text-ink-soft lg:text-22">
-              Assam, Meghalaya, Arunachal Pradesh, Nagaland, Manipur, Mizoram,
-              Tripura and Sikkim — run as guided tours, motorcycle expeditions
-              and family homestays, with the Inner Line Permits handled for you.
-            </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <LuxeButtonLink href="/destinations" variant="primary" size="lg">
-                Plan a trip
-              </LuxeButtonLink>
-              <LuxeButtonLink href="/destinations" variant="ghost" size="lg">
-                See the eight states
-              </LuxeButtonLink>
-            </div>
-          </div>
-
-          <SocialProof />
-        </div>
       </div>
 
       {/* --- The film -------------------------------------------------- */}
@@ -157,60 +135,5 @@ function HeroChip({
         className="object-cover"
       />
     </span>
-  );
-}
-
-/**
- * The credibility block: a rating, three faces, a count.
- *
- * It is here, in the first screen, rather than in a testimonials section
- * two-thirds down the page, because that is where the decision to keep
- * reading is made. Faces are photographs at 44px — an illustrated avatar
- * signals "placeholder", which is the opposite of what this element is for.
- */
-function SocialProof() {
-  return (
-    <div className="flex items-center gap-5 lg:flex-col lg:items-end lg:gap-4 lg:text-right">
-      <div className="flex -space-x-3">
-        {faces.map((face) => (
-          <span
-            key={face.alt}
-            className="relative size-11 overflow-hidden rounded-full border-2 border-paper"
-          >
-            <Image
-              src={face.src}
-              alt={face.alt}
-              fill
-              sizes="88px"
-              className="object-cover"
-            />
-          </span>
-        ))}
-      </div>
-      <div>
-        <span className="flex items-center gap-1.5 text-clay-ink lg:justify-end">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <Star key={index} />
-          ))}
-          <span className="u-num ml-1.5 text-14 text-ink">4.9</span>
-        </span>
-        <p className="u-label mt-2 text-ink-faint">
-          1,400 travellers since 2009
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function Star() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 12 12"
-      className="size-3 fill-current"
-      focusable="false"
-    >
-      <path d="M6 0l1.6 3.9L12 4.3 8.7 7l1 4.3L6 9l-3.7 2.3 1-4.3L0 4.3l4.4-.4z" />
-    </svg>
   );
 }

@@ -26,8 +26,12 @@ export const metadata: Metadata = {
  * The page is built as a sequence of decisions rather than a list of product
  * categories, and the order is the design:
  *
- *  1. **Hero** — what and where, with the proof of credibility (rating, faces,
- *     count) in the first screen rather than three-quarters down the page.
+ *  1. **Hero** — what and where, and nothing else. One line of type and the
+ *     film. The lede, the two buttons and the rating block were cut: they
+ *     asked the reader to decide before the page had said anything, and the
+ *     offers band and journey modes directly below both do that job better.
+ *     Credibility now lands at the proof band, once there is something to be
+ *     credible about.
  *  2. **Marquee** — what is on offer, moving. The eight names used to run
  *     here, but the hero says "eight states" in 160px directly above it.
  *  3. **Manifesto** — the one argument, before anything is sold.

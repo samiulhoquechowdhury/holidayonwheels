@@ -12,9 +12,9 @@ import { getFeaturedMotorcycleTours } from "@/content/motorcycle-tours";
 import { journeyShots } from "@/config/showcase";
 
 export const metadata: Metadata = {
-  title: "Car and bike hire",
+  title: "Bike, scooter and car hire",
   description:
-    "Self-drive car and motorcycle hire across Northeast India, operated by our partner Beep Drive.",
+    "Self-drive scooter, motorcycle and car hire across Northeast India, operated by our partner Beep Drive.",
 };
 
 /**
@@ -35,7 +35,7 @@ export default function RentalsPage() {
         title="Take the wheel yourself"
         accent="wheel"
         image={journeyShots.solo}
-        intro="Self-drive car and motorcycle hire across the region is run by our partner Beep Drive rather than booked here. It opens in a new tab and is paid for separately."
+        intro="Scooter, motorcycle and self-drive car hire across the region is run by our partner Beep Drive rather than booked here. It opens in a new tab and is paid for separately."
         tint="shell"
         region="tripura"
       />

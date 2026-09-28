@@ -30,6 +30,13 @@ const CARDS = [
     alt: "A row of Royal Enfield motorcycles lined up outside a hire garage in Guwahati, Assam",
     region: "assam" as const,
   },
+  {
+    kind: "scooter" as const,
+    title: "Hire a scooter",
+    copy: "An Activa or a Jupiter by the day, which is how most of Guwahati actually moves. Cheapest way to cover the city, the ghats and Kamakhya hill without a driver.",
+    alt: "Scooters parked along a street in Guwahati, Assam",
+    region: "assam" as const,
+  },
 ];
 
 export function RentalsOutbound() {

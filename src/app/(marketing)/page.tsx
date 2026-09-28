@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LuxeHero } from "@/components/home/LuxeHero";
-import { StateMarquee } from "@/components/home/StateMarquee";
+import { OfferMarquee } from "@/components/home/OfferMarquee";
 import { Manifesto } from "@/components/home/Manifesto";
 import { JourneyModes } from "@/components/home/JourneyModes";
 import { SignatureJourneys } from "@/components/home/SignatureJourneys";
@@ -28,7 +28,8 @@ export const metadata: Metadata = {
  *
  *  1. **Hero** — what and where, with the proof of credibility (rating, faces,
  *     count) in the first screen rather than three-quarters down the page.
- *  2. **Marquee** — the eight names, moving. Establishes scale in one glance.
+ *  2. **Marquee** — what is on offer, moving. The eight names used to run
+ *     here, but the hero says "eight states" in 160px directly above it.
  *  3. **Manifesto** — the one argument, before anything is sold.
  *  4. **Journey modes** — the self-selection moment. Everything below is
  *     downstream of the choice made here.
@@ -54,7 +55,7 @@ export default function HomePage() {
   return (
     <>
       <LuxeHero fromPrice={getLowestTourPrice()} />
-      <StateMarquee />
+      <OfferMarquee />
       <Manifesto />
       <JourneyModes />
       <SignatureJourneys />

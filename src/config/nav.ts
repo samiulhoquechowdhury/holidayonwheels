@@ -1,5 +1,3 @@
-import { BEEPDRIVE_URL } from "./external";
-
 export type NavLink = {
   label: string;
   href: string;
@@ -26,6 +24,7 @@ export const primaryNav: NavLink[] = [
   { label: "Destinations", href: "/destinations" },
   { label: "Activities", href: "/activities" },
   { label: "Motorcycle tours", href: "/motorcycle-tours" },
+  { label: "Bike & scooter hire", href: "/rentals" },
   { label: "Homestays", href: "/homestays" },
   { label: "Events", href: "/events" },
   { label: "Permits", href: "/ilp" },
@@ -56,11 +55,7 @@ export const footerNav: NavGroup[] = [
     links: [
       { label: "Inner Line Permits", href: "/ilp" },
       { label: "Apply for a permit", href: "/ilp/apply" },
-      {
-        label: "Car and bike hire",
-        href: BEEPDRIVE_URL,
-        external: true,
-      },
+      { label: "Bike & scooter hire", href: "/rentals" },
       { label: "Frequently asked questions", href: "/faq" },
     ],
   },

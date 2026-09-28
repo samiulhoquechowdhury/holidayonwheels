@@ -15,7 +15,7 @@ export const BEEPDRIVE_URL = "https://beepdrive.com";
  * known, change only this function.
  */
 export type RentalIntent = {
-  kind: "car" | "bike";
+  kind: "car" | "bike" | "scooter";
   /** City the traveller is browsing from, if we know it. */
   city?: string;
   /** ISO date strings, if the traveller has picked dates. */

@@ -77,6 +77,32 @@ the shoot.
 Every one of these crops to 4:5 on the planner card and 4:5 again on the
 destinations index, so a single portrait frame per state covers both.
 
+### The activity frames, and two that are wrong on purpose
+
+`activityShots` gives each of the eleven Guwahati day activities a frame.
+Every one is a photograph already in this file that has been looked at — a
+batch of eleven fresh candidates fetched for the page came back as the Taj
+Mahal, a Balinese temple, Mount Fuji, a savanna tree and a dog with a chew
+toy, which is the third time in a row that picking by image id has produced
+something absurd.
+
+Two of the eleven are stand-ins that are _wrong_, not merely generic, and
+should be first in the queue when the shoot happens:
+
+| Activity        | What the placeholder is     | Wanted                            |
+| --------------- | --------------------------- | --------------------------------- |
+| `kamakhya-dawn` | A Buddhist shrine on a spur | Kamakhya on Nilachal hill at dawn |
+| `hajo-trail`    | Prayer flags on a ridge     | Hayagriva Madhava, or Poa Mecca   |
+
+Both read correctly as "a temple on a hill" at card size and wrongly to
+anybody who knows either site — Kamakhya is Shakta and Hajo's temple is
+Vaishnavite, and neither is Tibetan Buddhist.
+
+The other nine are the right _kind_ of place: a river and a boat for the
+cruise, tall grass for Pobitora, still water for Deepor Beel, a market for
+the food walk. Each activity crops 4:5 on its card and 3:2 on its detail
+lead, so one landscape frame per activity covers both.
+
 ### One new mock: the family card
 
 `journeyShots.family` was added for the planner's party step. It is the only

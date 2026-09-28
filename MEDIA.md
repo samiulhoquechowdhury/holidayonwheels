@@ -66,13 +66,28 @@ Four of the eight are recognisably somewhere else. In priority order:
 | Tripura | _(replaced — was the Taj Mahal)_ | Ujjayanta Palace, or the Unakoti reliefs |
 | Manipur | The Karaweik barge, Yangon       | Phumdis on Loktak, or Ima Keithel        |
 | Mizoram | Mount Bromo, Indonesia           | Aizawl along its ridge, or Reiek Tlang   |
-| Assam   | A rowing boat on an alpine lake  | A country boat on the Brahmaputra        |
+| Assam   | Kerala backwaters, coconut palms | A country boat on the Brahmaputra        |
 
 The Tripura frame was swapped for a generic street scene in the interim,
 because the Taj Mahal is not a placeholder — it is a claim, and it is the
 first thing anyone who knows the country would notice on a card headed
 "Tripura". The other three are wrong but not _famous_, so they can wait for
 the shoot.
+
+**Assam is now the exception and should be shot or sourced first.** The
+signature routes section on the home page leads on "The Brahmaputra and rhino
+country", and its card is the feature tile — roughly 42% of the width and the
+full height of the bento, which makes `stateShots.assam` the largest
+photograph on the site's front page. It is dense coconut palm over a still
+backwater with a dugout canoe: unmistakably Kerala, five states and one
+climate away from the braided Brahmaputra, and directly under the word
+"Assam" set in 88px. The whole 36-frame mock pool was reviewed for a stand-in
+and there is nothing in it that reads as the Assam plains, so this one cannot
+be patched by reshuffling what we already have.
+
+Wanted, in order of preference: a greater one-horned rhino in elephant grass
+at Kaziranga; the Brahmaputra wide and braided past a sandbar; a tea garden
+with pluckers in it. Any of the three also serves `hero-river` below.
 
 Every one of these crops to 4:5 on the planner card and 4:5 again on the
 destinations index, so a single portrait frame per state covers both.

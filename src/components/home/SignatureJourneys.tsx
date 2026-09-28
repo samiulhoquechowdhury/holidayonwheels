@@ -7,9 +7,9 @@ import {
   ArrowButton,
   LuxeButtonLink,
 } from "@/components/primitives/LuxeButton";
-import { getFeaturedTours } from "@/content/tours";
+import { getTourBySlug } from "@/content/tours";
 import { getDestinationName } from "@/content/destinations";
-import { tourShots } from "@/config/showcase";
+import { stateShots } from "@/config/showcase";
 import { colourFor } from "@/config/palette";
 import { formatINR } from "@/lib/currency";
 import { cn } from "@/lib/cn";
@@ -24,14 +24,43 @@ import type { Tour } from "@/content/types";
  * of the others and holds the composition, and the eye goes to it before it
  * has read a word — which is precisely what a featured trip is for.
  *
+ * The three are named rather than taken off the top of the featured list.
+ * Ordered by featured flag alone the section opened Assam, Meghalaya, Assam —
+ * the same state twice in a row of three, which makes the region look smaller
+ * than it is on the one screen whose job is to make it look larger. Naming
+ * them also lets the row carry an argument: the plains, the frontier and the
+ * high Himalaya, in ascending order of altitude and of nerve, from an easy
+ * week at ₹74,500 to two passes above 4,000m.
+ *
+ * The photograph follows the trip's state, not its position in the grid. It
+ * used to index `tourShots` by slot, so a card's picture changed whenever the
+ * running order did and matched its state only by luck. Keyed by state, a
+ * place looks the same here as it does on the destinations index.
+ *
  * The label over each photograph is drawn hollow and fills solid on hover
  * (`.u-knockout`). Outlined type lets the picture read through the word, so
  * the card can carry a huge place-name without a scrim flattening the image
  * underneath it. It is the one piece of type on the site that sits on a
  * photograph, and it earns it by being transparent most of the time.
  */
+/**
+ * The three trips the home page leads on, in order.
+ *
+ * Assam is the feature: it is the cheapest, the only one of the three that
+ * needs no permit and the only one rated easy, so it is the one most readers
+ * can actually picture themselves on. The two behind it are what the region
+ * is for once that is established.
+ */
+const SIGNATURE_SLUGS = [
+  "brahmaputra-and-the-rhino-country",
+  "tawang-and-sela-pass",
+  "sikkim-north-gurudongmar",
+] as const;
+
 export function SignatureJourneys() {
-  const tours = getFeaturedTours(3);
+  const tours = SIGNATURE_SLUGS.map(getTourBySlug).filter(
+    (tour): tour is Tour => Boolean(tour),
+  );
 
   return (
     <section className="relative bg-mint py-[var(--section-pad)]">
@@ -75,17 +104,17 @@ export function SignatureJourneys() {
         >
           {tours[0] ? (
             <li className="lg:col-span-5 lg:row-span-2">
-              <JourneyCard tour={tours[0]} index={0} feature />
+              <JourneyCard tour={tours[0]} feature />
             </li>
           ) : null}
           {tours[1] ? (
             <li className="lg:col-span-7">
-              <JourneyCard tour={tours[1]} index={1} />
+              <JourneyCard tour={tours[1]} />
             </li>
           ) : null}
           {tours[2] ? (
             <li className="lg:col-span-4">
-              <JourneyCard tour={tours[2]} index={2} />
+              <JourneyCard tour={tours[2]} />
             </li>
           ) : null}
 
@@ -130,16 +159,13 @@ export function SignatureJourneys() {
  */
 function JourneyCard({
   tour,
-  index,
   feature = false,
 }: {
   tour: Tour;
-  /** Position in the bento. Picks the photograph — see `tourShots`. */
-  index: number;
   feature?: boolean;
 }) {
   const state = tour.states[0];
-  const image = tourShots[index % tourShots.length];
+  const image = stateShots[state];
   const colour = colourFor(state);
 
   return (
@@ -168,10 +194,15 @@ function JourneyCard({
       ) : null}
 
       {/* Bottom-weighted scrim only. A full overlay would kill the picture;
-          this darkens the third of the frame the type actually sits on. */}
+          this darkens the half of the frame the type actually sits on.
+          Strengthened when the cards moved to state photography: a snowfield
+          and a wall of prayer flags are far brighter than the frames that
+          were here before, and at the old 0.24 midpoint the strapline and the
+          price sat on white at roughly 2:1. The top half is untouched, so the
+          picture still reads. */}
       <span
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-t from-[rgb(20_18_15/0.86)] via-[rgb(20_18_15/0.24)] to-transparent"
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-[rgb(20_18_15/0.94)] from-10% via-[rgb(20_18_15/0.55)] via-45% to-transparent"
       />
 
       {/* Metadata rides the top edge, away from the title block. The state

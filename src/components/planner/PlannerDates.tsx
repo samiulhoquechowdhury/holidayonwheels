@@ -50,6 +50,25 @@ const MAX_LEAD_DAYS = 540;
 /** 21 days is the longest single-state trip the planner will attempt. */
 const MAX_NIGHTS = 20;
 
+/*
+ * How far out the first bookable day sits, and why.
+ *
+ * The fortnight is the Inner Line Permit's turnaround. It is a real
+ * constraint, but only for the five states that need one — and this page
+ * tells the traveller as much two steps earlier, where Assam, Meghalaya and
+ * Tripura are labelled "no permit" on their own cards. Applying the permit
+ * floor to them contradicted that label and, worse, greyed out eleven more
+ * days of a calendar for a document those trips never file. Somebody wanting
+ * to be on the Brahmaputra a week on Friday was told to wait a fortnight for
+ * a permit that does not exist.
+ *
+ * The open floor is the operational one: cars, drivers and rooms still have
+ * to be arranged, and the same day is not a holiday we can sell. Three days
+ * is a placeholder — confirm the real figure with the client.
+ */
+const ILP_LEAD_DAYS = 14;
+const OPEN_LEAD_DAYS = 3;
+
 export function PlannerDates({
   state,
   today,
@@ -66,10 +85,12 @@ export function PlannerDates({
   onStartChange: (iso: string) => void;
   onEndChange: (iso: string) => void;
 }) {
-  // A fortnight is the honest floor: permits for the ILP states take about
-  // that long, and offering a date we could not deliver is worse than not
-  // offering it.
-  const earliest = addDays(today, 14);
+  // Offering a date we could not deliver is worse than not offering it — but
+  // so is withholding one we could. The floor follows the state.
+  const earliest = addDays(
+    today,
+    state.requiresILP ? ILP_LEAD_DAYS : OPEN_LEAD_DAYS,
+  );
   const latest = addDays(today, MAX_LEAD_DAYS);
   const nights = start && end ? nightsBetween(start, end) : 0;
   const dayCount = nights > 0 ? nights + 1 : 0;
@@ -101,6 +122,11 @@ export function PlannerDates({
             earliest={earliest}
             latest={latest}
             maxNights={MAX_NIGHTS}
+            earliestReason={
+              state.requiresILP
+                ? "permits need a fortnight"
+                : `${state.name} needs no permit`
+            }
             bestMonths={state.bestMonths}
             colour={state.colour}
             ink={state.ink}

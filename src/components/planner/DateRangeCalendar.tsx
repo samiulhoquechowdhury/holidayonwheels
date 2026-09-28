@@ -103,6 +103,8 @@ export function DateRangeCalendar({
   end,
   onChange,
   earliest,
+  /** Why `earliest` sits where it does, in a few words. */
+  earliestReason,
   latest,
   maxNights,
   /** Full month names this state is worth visiting in. */
@@ -115,6 +117,7 @@ export function DateRangeCalendar({
   end: string;
   onChange: (start: string, end: string) => void;
   earliest: string;
+  earliestReason: string;
   latest: string;
   maxNights: number;
   bestMonths: string[];
@@ -307,13 +310,15 @@ export function DateRangeCalendar({
               ? "Click any day to start again."
               : "Click the day you arrive, then the day you fly home."}
         </p>
-        {/* Why the first fortnight is greyed out. Without this the calendar
-            looks broken rather than careful, and the reason is a genuinely
-            good one to tell people about. */}
+        {/* Why the first days are greyed out. Without this the calendar looks
+            broken rather than careful, and the reason is a genuinely good one
+            to tell people about. It is the caller's to give: the permit
+            states and the open ones are held back for different reasons and
+            for different lengths of time. */}
         <p>
           {choosingEnd
             ? `Up to ${maxNights} nights in one state`
-            : `Earliest ${formatLong(earliest)} — permits need a fortnight`}
+            : `Earliest ${formatLong(earliest)} — ${earliestReason}`}
         </p>
       </div>
     </div>

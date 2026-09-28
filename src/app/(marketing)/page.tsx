@@ -35,10 +35,13 @@ export const metadata: Metadata = {
  *  2. **Marquee** — what is on offer, moving. The eight names used to run
  *     here, but the hero says "eight states" in 160px directly above it.
  *  3. **Manifesto** — the one argument, before anything is sold.
- *  4. **Journey modes** — the self-selection moment. Everything below is
- *     downstream of the choice made here.
- *  5. **Signature journeys** — the recommendation, as a bento so that one
- *     trip is visibly the recommendation.
+ *  4. **Signature journeys** — the recommendation, as a bento so that one
+ *     trip is visibly the recommendation. It answers the manifesto directly
+ *     above it: having just argued that this is not a package, the next
+ *     thing to show is what it is instead.
+ *  5. **Journey modes** — the self-selection moment. Everything below is
+ *     downstream of the choice made here, so it sits after the reader has
+ *     seen one real trip rather than before.
  *  6. **State index** — the map, quiet, as type.
  *  7. **Expeditions** — the one dark band, for the one thing with risk in it.
  *  8. **Homestays** — the warm counterweight to it.
@@ -50,10 +53,12 @@ export const metadata: Metadata = {
  *     know something.
  * 13. **Closing card** — the smallest possible ask.
  *
- * Surfaces alternate paper / shell / sand / night rather than cycling five
- * tints: most of the page is paper, `shell` marks the two commercial bands,
- * `sand` happens once on the index, and `night` happens once on the
- * expeditions. Space and hairlines do the rest of the dividing.
+ * Surfaces alternate rather than cycling every tint the system has: most of
+ * the page is paper, `mint` marks the signature journeys, `butter` the state
+ * index, and `night` happens once, on the expeditions. Space and hairlines do
+ * the rest of the dividing. Swapping the two sections above also fixed a
+ * seam: the manifesto and the journey modes are both paper, so they ran
+ * together as one undivided block.
  */
 export default function HomePage() {
   return (
@@ -61,8 +66,8 @@ export default function HomePage() {
       <LuxeHero fromPrice={getLowestTourPrice()} />
       <OfferMarquee />
       <Manifesto />
-      <JourneyModes />
       <SignatureJourneys />
+      <JourneyModes />
       <StateIndex />
       <ExpeditionBand />
       <StayStack />

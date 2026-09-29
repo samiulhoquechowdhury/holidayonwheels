@@ -25,6 +25,12 @@ import { useEffect, useState } from "react";
  *  - **It ticks on the second boundary**, not every 1000ms from whenever it
  *    mounted. A naive interval drifts and lands mid-second, so the display
  *    skips a value every minute or so.
+ *  - **Twelve-hour, with the meridiem set apart.** Read through
+ *    `formatToParts` rather than taking the formatted string whole, so the
+ *    AM/PM can carry the label style beside digits that keep the numeric one.
+ *    `hour: "2-digit"` matters here: without it twelve-hour time drops the
+ *    leading zero and the whole masthead line shifts a character wide at one
+ *    o'clock.
  */
 
 const FORMAT = new Intl.DateTimeFormat("en-GB", {
@@ -32,16 +38,28 @@ const FORMAT = new Intl.DateTimeFormat("en-GB", {
   hour: "2-digit",
   minute: "2-digit",
   second: "2-digit",
-  hour12: false,
+  hour12: true,
 });
 
+function readClock(date: Date): { clock: string; period: string } {
+  const parts = FORMAT.formatToParts(date);
+  const part = (type: string) =>
+    parts.find((candidate) => candidate.type === type)?.value ?? "";
+  return {
+    clock: `${part("hour")}:${part("minute")}:${part("second")}`,
+    period: part("dayPeriod").toUpperCase(),
+  };
+}
+
 export function LocalClock() {
-  const [time, setTime] = useState<string | null>(null);
+  const [time, setTime] = useState<{ clock: string; period: string } | null>(
+    null,
+  );
 
   useEffect(() => {
     let frame: number;
     const tick = () => {
-      setTime(FORMAT.format(new Date()));
+      setTime(readClock(new Date()));
       // Land on the next whole second rather than drifting by however long
       // this mount happened to be past one.
       frame = window.setTimeout(tick, 1000 - (Date.now() % 1000));
@@ -55,10 +73,22 @@ export function LocalClock() {
       <span className="max-lg:hidden">Guwahati</span>
       <time
         suppressHydrationWarning
-        aria-label={time ? `Local time in Guwahati, ${time}` : undefined}
+        aria-label={
+          time
+            ? `Local time in Guwahati, ${time.clock} ${time.period}`
+            : undefined
+        }
       >
-        {time ?? "--:--:--"}
+        {time?.clock ?? "--:--:--"}
       </time>
+      {/* Holds its width before the first tick, so the masthead line does not
+          shift when AM arrives. */}
+      <span
+        suppressHydrationWarning
+        className="u-label inline-block min-w-[2.2ch] text-ink-faint"
+      >
+        {time?.period ?? ""}
+      </span>
     </span>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { cn } from "@/lib/cn";
 import { formatRange, nightsBetween } from "@/lib/date";
 import { Accent } from "@/components/primitives/Accent";
@@ -123,42 +123,6 @@ export function TripPlanner({
   }, [step]);
 
   /*
-   * Re-open the planner when the page asks it to.
-   *
-   * The eight write-ups further down link to `?state=<slug>#plan`, and so
-   * could anything else on the site. That is a navigation *within this same
-   * route*, so React keeps this component mounted and the `useState`
-   * initialisers above — which are the only thing that reads `initialState` —
-   * never run again. The URL changed, the heading did not, and the link
-   * looked broken: you landed back on "Where are you going?" with nothing
-   * selected, having just said where you were going.
-   *
-   * Keyed on the request rather than on the step, so it fires when the URL's
-   * intent changes and stays out of the way otherwise. Somebody who clicks
-   * Sikkim, then walks the rail back to step one to change their mind, is not
-   * dragged forward again: `stateSlug` moved but the request did not.
-   */
-  const requested = useRef(
-    startingState ? `${startingState}:${startingParty ?? ""}` : null,
-  );
-  useEffect(() => {
-    if (!startingState) return;
-    const key = `${startingState}:${startingParty ?? ""}`;
-    if (key === requested.current) return;
-    requested.current = key;
-
-    setStateSlug(startingState);
-    setParty(startingParty);
-    setPlan(null);
-    // A length chosen for one state is wrong for another, exactly as in
-    // `chooseState`.
-    setStart("");
-    setEnd("");
-    setDraft(emptyTravellerDraft(startingParty ?? "couple"));
-    setStep(startingParty ? "dates" : "party");
-  }, [startingState, startingParty]);
-
-  /*
    * Tell the page when the flow is under way.
    *
    * Past the first step this is a form, and the reading matter around it —
@@ -184,19 +148,24 @@ export function TripPlanner({
     document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
   }, [errors]);
 
-  function chooseState(slug: StateSlug) {
-    setStateSlug(slug);
-    setPlan(null);
-    // A length that suited Meghalaya is wrong for Sikkim, so the dates are
-    // cleared rather than silently carried onto a different road.
-    if (slug !== stateSlug) {
-      setStart("");
-      setEnd("");
-    }
-    setStep("party");
-  }
+  // Memoised because the deep-link effect above depends on it. Without that
+  // the effect's dependency list changes every render.
+  const chooseState = useCallback(
+    (slug: StateSlug) => {
+      setStateSlug(slug);
+      setPlan(null);
+      // A length that suited Meghalaya is wrong for Sikkim, so the dates are
+      // cleared rather than silently carried onto a different road.
+      if (slug !== stateSlug) {
+        setStart("");
+        setEnd("");
+      }
+      setStep("party");
+    },
+    [stateSlug],
+  );
 
-  function chooseParty(id: PartyType) {
+  const chooseParty = useCallback((id: PartyType) => {
     setParty(id);
     setPlan(null);
     // The party sets the head count it implies — a honeymoon is two people,
@@ -207,7 +176,43 @@ export function TripPlanner({
       notes: current.notes,
     }));
     setStep("dates");
-  }
+  }, []);
+
+  /*
+   * Re-open the planner when the page asks it to.
+   *
+   * The eight write-ups further down link to `?state=<slug>#plan`, and so
+   * could anything else on the site. That is a navigation *within this same
+   * route*, so React keeps this component mounted and the `useState`
+   * initialisers above — which are the only thing that reads `initialState` —
+   * never run again. The URL changed, the heading did not, and the link
+   * looked broken: you landed back on "Where are you going?" with nothing
+   * selected, having just said where you were going.
+   *
+   * Keyed on the request rather than on the step, so it fires when the URL's
+   * intent changes and stays out of the way otherwise. Somebody who clicks
+   * Sikkim, then walks the rail back to step one to change their mind, is not
+   * dragged forward again: `stateSlug` moved but the request did not.
+   */
+  const requested = useRef(
+    startingState ? `${startingState}:${startingParty ?? ""}` : null,
+  );
+  useEffect(() => {
+    if (!startingState) return;
+    const key = `${startingState}:${startingParty ?? ""}`;
+    if (key === requested.current) return;
+    requested.current = key;
+
+    // Delegated rather than re-implemented. `chooseState` and `chooseParty`
+    // are what those two answers mean — clearing a length that belonged to a
+    // different road, seeding the head count a party implies — and a second
+    // copy of that here is a second place to forget to update.
+    chooseState(startingState);
+    if (startingParty) chooseParty(startingParty);
+    // The two handlers are rebuilt every render, so listing them re-runs this
+    // on every render — which the `requested` guard above turns into an early
+    // return. Cheap, and it keeps the dependency list honest.
+  }, [startingState, startingParty, chooseState, chooseParty]);
 
   function validateTravellers(): boolean {
     const found: Record<string, string> = {};
@@ -316,7 +321,7 @@ export function TripPlanner({
        * heading, and the document outline follows what is actually on screen
        * rather than describing something that was removed.
        */}
-      <h1
+      <h2
         ref={headingRef}
         tabIndex={-1}
         // Focusing the heading makes the browser scroll it into view, and
@@ -344,60 +349,24 @@ export function TripPlanner({
             Here is what we would <Accent>do</Accent>
           </>
         )}
-      </h1>
+      </h2>
 
       <div className="mt-10 lg:mt-14">
-        {step === "state" ? (
-          <>
-            <p className="max-w-2xl text-18 text-ink-soft">
-              Eight states, and they are less alike than the map makes them look
-              — different languages, different food, different altitudes and
-              very different roads. Pick one to build around; we can add a
-              second once we are talking.
-            </p>
-            <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-              {states.map((state, index) => (
-                <li key={state.slug}>
-                  <ChoiceCard
-                    index={index + 1}
-                    // Four across at `lg`, two on a phone — so the first four
-                    // cover the first row at every width.
-                    priority={index < 4}
-                    label={state.name}
-                    copy={state.tagline}
-                    meta={[
-                      `${state.minDays}–${state.maxDays} days`,
-                      `${state.tripCount} ${state.tripCount === 1 ? "trip" : "trips"}`,
-                      ...(state.requiresILP ? ["Permit"] : []),
-                    ]}
-                    // The facts somebody actually picks a state on, behind a
-                    // disclosure rather than on the face of the card: all of
-                    // this on all eight at once is unreadable, and none of it
-                    // makes the choice a guess.
-                    details={[
-                      { label: "Fly into", value: state.gateway },
-                      {
-                        label: "Best months",
-                        value: state.bestMonths.join(", "),
-                      },
-                      {
-                        label: "Known for",
-                        value: state.knownFor.slice(0, 3).join(", "),
-                      },
-                      { label: "The road", value: state.routeNote },
-                    ]}
-                    image={state.image}
-                    alt={`${state.name} — ${state.knownFor.slice(0, 2).join(", ")}`}
-                    colour={state.colour}
-                    ink={state.ink}
-                    selected={stateSlug === state.slug}
-                    onSelect={() => chooseState(state.slug)}
-                  />
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : null}
+        {/*
+         * No screen for the `state` step any more.
+         *
+         * It used to be the eight states as cards. They sat directly above
+         * the eight state write-ups on the same page, which said the same
+         * eight names at more length and now each carry "Plan a trip to
+         * <state>" — so the grid was a second index of a page that already
+         * had one, and the write-ups are the chooser.
+         *
+         * The step survives in the state machine because it is still where
+         * "01 Where" on the rail and "start again" go. Nothing renders: the
+         * whole planner is hidden at this step by `.u-plan-shell`, which
+         * brings the write-ups back, so landing on `state` *is* going back to
+         * the list.
+         */}
 
         {step === "party" && chosenState ? (
           <>

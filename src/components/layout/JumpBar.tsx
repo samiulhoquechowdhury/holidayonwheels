@@ -40,11 +40,19 @@ export type JumpItem = {
 export function JumpBar({
   items,
   label,
+  align = "left",
   className,
 }: {
   items: JumpItem[];
   /** Accessible name for the nav — "Jump to a state", "Jump to a month". */
   label: string;
+  /**
+   * Where the chips sit once the row has room to wrap, from `lg` up. Below
+   * that the row scrolls horizontally and has to start at the gutter
+   * whatever this says — a centred row that overflows hides its first chip
+   * as well as its last, which is the one thing worse than hiding the last.
+   */
+  align?: "left" | "centre";
   className?: string;
 }) {
   if (items.length < 2) return null;
@@ -73,7 +81,13 @@ export function JumpBar({
          * finished, and those two cases are indistinguishable to the person
          * holding the phone. From `lg` the row wraps and the mask comes off.
          */}
-        <ul className="-mx-[var(--gutter)] flex scrollbar-none gap-2 overflow-x-auto [mask-image:linear-gradient(to_right,black_calc(100%-2.5rem),transparent)] px-[var(--gutter)] py-2 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:[mask-image:none] lg:px-0 lg:py-3">
+        <ul
+          className={cn(
+            "-mx-[var(--gutter)] flex scrollbar-none gap-2 overflow-x-auto [mask-image:linear-gradient(to_right,black_calc(100%-2.5rem),transparent)] px-[var(--gutter)] py-2",
+            "lg:mx-0 lg:flex-wrap lg:overflow-visible lg:[mask-image:none] lg:px-0 lg:py-3",
+            align === "centre" && "lg:justify-center",
+          )}
+        >
           {items.map((item) => (
             <li key={item.id} className="shrink-0">
               <a

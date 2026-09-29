@@ -30,12 +30,35 @@ export function CreatorBand() {
   const frames = creatorReels.slice(0, 3);
 
   return (
-    <section className="relative overflow-hidden bg-night py-[var(--section-pad)] text-night-text">
+    /*
+     * `mb`, not `pb`.
+     *
+     * `ClosingCard` below carries no top padding at all — it never needed any,
+     * because everything that used to precede it was a paper section with its
+     * own bottom padding. This band is full-bleed night, so its bottom edge
+     * met the closing card's dark panel with nothing between them and the two
+     * read as one shapeless dark mass. More bottom *padding* would only have
+     * made that mass taller; a margin lets the page's paper through, which is
+     * the gap that was missing.
+     */
+    <section className="relative mb-16 overflow-hidden bg-night py-[var(--section-pad)] text-night-text lg:mb-24">
       <div className="u-container-wide">
         <div className="grid items-center gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-20">
           {/* --- The fan ------------------------------------------------ */}
           <Rise>
-            <ul className="relative mx-auto flex max-w-lg items-center justify-center lg:mx-0 lg:max-w-none">
+            {/*
+             * The fan opens when you point at it: the two behind swing out and
+             * brighten, the one in front lifts. It is the one gesture that
+             * says "there are more of these" without a control saying so, and
+             * it costs nothing when it is not used.
+             *
+             * `group/fan` is on the list rather than the middle card, so the
+             * whole stack responds wherever the pointer lands on it — chasing
+             * the front card to trigger it would be a worse interaction than
+             * none. `motion-safe` stands the whole thing down under reduced
+             * motion, where the fan simply stays as it is.
+             */}
+            <ul className="group/fan relative mx-auto flex max-w-lg items-center justify-center lg:mx-0 lg:max-w-none">
               {frames.map((reel, index) => {
                 const middle = index === 1;
                 return (
@@ -44,13 +67,20 @@ export function CreatorBand() {
                     className={[
                       "relative aspect-[9/16] w-[30%] shrink-0 overflow-hidden rounded-[var(--radius-card)]",
                       "border border-[rgb(250_247_242/0.16)] shadow-[0_24px_60px_-24px_rgb(0_0_0/0.8)]",
-                      // The outer two tuck behind and lean away from centre.
+                      // Tailwind v4 writes rotate/scale/translate as their own CSS
+                      // properties rather than composing a `transform`, so a
+                      // transition list naming `transform` animates nothing:
+                      // the cards snapped to their hover position while only
+                      // the opacity faded. Name the three that actually move.
+                      "transition-[translate,rotate,scale,opacity] duration-[var(--dur)] ease-brand",
+                      // The outer two tuck behind and lean away from centre,
+                      // then swing further out and brighten on hover.
                       middle
-                        ? "z-10 w-[36%] scale-[1.06]"
-                        : "opacity-70 " +
+                        ? "z-10 w-[36%] scale-[1.06] motion-safe:group-hover/fan:-translate-y-2 motion-safe:group-hover/fan:scale-[1.1]"
+                        : "opacity-70 motion-safe:group-hover/fan:opacity-95 " +
                           (index === 0
-                            ? "-mr-[5%] origin-bottom-right -rotate-6"
-                            : "-ml-[5%] origin-bottom-left rotate-6"),
+                            ? "-mr-[5%] origin-bottom-right -rotate-6 motion-safe:group-hover/fan:-translate-x-[9%] motion-safe:group-hover/fan:-rotate-12"
+                            : "-ml-[5%] origin-bottom-left rotate-6 motion-safe:group-hover/fan:translate-x-[9%] motion-safe:group-hover/fan:rotate-12"),
                     ].join(" ")}
                   >
                     <Image

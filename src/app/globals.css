@@ -592,6 +592,28 @@
   }
 
   /*
+   * The exact inverse: shown only *while* the planner is in flow.
+   *
+   * The destinations page no longer opens on the planner's first step. That
+   * step was a grid of the eight states, sitting directly above eight state
+   * write-ups that say the same eight names at more length — the second of
+   * two duplicate indexes on one page, after the first was removed. The
+   * write-ups are the chooser now, and each carries "Plan a trip to <state>".
+   *
+   * So the planner's shell is off until a state has been picked, at which
+   * point `data-planner="flow"` turns this on and `.u-flow-hide` turns the
+   * write-ups off. The page is the list or the form, never both.
+   *
+   * This has to live on the wrapper rather than inside the planner, because
+   * the wrapper is a server component with its own section padding — a
+   * planner that returned null would still leave a padded empty band at the
+   * top of the page.
+   */
+  :root:not([data-planner="flow"]) .u-plan-shell {
+    display: none;
+  }
+
+  /*
    * A horizontally scrollable row with no visible scrollbar — the state chip
    * rows on the destinations and tours pages.
    *

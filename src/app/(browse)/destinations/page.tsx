@@ -5,6 +5,7 @@ import { SplitReveal } from "@/components/motion/SplitReveal";
 import { Rise } from "@/components/motion/Rise";
 import { ParallaxMedia } from "@/components/motion/Parallax";
 import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
+import { Accent } from "@/components/primitives/Accent";
 import { JumpBar } from "@/components/layout/JumpBar";
 import { MonthStrip } from "@/components/destinations/MonthStrip";
 import { getDestinations } from "@/content/destinations";
@@ -122,7 +123,7 @@ export default async function DestinationsPage({
         width="wide"
         id="plan"
         spacing="flush"
-        className="overflow-visible pt-[calc(var(--header-h)+3rem)] pb-[var(--section-pad)] lg:pt-[calc(var(--header-h)+4.5rem)]"
+        className="u-plan-shell overflow-visible pt-[calc(var(--header-h)+3rem)] pb-[var(--section-pad)] lg:pt-[calc(var(--header-h)+4.5rem)]"
       >
         <TripPlanner
           states={plannerStates}
@@ -144,6 +145,40 @@ export default async function DestinationsPage({
        */}
       <div className="u-flow-hide">
         {/*
+         * The page's own opening, which it needed the moment the planner
+         * stopped providing one. This carries the `h1` — without it the
+         * destinations page had no top-level heading at all once the
+         * planner's question was taken off the first screen.
+         *
+         * The copy is the planner's old first step, moved rather than
+         * rewritten: it was the right paragraph, it was just attached to a
+         * grid of eight cards that repeated the eight write-ups below it.
+         */}
+        <SectionShell
+          tint="paper"
+          width="wide"
+          spacing="flush"
+          className="pt-[calc(var(--header-h)+3rem)] pb-16 lg:pt-[calc(var(--header-h)+4.5rem)] lg:pb-20"
+        >
+          <p className="u-label mb-8 flex items-center gap-4 text-ink-faint">
+            <span
+              aria-hidden="true"
+              className="h-0.5 w-12 shrink-0 rounded-full bg-clay"
+            />
+            Built around your dates, from {tours.length} routes we run
+          </p>
+          <h1 className="max-w-3xl text-48 lg:text-88">
+            Where are you <Accent>going</Accent>?
+          </h1>
+          <p className="mt-8 max-w-2xl text-18 text-ink-soft lg:text-22">
+            Eight states, and they are less alike than the map makes them look —
+            different languages, different food, different altitudes and very
+            different roads. Read the one you are drawn to, then start there; we
+            can add a second once we are talking.
+          </p>
+        </SectionShell>
+
+        {/*
          * The slim index, which sticks.
          *
          * There used to be a "What each of the eight is for" grid above it,
@@ -159,6 +194,11 @@ export default async function DestinationsPage({
          */}
         <JumpBar
           label="Jump to a state"
+          // Centred here and nowhere else. This bar is the only navigation
+          // between the page's header and the first state, so it reads as a
+          // band of its own rather than as a caption hanging off the left of
+          // the column above it.
+          align="centre"
           items={destinations.map((destination) => ({
             id: destination.slug,
             label: destination.name,

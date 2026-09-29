@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LuxeHero } from "@/components/home/LuxeHero";
 import { OfferMarquee } from "@/components/home/OfferMarquee";
 import { Manifesto } from "@/components/home/Manifesto";
-import { JourneyModes } from "@/components/home/JourneyModes";
+// import { JourneyModes } from "@/components/home/JourneyModes";
 import { SignatureJourneys } from "@/components/home/SignatureJourneys";
 import { StateIndex } from "@/components/home/StateIndex";
 import { ExpeditionBand } from "@/components/home/ExpeditionBand";
@@ -41,9 +41,11 @@ export const metadata: Metadata = {
  *     trip is visibly the recommendation. It answers the manifesto directly
  *     above it: having just argued that this is not a package, the next
  *     thing to show is what it is instead.
- *  5. **Journey modes** — the self-selection moment. Everything below is
- *     downstream of the choice made here, so it sits after the reader has
- *     seen one real trip rather than before.
+ *  5. **Journey modes** — commented out, not deleted. It was the
+ *     self-selection moment ("How are you travelling?"), and it may come
+ *     back; its eyebrow also still read "Start here" from when it sat higher
+ *     up the page, which stopped being true once the signature routes moved
+ *     above it. Uncomment the import and the tag below to restore it.
  *  6. **State index** — the map, quiet, as type.
  *  7. **Expeditions** — the one dark band, for the one thing with risk in it.
  *  8. **Homestays** — the warm counterweight to it.
@@ -77,7 +79,7 @@ export default function HomePage() {
       <OfferMarquee />
       <Manifesto />
       <SignatureJourneys />
-      <JourneyModes />
+      {/* <JourneyModes /> */}
       <StateIndex />
       <ExpeditionBand />
       <StayStack />

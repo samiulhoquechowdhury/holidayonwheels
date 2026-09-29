@@ -26,6 +26,8 @@ const activities: Activity[] = [
     category: "water",
     locality: "Kachari Ghat, Guwahati",
     durationLabel: "2 hours",
+    durationHours: 2,
+    distanceKm: 0,
     bestTime: "Boards at 4.30pm, back by sunset",
     fromPrice: 1200,
     groupSizeMax: 40,
@@ -59,6 +61,8 @@ const activities: Activity[] = [
     category: "water",
     locality: "Umananda Ghat, Guwahati",
     durationLabel: "2 hours",
+    durationHours: 2,
+    distanceKm: 0,
     bestTime: "Best before 10am, before the day heats up",
     fromPrice: 900,
     groupSizeMax: 12,
@@ -87,6 +91,8 @@ const activities: Activity[] = [
     category: "heritage",
     locality: "Nilachal hill, Guwahati",
     durationLabel: "3 hours",
+    durationHours: 3,
+    distanceKm: 0,
     bestTime: "Leaves at 5am; the queue is impossible by nine",
     fromPrice: 900,
     groupSizeMax: 10,
@@ -120,6 +126,8 @@ const activities: Activity[] = [
     category: "wildlife",
     locality: "Pobitora Wildlife Sanctuary, 50 km east",
     durationLabel: "Half day",
+    durationHours: 5,
+    distanceKm: 50,
     bestTime: "November to April; dawn departure",
     fromPrice: 3200,
     groupSizeMax: 6,
@@ -153,6 +161,8 @@ const activities: Activity[] = [
     category: "wildlife",
     locality: "Deepor Beel, 13 km west",
     durationLabel: "Half day",
+    durationHours: 4,
+    distanceKm: 13,
     bestTime: "November to March, from 6am",
     fromPrice: 1800,
     groupSizeMax: 8,
@@ -184,6 +194,8 @@ const activities: Activity[] = [
     category: "culture",
     locality: "Sualkuchi, 35 km north-west",
     durationLabel: "Half day",
+    durationHours: 5,
+    distanceKm: 35,
     bestTime: "Any morning except Sunday",
     fromPrice: 1600,
     groupSizeMax: 8,
@@ -216,6 +228,8 @@ const activities: Activity[] = [
     category: "water",
     locality: "Chandubi, 60 km south",
     durationLabel: "Full day",
+    durationHours: 8,
+    distanceKm: 60,
     bestTime: "October to March",
     fromPrice: 2800,
     groupSizeMax: 10,
@@ -248,6 +262,8 @@ const activities: Activity[] = [
     category: "food",
     locality: "Fancy Bazaar, Guwahati",
     durationLabel: "3 hours",
+    durationHours: 3,
+    distanceKm: 0,
     bestTime: "Evenings, from 5pm",
     fromPrice: 1500,
     groupSizeMax: 8,
@@ -275,6 +291,8 @@ const activities: Activity[] = [
     category: "heritage",
     locality: "Baihata Chariali, 40 km north",
     durationLabel: "Half day",
+    durationHours: 5,
+    distanceKm: 40,
     bestTime: "Any morning; take repellent in the wet months",
     fromPrice: 2200,
     groupSizeMax: 8,
@@ -306,6 +324,8 @@ const activities: Activity[] = [
     category: "heritage",
     locality: "Hajo, 32 km north-west",
     durationLabel: "Half day",
+    durationHours: 5,
+    distanceKm: 32,
     bestTime: "Afternoons, any day",
     fromPrice: 2400,
     groupSizeMax: 8,
@@ -336,6 +356,8 @@ const activities: Activity[] = [
     category: "culture",
     locality: "Kachari Ghat to North Guwahati",
     durationLabel: "90 minutes",
+    durationHours: 1.5,
+    distanceKm: 0,
     bestTime: "Last cars around 5.30pm; go for the light",
     fromPrice: 700,
     groupSizeMax: 12,
@@ -386,6 +408,69 @@ export function getRelatedActivities(slug: string, limit = 3): Activity[] {
     ...others.filter((a) => a.category === activity.category),
     ...others.filter((a) => a.category !== activity.category),
   ].slice(0, limit);
+}
+
+/**
+ * Banded by how much of the day a thing takes, which is the question people
+ * actually arrive with.
+ *
+ * The index used to group by category — water, wildlife, heritage — and that
+ * is a taxonomy rather than a decision. Nobody stands in a hotel lobby at
+ * eight in the morning thinking "I am in a heritage mood"; they think "I have
+ * until two". Category still travels on every card as a coloured chip, so the
+ * mood is answerable, but it is no longer what the page is organised around.
+ *
+ * Bands are door to door and inclusive of the drive, because that is what
+ * eats a morning. Three of them, not five: the moment a reader has to hold
+ * more than three options in their head the band stops doing its job.
+ */
+export const ACTIVITY_BANDS: {
+  id: string;
+  label: string;
+  blurb: string;
+  max: number;
+}[] = [
+  {
+    id: "short",
+    label: "Two or three hours",
+    blurb: "In the city, and back before you have missed anything.",
+    max: 3,
+  },
+  {
+    id: "half",
+    label: "Half a day",
+    blurb: "Out of town and back for a late lunch. Most of these leave early.",
+    max: 5,
+  },
+  {
+    id: "full",
+    label: "A full day",
+    blurb: "The whole day gone, and worth it.",
+    max: Infinity,
+  },
+];
+
+export function getActivitiesByBand(bandId: string): Activity[] {
+  const index = ACTIVITY_BANDS.findIndex((b) => b.id === bandId);
+  if (index < 0) return [];
+  const floor = index === 0 ? 0 : ACTIVITY_BANDS[index - 1].max;
+  const { max } = ACTIVITY_BANDS[index];
+  return activities
+    .filter((a) => a.durationHours > floor && a.durationHours <= max)
+    .sort(
+      (a, b) => a.durationHours - b.durationHours || a.fromPrice - b.fromPrice,
+    );
+}
+
+/** The orienting numbers above the list: cheapest, shortest, furthest out. */
+export function getActivityRange() {
+  return {
+    count: activities.length,
+    fromPrice: Math.min(...activities.map((a) => a.fromPrice)),
+    shortestHours: Math.min(...activities.map((a) => a.durationHours)),
+    furthestKm: Math.max(...activities.map((a) => a.distanceKm)),
+    inCity: activities.filter((a) => a.distanceKm === 0).length,
+  };
 }
 
 export const ACTIVITY_CATEGORIES: {

@@ -108,33 +108,47 @@ export const roomShots: Record<string, string> = {
 };
 
 /**
- * One frame per day activity, keyed by slug.
+ * One frame per activity, and every one of them is its own.
  *
- * Every one of these is a frame already in this file and already looked at —
- * no new ids were guessed. That is not fussiness: the last two attempts at
- * picking placeholders by id produced a plate of samosas under "Tripura" and
- * a pair of trainers on a black background, and a batch fetched for this page
- * came back as the Taj Mahal, a Balinese temple, Mount Fuji and a dog with a
- * chew toy.
+ * These used to be borrowed from the state and journey sets, so the food walk
+ * and Manipur shared a market, the ropeway and Mizoram shared a dusk ridge,
+ * and the cruise and Assam shared a boat. On a page whose whole job is to
+ * show eleven *different* things to do, the same picture appearing twice is
+ * the fastest way to make eleven look like six.
  *
- * Two are stand-ins that need naming in the brief rather than quietly
- * shipping: `kamakhya-dawn` and `hajo-trail` both use a hilltop shrine that
- * is Buddhist, not the Shakta and Vaishnavite sites they label. They read
- * correctly as "a temple on a hill" at card size and wrongly to anybody who
- * knows either place. See MEDIA.md.
+ * Each was chosen against its own subject and looked at before it went in —
+ * a woman at a loom for Sualkuchi, a rhino in grass for Pobitora, a heron in
+ * lilies for Deepor Beel, cable cars over water for the ropeway. None is
+ * reused anywhere else in this file or in `creators.ts`, `dining.ts` or
+ * `day-options.ts`.
+ *
+ * Still mock, still Unsplash, still to be replaced by the real shoot — see
+ * MEDIA.md. But wrong-and-distinct is a better placeholder than
+ * wrong-and-repeated: it holds the right shape for the page.
  */
 export const activityShots: Record<string, string> = {
-  "brahmaputra-sunset-cruise": shot("1590050752117-238cb0fb12b1"), // river, boat
-  "umananda-island": shot("1501785888041-af3ef285b470"), // water and a boat
-  "kamakhya-dawn": shot("1544735716-392fe2489ffa"), // a shrine on a spur
-  "pobitora-safari": shot("1523592121529-f6dde35f079e"), // a figure in tall grass
-  "deepor-beel-birding": shot("1503220317375-aaad61436b1b"), // still water at dawn
-  "sualkuchi-silk": shot("1547153760-18fc86324498"), // craft and colour
-  "chandubi-lake": shot("1609920658906-8223bd289001"), // water under forest
-  "guwahati-food-walk": shot("1533900298318-6b8da08a523e"), // a market in full swing
-  "madan-kamdev": shot("1449158743715-0a90ebb6d2d8"), // stone and trees
-  "hajo-trail": shot("1571401835393-8c5f35328320"), // prayer flags on a hill
-  "guwahati-ropeway": shot("1483728642387-6c3bdd6c93e5"), // the river at dusk
+  // A boat of people on a wide river at sunset, flags up.
+  "brahmaputra-sunset-cruise": shot("1763046198598-fc3a0892261a"),
+  // A ferry crossing under a warm sky — Umananda is reached by one.
+  "umananda-island": shot("1789549766299-cdabd48c1682"),
+  // A temple silhouette against a dawn sky.
+  "kamakhya-dawn": shot("1541173061692-bbec3dc2bf85"),
+  // A one-horned rhino in grass, which is the entire point of Pobitora.
+  "pobitora-safari": shot("1465471765877-2e7a264830d5"),
+  // A heron standing among lilies.
+  "deepor-beel-birding": shot("1528164646014-c17e20821ec2"),
+  // A weaver at a handloom.
+  "sualkuchi-silk": shot("1638310533874-6c124c012e1d"),
+  // Still water running through forest.
+  "chandubi-lake": shot("1654206824840-eecae3005323"),
+  // A cook working a street stall.
+  "guwahati-food-walk": shot("1552912470-ee2e96439539"),
+  // Brick temple ruins with carved figures.
+  "madan-kamdev": shot("1771847329330-3c0540ca9315"),
+  // A dome in morning mist. Hajo holds both a temple and a mosque.
+  "hajo-trail": shot("1519955045385-7cdb8e07c76f"),
+  // Cable cars strung over water.
+  "guwahati-ropeway": shot("1786619377490-c08d9f93e1d2"),
 };
 
 /**

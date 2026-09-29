@@ -239,6 +239,21 @@ export type Activity = {
   locality: string;
   /** "2 hours", "Half day" — read, not computed. */
   durationLabel: string;
+  /**
+   * Door to door, in hours, including the drive out and back.
+   *
+   * `durationLabel` is what a reader wants to see and this is what the page
+   * needs to sort and band by. Keeping both means the label can stay
+   * idiomatic ("Half day") while the index can still answer the question
+   * people actually arrive with, which is whether a thing fits the morning
+   * they have free.
+   */
+  durationHours: number;
+  /**
+   * Kilometres from the middle of Guwahati, one way. Zero for anything in
+   * the city itself — the index shows "In the city" rather than "0 km".
+   */
+  distanceKm: number;
   /** When in the day or the year it is worth doing. */
   bestTime: string;
   /** Per person. */

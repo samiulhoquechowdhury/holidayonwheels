@@ -123,6 +123,42 @@ export function TripPlanner({
   }, [step]);
 
   /*
+   * Re-open the planner when the page asks it to.
+   *
+   * The eight write-ups further down link to `?state=<slug>#plan`, and so
+   * could anything else on the site. That is a navigation *within this same
+   * route*, so React keeps this component mounted and the `useState`
+   * initialisers above — which are the only thing that reads `initialState` —
+   * never run again. The URL changed, the heading did not, and the link
+   * looked broken: you landed back on "Where are you going?" with nothing
+   * selected, having just said where you were going.
+   *
+   * Keyed on the request rather than on the step, so it fires when the URL's
+   * intent changes and stays out of the way otherwise. Somebody who clicks
+   * Sikkim, then walks the rail back to step one to change their mind, is not
+   * dragged forward again: `stateSlug` moved but the request did not.
+   */
+  const requested = useRef(
+    startingState ? `${startingState}:${startingParty ?? ""}` : null,
+  );
+  useEffect(() => {
+    if (!startingState) return;
+    const key = `${startingState}:${startingParty ?? ""}`;
+    if (key === requested.current) return;
+    requested.current = key;
+
+    setStateSlug(startingState);
+    setParty(startingParty);
+    setPlan(null);
+    // A length chosen for one state is wrong for another, exactly as in
+    // `chooseState`.
+    setStart("");
+    setEnd("");
+    setDraft(emptyTravellerDraft(startingParty ?? "couple"));
+    setStep(startingParty ? "dates" : "party");
+  }, [startingState, startingParty]);
+
+  /*
    * Tell the page when the flow is under way.
    *
    * Past the first step this is a form, and the reading matter around it —

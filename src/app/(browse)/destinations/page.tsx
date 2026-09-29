@@ -5,9 +5,7 @@ import { SplitReveal } from "@/components/motion/SplitReveal";
 import { Rise } from "@/components/motion/Rise";
 import { ParallaxMedia } from "@/components/motion/Parallax";
 import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
-import { Accent } from "@/components/primitives/Accent";
 import { JumpBar } from "@/components/layout/JumpBar";
-import { StatesHeader } from "@/components/destinations/StatesHeader";
 import { MonthStrip } from "@/components/destinations/MonthStrip";
 import { getDestinations } from "@/content/destinations";
 import { TripPlanner } from "@/components/planner/TripPlanner";
@@ -69,12 +67,6 @@ export default async function DestinationsPage({
     destinations.map((destination) => [
       destination.slug,
       tours.filter((tour) => tour.states.includes(destination.slug)).length,
-    ]),
-  );
-  const colours = Object.fromEntries(
-    destinations.map((destination) => [
-      destination.slug,
-      stateColours[destination.slug],
     ]),
   );
 
@@ -151,33 +143,19 @@ export default async function DestinationsPage({
        * encyclopaedia entries and a footer underneath it.
        */}
       <div className="u-flow-hide">
-        <SectionShell tint="paper" width="wide" spacing="tight">
-          <div className="border-t border-[var(--ink-hairline)] pt-12">
-            <p className="u-label flex items-center gap-4 text-ink-faint">
-              <span
-                aria-hidden="true"
-                className="h-0.5 w-12 shrink-0 rounded-full bg-clay"
-              />
-              Before you choose
-            </p>
-            <h2 className="mt-6 max-w-3xl text-36 lg:text-48">
-              What each of the eight is <Accent>for</Accent>
-            </h2>
-          </div>
-
-          <div className="mt-12">
-            <StatesHeader
-              destinations={destinations}
-              colours={colours}
-              tripCounts={tripCounts}
-            />
-          </div>
-        </SectionShell>
-
         {/*
-         * The slim index, which sticks. The one above answers "which eight";
-         * this answers "take me to another one" once you are four screens into
-         * the detail and it has scrolled away.
+         * The slim index, which sticks.
+         *
+         * There used to be a "What each of the eight is for" grid above it,
+         * naming and picturing all eight states a second time directly under
+         * the planner's own eight cards. Two full sets of the same eight, one
+         * screen apart, made the page feel like it had restarted. The grid is
+         * gone; the eight write-ups below are the answer to "what is each one
+         * for", at the length that question deserves.
+         *
+         * This bar stays. It is the only way to reach the eighth state without
+         * scrolling past seven, and a chip rail is not a third listing in the
+         * way a grid of photographs is.
          */}
         <JumpBar
           label="Jump to a state"
@@ -320,18 +298,24 @@ function StateBlock({
               className="mt-8 max-w-xl"
             />
 
+            {/* The planner leads. This block is the argument for a state;
+                the action that follows an argument is to start, not to read
+                a second article. "{n} trips" was the ghost button and it
+                described a catalogue rather than naming what happens next —
+                which is that the planner opens on this state and asks who is
+                travelling. */}
             <div className="mt-10 flex flex-wrap gap-3">
-              <LuxeButtonLink href={`/destinations/${destination.slug}`}>
-                Read about {destination.name}
+              <LuxeButtonLink
+                href={`/destinations?state=${destination.slug}#plan`}
+              >
+                Plan a trip to {destination.name}
               </LuxeButtonLink>
-              {tripCount > 0 ? (
-                <LuxeButtonLink
-                  href={`/destinations?state=${destination.slug}#plan`}
-                  variant="ghost"
-                >
-                  {tripCount} {tripCount === 1 ? "trip" : "trips"}
-                </LuxeButtonLink>
-              ) : null}
+              <LuxeButtonLink
+                href={`/destinations/${destination.slug}`}
+                variant="ghost"
+              >
+                Read more
+              </LuxeButtonLink>
             </div>
           </Rise>
         </div>

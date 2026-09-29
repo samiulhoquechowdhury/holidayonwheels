@@ -47,10 +47,19 @@ export function CreatorBand() {
           {/* --- The fan ------------------------------------------------ */}
           <Rise>
             {/*
-             * The fan opens when you point at it: the two behind swing out and
-             * brighten, the one in front lifts. It is the one gesture that
-             * says "there are more of these" without a control saying so, and
-             * it costs nothing when it is not used.
+             * The fan *closes* when you point at it: the two behind slide in
+             * and straighten until the front card covers them, and the front
+             * card lifts as they go. A stack collapsing into one object is a
+             * gesture the phone already taught everybody, and it keeps the
+             * whole thing inside the same footprint — the fan opening outwards
+             * pushed its edges towards the copy beside it and, at the widths
+             * where this column is narrowest, towards the edge of the section.
+             *
+             * They tuck behind rather than fading. The middle card is 36% of
+             * the row and the outer two are 30%, so 85% of their own width is
+             * the shift that puts each one fully inside the front card's
+             * footprint — enough that no sliver shows past the rounded corner,
+             * not so much that they overshoot and reappear on the far side.
              *
              * `group/fan` is on the list rather than the middle card, so the
              * whole stack responds wherever the pointer lands on it — chasing
@@ -73,14 +82,15 @@ export function CreatorBand() {
                       // the cards snapped to their hover position while only
                       // the opacity faded. Name the three that actually move.
                       "transition-[translate,rotate,scale,opacity] duration-[var(--dur)] ease-brand",
-                      // The outer two tuck behind and lean away from centre,
-                      // then swing further out and brighten on hover.
+                      // At rest the outer two lean away from centre. On hover
+                      // they slide inward and straighten until the front card
+                      // hides them; the front card lifts to meet them.
                       middle
                         ? "z-10 w-[36%] scale-[1.06] motion-safe:group-hover/fan:-translate-y-2 motion-safe:group-hover/fan:scale-[1.1]"
-                        : "opacity-70 motion-safe:group-hover/fan:opacity-95 " +
+                        : "opacity-70 motion-safe:group-hover/fan:rotate-0 " +
                           (index === 0
-                            ? "-mr-[5%] origin-bottom-right -rotate-6 motion-safe:group-hover/fan:-translate-x-[9%] motion-safe:group-hover/fan:-rotate-12"
-                            : "-ml-[5%] origin-bottom-left rotate-6 motion-safe:group-hover/fan:translate-x-[9%] motion-safe:group-hover/fan:rotate-12"),
+                            ? "-mr-[5%] origin-bottom-right -rotate-6 motion-safe:group-hover/fan:translate-x-[85%]"
+                            : "-ml-[5%] origin-bottom-left rotate-6 motion-safe:group-hover/fan:-translate-x-[85%]"),
                     ].join(" ")}
                   >
                     <Image

@@ -1,4 +1,5 @@
 import type { Homestay, StateSlug } from "./types";
+import { shot } from "@/config/showcase";
 
 /**
  * Homestays. Browsable and bookable on their own, and offered as an add-on
@@ -72,6 +73,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "A traditional Mishing bamboo house raised on stilts above paddy fields on Majuli island, Assam",
+    // stilt huts over calm water
+    image: shot("1761342612154-57377cda7a89"),
   },
   {
     slug: "khasi-cottage-mawphlang",
@@ -142,6 +145,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "A stone cottage with a pitched tin roof among pines at Mawphlang, East Khasi Hills, Meghalaya",
+    // timber houses under forest
+    image: shot("1788146534999-516a87a14f20"),
   },
   {
     slug: "riverside-nongriat",
@@ -198,6 +203,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "Simple guesthouse rooms beside the stream at Nongriat village below the double-decker root bridge, Meghalaya",
+    // a timber house on a river
+    image: shot("1592339422218-d8038161461c"),
   },
   {
     slug: "apatani-home-ziro",
@@ -255,6 +262,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "A bamboo Apatani farmhouse in Hong village at Ziro, Arunachal Pradesh, with paddy terraces behind it",
+    // a village among rice terraces
+    image: shot("1663378441740-25274eb4d59d"),
   },
   {
     slug: "angami-house-khonoma",
@@ -312,6 +321,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "A stone and timber Angami house in Khonoma village, Nagaland, above alder-studded rice terraces",
+    // houses on terraced hillsides in mist
+    image: shot("1786558675588-5a46f55984b7"),
   },
   {
     slug: "phumdi-hut-loktak",
@@ -368,6 +379,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "A bamboo hut built on a floating phumdi island in the middle of Loktak Lake, Manipur",
+    // thatched huts on stilts over water
+    image: shot("1780433644894-fe773f5b83b2"),
   },
   {
     slug: "mizo-ridge-house-reiek",
@@ -423,6 +436,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "A timber house on a ridge below Reiek Tlang in Mizoram, above a valley filled with cloud",
+    // a two-storey house on a forested ridge
+    image: shot("1760366621225-55dceb1a3882"),
   },
   {
     slug: "planters-bungalow-jorhat",
@@ -491,6 +506,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "The veranda of a 1920s planter's bungalow on a working tea estate near Jorhat, Assam",
+    // a verandah of wicker chairs over green
+    image: shot("1785245647183-6ab9ddf670a1"),
   },
   {
     slug: "lepcha-house-yuksom",
@@ -553,6 +570,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "A timber house among large cardamom terraces at Yuksom, west Sikkim, with forested ridges behind",
+    // a house on a green hillside
+    image: shot("1700305732566-9bab903fd490"),
   },
   {
     slug: "gangtok-town-house",
@@ -615,6 +634,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "A multi-storey family home on the hillside above Gangtok, Sikkim, with the ridge visible behind",
+    // a colourful hill town
+    image: shot("1781030567598-324ad53db41a"),
   },
   {
     slug: "konyak-longhouse-mon",
@@ -674,6 +695,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "A Konyak longhouse with carved gables and a log drum at Longwa village, Mon district, Nagaland",
+    // thatched houses behind a fence
+    image: shot("1769372763562-c1679a3a5163"),
   },
   {
     slug: "tripuri-house-jampui",
@@ -728,6 +751,8 @@ const homestays: Homestay[] = [
     ],
     heroAlt:
       "A house with a wide veranda among orange groves in the Jampui Hills, Tripura, above a valley of cloud",
+    // a timber house among flowers
+    image: shot("1774174689250-b0d4aa85143b"),
   },
 ];
 

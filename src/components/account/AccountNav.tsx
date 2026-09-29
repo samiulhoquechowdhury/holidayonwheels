@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 
 const LINKS = [
+  { id: "overview", href: "/account", label: "Overview" },
   { id: "bookings", href: "/account/bookings", label: "My bookings" },
   { id: "permits", href: "/account/permits", label: "My permits" },
 ] as const;

@@ -171,13 +171,23 @@ export function Header() {
            * No "Plan a trip" button. Planning starts on the destinations
            * page now — the first nav item — so a second button beside it
            * pointing at the same place was the bar asking twice.
+           *
+           * The menu toggle stops at `xl`, which is exactly where the full
+           * navigation appears. Below that the drawer *is* the navigation and
+           * the toggle is the only way to reach it; above it, the drawer
+           * repeats seven labels already sitting in the middle of the same
+           * bar. The account control takes its place at the right edge, and
+           * shows at every width — signing in is not a desktop-only thing.
            */}
           <div className="flex shrink-0 items-center gap-2 md:gap-3">
-            <StairToggle
-              ref={toggleRef}
-              open={open}
-              onClick={() => setOpen((v) => !v)}
-            />
+            <AccountButton />
+            <div className="xl:hidden">
+              <StairToggle
+                ref={toggleRef}
+                open={open}
+                onClick={() => setOpen((v) => !v)}
+              />
+            </div>
           </div>
         </div>
       </motion.header>
@@ -302,6 +312,59 @@ function RollingLabel({ children }: { children: React.ReactNode }) {
  * The stagger is `transition-delay`, not a keyframe sequence, so the rules
  * unwind in reverse when the pointer leaves rather than snapping back.
  */
+/**
+ * The account control.
+ *
+ * Same plate as the menu toggle — identical height, radius, hairline and
+ * hover — because they are peers at the right edge and anything else makes
+ * one of them look like the primary. The label rolls on hover exactly as the
+ * nav labels do.
+ *
+ * It reads "Account" rather than "Log in". There is no sign-in yet, and a bar
+ * that says "Log in" on every page of the site is a promise of a form that
+ * does not exist; "Account" is true of the dashboard behind it either way,
+ * and does not have to be re-labelled the day auth ships. The glyph is a
+ * plain bust — drawn rather than imported, at the same 1px weight as the
+ * toggle's rules, so the two sit at the same optical density.
+ *
+ * The label drops below `sm`, leaving the glyph alone. At 390px the bar is
+ * carrying a mark, this and the menu toggle, and two words of chrome is what
+ * pushes the toggle off the edge.
+ */
+function AccountButton() {
+  return (
+    <Link
+      href="/account"
+      className={cn(
+        "group inline-flex h-[var(--plate-h)] shrink-0 items-center gap-2.5 rounded-[var(--radius-control)] px-3.5 text-ink sm:gap-3 sm:px-5",
+        "border border-[var(--ink-hairline)] transition-[height,border-color,background-color] duration-[var(--dur-micro)] ease-brand",
+        "hover:border-[var(--ink-hairline-strong)] hover:bg-[rgb(46_42_36/0.035)]",
+      )}
+    >
+      <span
+        aria-hidden="true"
+        className="grid size-5 shrink-0 place-items-center"
+      >
+        <svg
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeLinecap="round"
+          className="size-5"
+          focusable="false"
+        >
+          <circle cx="10" cy="6.75" r="3.25" />
+          <path d="M3.75 16.5c0-3.2 2.8-5 6.25-5s6.25 1.8 6.25 5" />
+        </svg>
+      </span>
+      <span className="u-label hidden overflow-hidden sm:block">
+        <RollingLabel>Account</RollingLabel>
+      </span>
+    </Link>
+  );
+}
+
 function StairToggle({
   open,
   onClick,

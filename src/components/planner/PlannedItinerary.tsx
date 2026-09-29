@@ -323,6 +323,45 @@ export function PlannedItinerary({
                                   ? `+${formatINR(option.price)}`
                                   : undefined
                               }
+                              image={option.image}
+                              imageAlt={option.blurb}
+                              colour={colour}
+                              ink={ink}
+                            />
+                          ))}
+                        </div>
+                      </Section>
+                    ) : null}
+
+                    {/* --- What you travel in -------------------------- */}
+                    {options.vehicle ? (
+                      <Section
+                        title={options.vehicle.legend}
+                        hint={options.vehicle.note}
+                      >
+                        <div className={TILE_GRID}>
+                          {options.vehicle.options.map((option) => (
+                            <ChoiceTile
+                              key={option.id}
+                              type="radio"
+                              name={`vehicle-${day.day}`}
+                              id={`vehicle-${day.day}-${option.id}`}
+                              checked={selection?.vehicleId === option.id}
+                              onChange={() =>
+                                onChange(day.day, {
+                                  ...emptySelection(selection),
+                                  vehicleId: option.id,
+                                })
+                              }
+                              label={option.name}
+                              price={
+                                option.price > 0
+                                  ? `+${formatINR(option.price)}`
+                                  : "Included"
+                              }
+                              image={option.image}
+                              imageAlt={option.blurb}
+                              recommended={option.recommended}
                               colour={colour}
                               ink={ink}
                             />
@@ -497,6 +536,9 @@ function ChoiceTile({
   onChange,
   label,
   price,
+  image,
+  imageAlt,
+  recommended,
   colour,
   ink,
 }: {
@@ -507,6 +549,16 @@ function ChoiceTile({
   onChange: () => void;
   label: string;
   price?: string;
+  /**
+   * Optional. Where there is one it sits above the label as a wide strip
+   * rather than beside it: "Guwahati airport (GAU)" and "Guwahati railway
+   * station (GHY)" differ by two words, and a 40px thumbnail is not enough
+   * picture to tell a terminal from a platform at a glance.
+   */
+  image?: string;
+  imageAlt?: string;
+  /** Draws the "we would send this" flag. */
+  recommended?: boolean;
   colour: string;
   ink: string;
 }) {
@@ -515,6 +567,7 @@ function ChoiceTile({
       htmlFor={id}
       className={cn(
         "flex h-full min-h-[4.5rem] cursor-pointer flex-col justify-between gap-2 rounded-[var(--radius-input)] border p-3",
+        image && "p-0 pb-3",
         "transition-[border-color,background-color] duration-[var(--dur-micro)] ease-brand",
         FOCUS,
         checked
@@ -531,7 +584,27 @@ function ChoiceTile({
         onChange={onChange}
         className="u-sr-only"
       />
-      <span className="flex items-start gap-2.5">
+      {image ? (
+        <span className="relative block aspect-[16/9] w-full overflow-hidden rounded-t-[calc(var(--radius-input)-1px)]">
+          <Image
+            src={image}
+            alt={imageAlt ?? ""}
+            fill
+            sizes="(max-width: 640px) 45vw, 220px"
+            className="object-cover"
+          />
+          {recommended ? (
+            <span
+              className="u-label absolute top-2 left-2 rounded-full px-2.5 py-1 text-[0.625rem] text-paper"
+              style={{ backgroundColor: ink }}
+            >
+              We would send this
+            </span>
+          ) : null}
+        </span>
+      ) : null}
+
+      <span className={cn("flex items-start gap-2.5", image && "px-3 pt-3")}>
         <Mark type={type} checked={checked} colour={colour} />
         <span className="min-w-0 text-14 leading-snug font-medium">
           {label}
@@ -541,6 +614,7 @@ function ChoiceTile({
         <span
           className={cn(
             "u-num pl-[1.875rem] text-14",
+            image && "px-3",
             !checked && "text-ink-soft",
           )}
           style={checked ? { color: ink } : undefined}

@@ -8,12 +8,15 @@ import {
   GATEWAY_POINTS,
   TRANSFER_DAY_KM,
   VEHICLE_OPTIONS,
+  vehiclesForParty,
   optionsForPlace,
   type ActivityOption,
   type StayOption,
   type TransferOption,
 } from "@/content/day-options";
 import { getDestinationBySlug } from "@/content/destinations";
+import { getEventsBetween } from "@/content/events";
+import { localGuideFor, type LocalPlace } from "@/content/local-guide";
 import { getToursByState } from "@/content/tours";
 import { matchesParty, type PartyType } from "./party";
 import { addDays, formatLong, nightsBetween, parseISO } from "./date";
@@ -64,6 +67,22 @@ export type DayOptions = {
     note: string;
     options: TransferOption[];
     /** Pre-selected. Always the one the trip price already covers. */
+    defaultId: string;
+  } | null;
+  /**
+   * The car itself, offered once, on the last day.
+   *
+   * Separate from `transfer` because it is a different question with a
+   * different shape: `transfer` asks *where* on that one day, this asks
+   * *what* for the whole trip. It sits on the departure day because by then
+   * the traveller has seen every road the itinerary puts them on and knows
+   * what they are choosing a vehicle for — asked on day one it is a question
+   * about a journey nobody has read yet.
+   */
+  vehicle: {
+    legend: string;
+    note: string;
+    options: TransferOption[];
     defaultId: string;
   } | null;
   /** Empty on the departure day. You sleep nowhere on the day you fly home. */
@@ -148,6 +167,30 @@ export type TripPlan = {
   routeNote: string;
   quote: PlanQuote;
   matches: PlanMatch[];
+  /**
+   * What is on, and where to eat, while they are there.
+   *
+   * Assembled here rather than in the client for the usual reason: an
+   * `NEEvent` carries three paragraphs of body copy and a ticket table, and
+   * the card needs six fields of it. Nothing in here is bookable through us —
+   * it is the one part of the planner that is not selling anything, which is
+   * exactly why it is worth having.
+   */
+  localPicks: {
+    /** The gateway city these belong to. Empty when we have no guide for it. */
+    city: string;
+    /** Events running on any day of the trip, in this state. */
+    events: {
+      slug: string;
+      name: string;
+      venue: string;
+      startDate: string;
+      endDate: string;
+      fromPrice: number;
+    }[];
+    cafes: LocalPlace[];
+    dinners: LocalPlace[];
+  };
 };
 
 /** Children are charged a reduced rate; this is the age it applies below. */
@@ -508,11 +551,27 @@ export function planTrip(input: PlanInput): TripPlan {
       };
     }
 
+    /*
+     * Sized off the whole party, children included. A four-year-old occupies
+     * a seat and their bag occupies boot space, so counting adults only is
+     * how a family of five gets sent a sedan.
+     */
+    const heads = input.adults + input.children;
+    const vehicle: DayOptions["vehicle"] = isLast
+      ? {
+          legend: "And what would you like to travel in?",
+          note: `For ${heads} ${heads === 1 ? "traveller" : "travellers"} with luggage. The first is the one we would send, and it is already in the price.`,
+          options: vehiclesForParty(heads),
+          defaultId: vehiclesForParty(heads)[0].id,
+        }
+      : null;
+
     const options = optionsForPlace(place);
     return {
       day: day.day,
       place,
       transfer,
+      vehicle,
       stays: isLast ? [] : options.stays,
       activities: options.activities,
     };
@@ -633,6 +692,45 @@ export function planTrip(input: PlanInput): TripPlan {
       children: input.children,
     }),
     matches,
+    localPicks: buildLocalPicks(input.state, input.startDate, plannedEnd),
+  };
+}
+
+/**
+ * What is on, and where to eat, for the dates actually planned.
+ *
+ * Matched against `plannedEnd` rather than the requested end date. On a
+ * clamped trip those differ, and offering somebody a festival on a night the
+ * itinerary does not cover is worse than offering them nothing.
+ *
+ * Events are filtered to the state as well as the dates. A festival in
+ * Nagaland during a Meghalaya week is true and useless: it is four hundred
+ * kilometres and a permit away from where this traveller will be standing.
+ */
+function buildLocalPicks(
+  state: StateSlug,
+  startDate: string,
+  endDate: string,
+): TripPlan["localPicks"] {
+  const guide = localGuideFor(state);
+
+  const events = getEventsBetween(startDate, endDate)
+    .filter((event) => event.state === state)
+    .slice(0, 3)
+    .map((event) => ({
+      slug: event.slug,
+      name: event.name,
+      venue: event.venue,
+      startDate: event.startDate,
+      endDate: event.endDate,
+      fromPrice: event.fromPrice,
+    }));
+
+  return {
+    city: guide?.city ?? "",
+    events,
+    cafes: guide?.cafes ?? [],
+    dinners: guide?.dinners ?? [],
   };
 }
 

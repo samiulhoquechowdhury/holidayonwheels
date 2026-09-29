@@ -19,6 +19,8 @@ import type { DayOptions } from "./plan";
 
 export type DaySelection = {
   transferId?: string;
+  /** Only ever set on the departure day, where the vehicle is chosen. */
+  vehicleId?: string;
   stayId?: string;
   activityIds: string[];
 };
@@ -58,6 +60,7 @@ export function defaultSelections(dayOptions: DayOptions[]): Selections {
   for (const day of dayOptions) {
     out[day.day] = {
       transferId: day.transfer?.defaultId,
+      vehicleId: day.vehicle?.defaultId,
       stayId: day.stays[0]?.id,
       activityIds: [],
     };
@@ -108,6 +111,17 @@ export function buildExtras(
         label: transfer.name,
         detail: `Day ${day.day} · one vehicle`,
         amount: transfer.price,
+      });
+      touched = true;
+    }
+
+    const vehicle = day.vehicle?.options.find((v) => v.id === chosen.vehicleId);
+    if (vehicle && vehicle.price > 0) {
+      transfers.push({
+        key: `v-${day.day}-${vehicle.id}`,
+        label: vehicle.name,
+        detail: "For the trip · one vehicle",
+        amount: vehicle.price,
       });
       touched = true;
     }
@@ -163,6 +177,13 @@ export function summariseDay(
   // answer on day one that the operator cannot guess.
   if (transfer && (transfer.price > 0 || day.day === 1))
     parts.push(transfer.name);
+
+  // Always surfaced, chargeable or not. The vehicle is the one answer on the
+  // last day that decides how the whole trip is actually driven.
+  const vehicle = day.vehicle?.options.find(
+    (v) => v.id === selection.vehicleId,
+  );
+  if (vehicle) parts.push(vehicle.name);
 
   const count = selection.activityIds.length;
   if (count > 0) parts.push(`${count} ${count === 1 ? "extra" : "extras"}`);

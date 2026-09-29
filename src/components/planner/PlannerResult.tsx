@@ -10,6 +10,7 @@ import { Chip } from "@/components/primitives/Chip";
 import { Accent } from "@/components/primitives/Accent";
 import { LuxeButton, LuxeButtonLink } from "@/components/primitives/LuxeButton";
 import { PlannedItinerary } from "./PlannedItinerary";
+import { LocalPicks } from "./LocalPicks";
 import { tourShots } from "@/config/showcase";
 import { partyDef } from "@/lib/party";
 import { stateColours } from "@/config/palette";
@@ -298,6 +299,19 @@ export function PlannerResult({
               </div>
             )}
           </div>
+
+          {/*
+           * Below the confirm block, not above it.
+           *
+           * "After the accordion" is where this belongs by subject — it is
+           * about the place rather than the trip — but the confirm block is
+           * deliberately the first thing under the last day, and putting three
+           * cards of restaurants in front of the one action on the page would
+           * undo that. It reads instead as what is waiting once the trip is
+           * settled. Renders nothing at all where we have no guide for the
+           * state and nothing is on.
+           */}
+          <LocalPicks picks={plan.localPicks} stateName={plan.stateName} />
         </div>
 
         {/* --- The money, the reasoning, and the next move -------------- */}

@@ -1,4 +1,4 @@
-import { roomShots } from "@/config/showcase";
+import { roomShots, shot } from "@/config/showcase";
 import type { StateSlug } from "./types";
 
 /**
@@ -78,6 +78,19 @@ export type TransferOption = {
   blurb: string;
   /** Per party, for the day. Zero is what the trip price already covers. */
   price: number;
+  /**
+   * The tile's photograph. Optional so an option can go without one, but in
+   * practice every meeting point and every vehicle has one: "Guwahati airport
+   * (GAU)" and "Guwahati railway station (GHY)" are four words apart and a
+   * traveller picking in a hurry reads the picture first.
+   */
+  image?: string;
+  /**
+   * Set on the one vehicle we would put this party in. Shown as a mark on the
+   * tile rather than by reordering, so the list stays in size order and the
+   * recommendation is visibly a recommendation rather than a default.
+   */
+  recommended?: boolean;
 };
 
 export type PlaceOptions = {
@@ -1275,12 +1288,49 @@ const GENERIC: PlaceOptions = {
  * only offers "airport transfer, included" gets a phone call the next day
  * asking which train the traveller is on.
  */
+/**
+ * Transport photography, and it is mock like everything else — see MEDIA.md.
+ *
+ * Every frame here was looked at rather than picked from an id. The railway
+ * one is a real Indian platform with an AC three-tier coach at it, which is
+ * the one that matters: an intercity platform anywhere else reads as a
+ * different country to anybody who has stood on one at Paltan Bazar.
+ *
+ * `heli` deliberately reuses the terminal frame. The Bagdogra–Gangtok flight
+ * leaves from the airport, so it is the right building even though it is the
+ * wrong aircraft; a helicopter frame can replace it whenever one is shot.
+ */
+const TRANSPORT = {
+  air: shot("1674725690428-948af1d7f5a1"),
+  rail: shot("1639494095806-1680b909cb33"),
+  road: shot("1470071459604-3b5ec3a7fe05"),
+} as const;
+
+/**
+ * Which picture a meeting point gets, from its id.
+ *
+ * Derived rather than passed at all thirty-five call sites: the ids already
+ * end in `-air`, `-rail`, `-own` or `-heli` because that is what they are,
+ * and a second hand-maintained list of the same fact would drift.
+ */
+function transferImage(id: string): string {
+  if (id.includes("rail")) return TRANSPORT.rail;
+  if (id.includes("air") || id.includes("heli")) return TRANSPORT.air;
+  return TRANSPORT.road;
+}
+
 const meet = (
   id: string,
   name: string,
   blurb: string,
   price = 0,
-): TransferOption => ({ id, name, blurb, price });
+): TransferOption => ({
+  id,
+  name,
+  blurb,
+  price,
+  image: transferImage(id),
+});
 
 const GUWAHATI_IN: TransferOption[] = [
   meet(
@@ -1490,29 +1540,107 @@ export const GATEWAY_POINTS: Record<
  * vehicle" on a day spent walking around one village is the kind of question
  * that makes a form feel automated.
  */
-export const VEHICLE_OPTIONS: TransferOption[] = [
+/**
+ * The fleet, smallest to largest.
+ *
+ * `seats` is the working capacity with luggage in the car, not the number on
+ * the registration. A Dzire seats four on paper and two comfortably for nine
+ * days with cases; an Innova is a seven-seater that carries five and their
+ * bags up a hill road. Sizing off the registration is how a party of six ends
+ * up with somebody's suitcase on their knees to Tawang.
+ *
+ * Prices are the *difference* from what the trip already covers, per party
+ * per day, and they are placeholders pending the client's rate card.
+ */
+type Vehicle = {
+  id: string;
+  name: string;
+  blurb: string;
+  price: number;
+  image: string;
+  /** Comfortable heads, with luggage. */
+  seats: number;
+};
+
+const FLEET: Vehicle[] = [
   {
-    id: "veh-included",
-    name: "The vehicle we already booked",
+    id: "veh-sedan",
+    name: "A sedan",
     blurb:
-      "A private air-conditioned SUV with a driver from the state. Included in the trip price.",
+      "A Dzire or an Etios with a driver. The quietest way to cover distance when there are only two of you.",
     price: 0,
+    seats: 2,
+    image: shot("1639056067266-43a821cf0a1f"),
+  },
+  {
+    id: "veh-suv",
+    name: "An SUV",
+    blurb:
+      "An Innova Crysta or equivalent — the vehicle almost every road in the region is actually driven in.",
+    price: 0,
+    seats: 5,
+    image: shot("1709620435392-c1ecacde8bd5"),
   },
   {
     id: "veh-premium",
-    name: "A premium SUV for the day",
+    name: "A premium SUV",
     blurb:
-      "A Fortuner or equivalent — more clearance, better seats, and a noticeably quieter cabin on a long hill day.",
+      "A Fortuner or equivalent. More clearance, better seats, and a noticeably quieter cabin on a long hill day.",
     price: 3500,
+    seats: 5,
+    image: shot("1654688554491-69d21d38fb91"),
   },
   {
-    id: "veh-van",
-    name: "A tempo traveller for the party",
+    id: "veh-tempo",
+    name: "A tempo traveller",
     blurb:
-      "Worth it above five people: everyone gets a window, and the luggage stops travelling on laps.",
+      "Everyone gets a window and the luggage stops travelling on laps. The usual answer above five people.",
     price: 4500,
+    seats: 12,
+    image: shot("1687493645938-5f3501e2b819"),
+  },
+  {
+    id: "veh-coach",
+    name: "A mini coach",
+    blurb:
+      "For a party this size, with a hold underneath. Not every hill road takes one — we will tell you where it cannot go.",
+    price: 9000,
+    seats: 25,
+    image: shot("1534011056808-50c1c6082fe7"),
   },
 ];
+
+/**
+ * What we would put this party in, and what else they could have.
+ *
+ * Returns the fleet from the smallest vehicle that fits upwards, with that
+ * first one marked as the recommendation. Two people are offered a sedan and
+ * may still take the tempo traveller; six are never offered the sedan at all,
+ * because showing somebody a car their party does not fit in is a way of
+ * making them read capacities.
+ *
+ * The cheapest vehicle that fits is always priced at zero — it is what the
+ * trip price covers — so the recommendation never costs extra and every
+ * option above it is visibly an upgrade.
+ */
+export function vehiclesForParty(heads: number): TransferOption[] {
+  const fits = FLEET.filter((vehicle) => vehicle.seats >= Math.max(1, heads));
+  // Above the largest vehicle we run, the party travels in two of them.
+  const usable = fits.length > 0 ? fits : [FLEET[FLEET.length - 1]];
+  const floor = usable[0].price;
+
+  return usable.map((vehicle, index) => ({
+    id: vehicle.id,
+    name: vehicle.name,
+    blurb: vehicle.blurb,
+    price: Math.max(0, vehicle.price - floor),
+    image: vehicle.image,
+    recommended: index === 0,
+  }));
+}
+
+/** Kept for the long middle days, which are about comfort rather than size. */
+export const VEHICLE_OPTIONS: TransferOption[] = vehiclesForParty(1);
 
 /** The distance, in kilometres, above which a day is a transfer day. */
 export const TRANSFER_DAY_KM = 60;

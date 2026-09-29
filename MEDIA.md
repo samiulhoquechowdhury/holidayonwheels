@@ -92,6 +92,31 @@ with pluckers in it. Any of the three also serves `hero-river` below.
 Every one of these crops to 4:5 on the planner card and 4:5 again on the
 destinations index, so a single portrait frame per state covers both.
 
+### The dining section has no dining photography at all
+
+The home page now carries "Dinner is part of the trip" — four evenings, from
+a long table on a tea-estate lawn to an Assamese thali. It is the one section
+on the site whose entire job is to show a room you would want to eat in, and
+the mock pool contains no restaurant or cafe interior of any kind. All 36
+frames were checked for one.
+
+What is standing in, and why each is the least wrong option available:
+
+| Card                         | Placeholder                   | Wanted                                          |
+| ---------------------------- | ----------------------------- | ----------------------------------------------- |
+| The alfresco grand dinner    | A group around a fire at dusk | A laid long table on a tea-estate lawn, lit     |
+| A chef's table, privately    | Plated savouries on a board   | The bungalow dining room, table set, cook at it |
+| The market, then the kitchen | A covered market              | Fancy Bazaar, Guwahati — the real one           |
+| An Assamese thali, properly  | A thali of curries and bread  | An actual Assamese thali: khar, tenga, fish     |
+
+The last is the closest of the four and still shows the wrong meal. The first
+is a campfire, not a dinner service. None of them is in Northeast India.
+
+This is a good candidate for the first commissioned shoot rather than a
+stock swap: a dining room and a laid table are the two subjects where stock
+photography reads as stock most obviously, and where the client's own
+property is the point.
+
 ### The activity frames, and two that are wrong on purpose
 
 `activityShots` gives each of the eleven Guwahati day activities a frame.

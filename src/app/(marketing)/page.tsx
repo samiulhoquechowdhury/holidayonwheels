@@ -7,6 +7,7 @@ import { SignatureJourneys } from "@/components/home/SignatureJourneys";
 import { StateIndex } from "@/components/home/StateIndex";
 import { ExpeditionBand } from "@/components/home/ExpeditionBand";
 import { StayStack } from "@/components/home/StayStack";
+import { DiningTable } from "@/components/home/DiningTable";
 import { FestivalRail } from "@/components/home/FestivalRail";
 import { ProofBand } from "@/components/home/ProofBand";
 import { PermitPanel } from "@/components/home/PermitPanel";
@@ -46,18 +47,21 @@ export const metadata: Metadata = {
  *  6. **State index** — the map, quiet, as type.
  *  7. **Expeditions** — the one dark band, for the one thing with risk in it.
  *  8. **Homestays** — the warm counterweight to it.
- *  9. **Festivals** — the only section with a deadline.
- * 10. **Proof** — the quantified claim, placed where a reader is deciding
+ *  9. **Dining** — where you eat, straight after where you sleep. Food was
+ *     the one part of a trip this page never mentioned, which in this region
+ *     is a strange thing to leave out.
+ * 10. **Festivals** — the only section with a deadline.
+ * 11. **Proof** — the quantified claim, placed where a reader is deciding
  *     whether any of the above was true.
- * 11. **Permits** — the last objection removed.
- * 12. **Journal** — for the reader who is not ready, and wants to know we
+ * 12. **Permits** — the last objection removed.
+ * 13. **Journal** — for the reader who is not ready, and wants to know we
  *     know something.
- * 13. **Creator programme** — the only band on the page addressed to somebody
+ * 14. **Creator programme** — the only band on the page addressed to somebody
  *     who is not buying a holiday. It sits here, late, because a second
  *     audience's ask placed in the middle of the first audience's argument
  *     costs more than the position gains; by this point the page has stopped
  *     selling and started talking.
- * 14. **Closing card** — the smallest possible ask.
+ * 15. **Closing card** — the smallest possible ask.
  *
  * Surfaces alternate rather than cycling every tint the system has: most of
  * the page is paper, `mint` marks the signature journeys, `butter` the state
@@ -77,6 +81,7 @@ export default function HomePage() {
       <StateIndex />
       <ExpeditionBand />
       <StayStack />
+      <DiningTable />
       <FestivalRail />
       <ProofBand />
       <PermitPanel />

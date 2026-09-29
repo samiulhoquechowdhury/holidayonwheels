@@ -148,9 +148,23 @@ export function DateRangeCalendar({
     return cap < latest ? cap : latest;
   }, [choosingEnd, start, maxNights, latest]);
 
-  const floor = choosingEnd ? start : earliest;
-
-  const isDisabled = (iso: string) => iso < floor || iso > ceiling;
+  /*
+   * The floor never moves to the start.
+   *
+   * It used to: while an end was being chosen, every day before the start was
+   * disabled. That contradicted `pick` directly below, which has a branch for
+   * clicking on or before the start — "both are what people do rather than
+   * what they are told to do" — and that branch was unreachable, because the
+   * disabled guard returned first. So somebody who picked 14 October and then
+   * realised they meant the 11th found the 11th greyed out, with no way back
+   * except to complete a range they did not want and click again.
+   *
+   * Nothing else needed to change for this to be safe. `pick` already treats
+   * an earlier day as a new start, and `previewEnd` already refuses to draw a
+   * band backwards from the start, so the only thing the floor was adding was
+   * the obstruction.
+   */
+  const isDisabled = (iso: string) => iso < earliest || iso > ceiling;
 
   const months = useMemo(() => [view, addMonths(view, 1)], [view]);
 
@@ -243,6 +257,27 @@ export function DateRangeCalendar({
           of "September 2026" between two arrows was the same word three
           times on one screen. */}
       <div className="-mb-2 flex items-center justify-end gap-2">
+        {/*
+         * A visible way back, as soon as there is something to go back from.
+         * The hint line underneath says you can click an earlier day to start
+         * again, but a hint is not a control — somebody who has picked the
+         * wrong arrival and is staring at a half-drawn range wants a button,
+         * and the one thing worse than a fiddly date picker is one with no
+         * undo on screen.
+         */}
+        {start ? (
+          <button
+            type="button"
+            onClick={() => {
+              onChange("", "");
+              setHover(null);
+              setFocus(start);
+            }}
+            className="u-label mr-1 min-h-9 rounded-full px-3 text-ink-faint underline underline-offset-4 transition-colors duration-[var(--dur-micro)] ease-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage"
+          >
+            Clear dates
+          </button>
+        ) : null}
         <NavButton
           direction="back"
           disabled={!canGoBack}
@@ -305,7 +340,7 @@ export function DateRangeCalendar({
       <div className="mt-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 text-14 text-ink-faint">
         <p>
           {choosingEnd
-            ? "Now pick the day you fly home."
+            ? "Now pick the day you fly home — or an earlier day to start again."
             : start && end
               ? "Click any day to start again."
               : "Click the day you arrive, then the day you fly home."}

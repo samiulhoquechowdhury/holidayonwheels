@@ -16,8 +16,14 @@
  * See MEDIA.md for the encode targets the real assets have to meet.
  */
 
-/** Unsplash's imgix endpoint. Crop and quality are applied per call site. */
-const shot = (id: string) =>
+/**
+ * Unsplash's imgix endpoint. Crop and quality are applied per call site.
+ *
+ * Exported so other placeholder sets — `config/creators.ts` — build their
+ * URLs the same way rather than writing the query string out again. When the
+ * real photography lands and this file goes, there is one shape to delete.
+ */
+export const shot = (id: string) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=80`;
 
 /**

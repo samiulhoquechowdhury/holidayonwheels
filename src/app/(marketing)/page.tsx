@@ -11,6 +11,7 @@ import { FestivalRail } from "@/components/home/FestivalRail";
 import { ProofBand } from "@/components/home/ProofBand";
 import { PermitPanel } from "@/components/home/PermitPanel";
 import { JournalGrid } from "@/components/home/JournalGrid";
+import { CreatorBand } from "@/components/home/CreatorBand";
 import { ClosingCard } from "@/components/home/ClosingCard";
 import { getLowestTourPrice } from "@/content/tours";
 
@@ -51,7 +52,12 @@ export const metadata: Metadata = {
  * 11. **Permits** — the last objection removed.
  * 12. **Journal** — for the reader who is not ready, and wants to know we
  *     know something.
- * 13. **Closing card** — the smallest possible ask.
+ * 13. **Creator programme** — the only band on the page addressed to somebody
+ *     who is not buying a holiday. It sits here, late, because a second
+ *     audience's ask placed in the middle of the first audience's argument
+ *     costs more than the position gains; by this point the page has stopped
+ *     selling and started talking.
+ * 14. **Closing card** — the smallest possible ask.
  *
  * Surfaces alternate rather than cycling every tint the system has: most of
  * the page is paper, `mint` marks the signature journeys, `butter` the state
@@ -75,6 +81,7 @@ export default function HomePage() {
       <ProofBand />
       <PermitPanel />
       <JournalGrid />
+      <CreatorBand />
       <ClosingCard />
     </>
   );

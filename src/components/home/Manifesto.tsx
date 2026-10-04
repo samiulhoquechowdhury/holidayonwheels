@@ -21,7 +21,15 @@ import { editorial } from "@/config/showcase";
  */
 export function Manifesto() {
   return (
-    <section className="relative isolate overflow-hidden bg-paper py-[var(--section-pad)]">
+    /*
+     * Full section padding at the top, a short one at the bottom.
+     *
+     * The signature bento is part of this section now rather than the next
+     * one, so the usual 176px between them read as a gap between two blocks
+     * instead of breathing room inside one. The cards sit just under the
+     * three points, which is what makes the join invisible.
+     */
+    <section className="relative isolate overflow-hidden bg-paper pt-[var(--section-pad)] pb-16 lg:pb-20">
       <div aria-hidden="true" className="u-grid-lines" />
 
       <div className="u-container-wide relative">

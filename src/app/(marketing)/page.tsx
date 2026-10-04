@@ -36,11 +36,14 @@ export const metadata: Metadata = {
  *     credible about.
  *  2. **Marquee** — what is on offer, moving. The eight names used to run
  *     here, but the hero says "eight states" in 160px directly above it.
- *  3. **Manifesto** — the one argument, before anything is sold.
- *  4. **Signature journeys** — the recommendation, as a bento so that one
- *     trip is visibly the recommendation. It answers the manifesto directly
- *     above it: having just argued that this is not a package, the next
- *     thing to show is what it is instead.
+ *  3. **Manifesto and signature journeys** — one block, deliberately. The
+ *     manifesto makes the argument; the bento under it is the evidence, on
+ *     the same paper, with no heading, eyebrow or button of its own. They
+ *     were two sections and the join showed: "Signature routes / The trips
+ *     we would book ourselves / Plan your own" restated what the paragraph
+ *     above had just finished saying. The manifesto ends on "we sell the
+ *     week you spend in them"; the honest next thing is to show three weeks,
+ *     not to clear the throat and introduce them.
  *  5. **Journey modes** — commented out, not deleted. It was the
  *     self-selection moment ("How are you travelling?"), and it may come
  *     back; its eyebrow also still read "Start here" from when it sat higher
@@ -66,11 +69,13 @@ export const metadata: Metadata = {
  * 15. **Closing card** — the smallest possible ask.
  *
  * Surfaces alternate rather than cycling every tint the system has: most of
- * the page is paper, `mint` marks the signature journeys, `butter` the state
- * index, and `night` happens once, on the expeditions. Space and hairlines do
- * the rest of the dividing. Swapping the two sections above also fixed a
- * seam: the manifesto and the journey modes are both paper, so they ran
- * together as one undivided block.
+ * the page is paper, `sand` marks the dining block, `butter` the state index,
+ * `blush` the festivals, and `night` happens twice — the expeditions and the
+ * creator programme. Space and hairlines do the rest of the dividing.
+ *
+ * The signature journeys used to be mint. They are paper now *because* two
+ * adjacent paper sections read as one, which is the point there rather than
+ * the bug it would be anywhere else on this page.
  */
 export default function HomePage() {
   return (

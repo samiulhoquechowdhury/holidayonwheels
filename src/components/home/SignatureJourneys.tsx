@@ -1,12 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SplitReveal } from "@/components/motion/SplitReveal";
 import { Rise } from "@/components/motion/Rise";
-import { Accent } from "@/components/primitives/Accent";
-import {
-  ArrowButton,
-  LuxeButtonLink,
-} from "@/components/primitives/LuxeButton";
+import { ArrowButton } from "@/components/primitives/LuxeButton";
 import { getTourBySlug } from "@/content/tours";
 import { stateColours } from "@/config/palette";
 import type { StateSlug } from "@/content/types";
@@ -84,28 +79,25 @@ export function SignatureJourneys() {
   );
 
   return (
-    <section className="relative bg-mint py-[var(--section-pad)]">
+    /*
+     * No heading, no eyebrow, no button, and the same paper as the manifesto
+     * above it — because this *is* the manifesto's last paragraph.
+     *
+     * It used to open with "Signature routes" over "The trips we would book
+     * ourselves" and a "Plan your own" button on the right. All three were
+     * restating what the section above had just finished arguing. The
+     * manifesto ends on "we do not sell the eight states, we sell the week
+     * you spend in them"; the honest next thing is to show three weeks, not
+     * to clear the throat and introduce them.
+     *
+     * So the ground matches, the top padding is gone, and the bento reads as
+     * the evidence under the claim rather than as a second section making its
+     * own case. The way into the planner is still here — it is the fourth
+     * tile, which asks for it in the one place somebody is already looking
+     * for an alternative.
+     */
+    <section className="relative bg-paper pt-0 pb-[var(--section-pad)]">
       <div className="u-container-wide">
-        <div className="flex flex-wrap items-end justify-between gap-8">
-          <div>
-            <Rise className="u-label mb-6 flex items-center gap-4 text-ink-faint">
-              <span className="h-px w-12 bg-[var(--ink-hairline-strong)]" />
-              Signature routes
-            </Rise>
-            <SplitReveal className="max-w-2xl text-48 lg:text-88">
-              The trips we would <Accent>book</Accent> ourselves
-            </SplitReveal>
-          </div>
-          <Rise delay={0.15}>
-            {/* "All trips" until `/tours` stopped being an index. It is the
-                planner now, so the label has to promise what it delivers —
-                a list nobody can reach is worse than no link. */}
-            <LuxeButtonLink href="/destinations" variant="ghost">
-              Plan your own
-            </LuxeButtonLink>
-          </Rise>
-        </div>
-
         {/*
           Twelve columns, two equal rows. The first card claims five columns
           and both rows; the other three divide what is left. Below `lg` the
@@ -121,7 +113,7 @@ export function SignatureJourneys() {
         <Rise
           as="ul"
           stagger={0.1}
-          className="mt-14 grid gap-4 lg:mt-20 lg:grid-cols-12 lg:grid-rows-[repeat(2,minmax(0,1fr))] lg:gap-5"
+          className="grid gap-4 lg:grid-cols-12 lg:grid-rows-[repeat(2,minmax(0,1fr))] lg:gap-5"
         >
           {tours[0] ? (
             <li className="lg:col-span-5 lg:row-span-2">

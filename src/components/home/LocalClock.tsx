@@ -25,6 +25,11 @@ import { useEffect, useState } from "react";
  *  - **It ticks on the second boundary**, not every 1000ms from whenever it
  *    mounted. A naive interval drifts and lands mid-second, so the display
  *    skips a value every minute or so.
+ *  - **The date comes from the same `Date` as the tick.** It only changes at
+ *    midnight, but recomputing it alongside the seconds costs nothing and
+ *    avoids a second timer that would have to be scheduled against a
+ *    different boundary — and would be the thing that breaks on the one night
+ *    of the year anyone would notice.
  *  - **Twelve-hour, with the meridiem set apart.** Read through
  *    `formatToParts` rather than taking the formatted string whole, so the
  *    AM/PM can carry the label style beside digits that keep the numeric one.
@@ -41,25 +46,35 @@ const FORMAT = new Intl.DateTimeFormat("en-GB", {
   hour12: true,
 });
 
-function readClock(date: Date): { clock: string; period: string } {
-  const parts = FORMAT.formatToParts(date);
+/** Guwahati's date, not the reader's — the same clock the office runs on. */
+const DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Kolkata",
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+});
+
+type Now = { date: string; clock: string; period: string };
+
+function readNow(at: Date): Now {
+  const parts = FORMAT.formatToParts(at);
   const part = (type: string) =>
     parts.find((candidate) => candidate.type === type)?.value ?? "";
   return {
+    // "Wed, 30 Sep" in en-GB; the comma is noise beside a running clock.
+    date: DATE_FORMAT.format(at).replace(",", ""),
     clock: `${part("hour")}:${part("minute")}:${part("second")}`,
     period: part("dayPeriod").toUpperCase(),
   };
 }
 
 export function LocalClock() {
-  const [time, setTime] = useState<{ clock: string; period: string } | null>(
-    null,
-  );
+  const [time, setTime] = useState<Now | null>(null);
 
   useEffect(() => {
     let frame: number;
     const tick = () => {
-      setTime(readClock(new Date()));
+      setTime(readNow(new Date()));
       // Land on the next whole second rather than drifting by however long
       // this mount happened to be past one.
       frame = window.setTimeout(tick, 1000 - (Date.now() % 1000));
@@ -71,11 +86,41 @@ export function LocalClock() {
   return (
     <span className="u-num flex items-baseline gap-2 whitespace-nowrap">
       <span className="max-lg:hidden">Guwahati</span>
+      <span aria-hidden="true" className="text-ink-faint max-lg:hidden">
+        ·
+      </span>
+      {/*
+       * Reserved width, like the clock's dashes. The masthead is
+       * `justify-between`, so a right-hand item that grows on hydration drags
+       * the centred middle item with it — the whole line would settle
+       * sideways a beat after paint.
+       *
+       * Hidden below `sm`, where the line is already down to the mark and the
+       * time and a third item would wrap.
+       */}
+      <span
+        suppressHydrationWarning
+        className="hidden min-w-[4.5rem] sm:inline-block"
+      >
+        {time?.date ?? ""}
+      </span>
+      {/*
+       * `min-w` on the clock, not just the dashes.
+       *
+       * `u-num` is `tabular-nums`, so every real time is exactly the same
+       * width — 51px at the masthead's fixed 12px — but "--:--:--" is only
+       * 35px, because a hyphen is not a digit and tabular figures do not
+       * cover it. The line therefore grew 18px the moment the first tick
+       * landed, and `justify-between` split that as ±9px, dragging the
+       * centred middle item sideways a beat after paint. Reserving the digit
+       * width holds the line still.
+       */}
       <time
+        className="inline-block min-w-[3.3rem]"
         suppressHydrationWarning
         aria-label={
           time
-            ? `Local time in Guwahati, ${time.clock} ${time.period}`
+            ? `Guwahati, ${time.date}, ${time.clock} ${time.period}`
             : undefined
         }
       >

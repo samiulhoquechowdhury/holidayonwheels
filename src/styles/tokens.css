@@ -244,6 +244,37 @@
 @media (min-width: 1024px) {
   :root {
     --gutter: 80px;
-    --section-pad: 176px;
+    /*
+     * Was 176px. Air is the design, but 176px top *and* bottom is 352px of
+     * it per section, and on a 768px laptop that is 46% of the screen spent
+     * before any content. Measured at 1366x768 every section on the home page
+     * ran between 1.2 and 2.9 screens tall and not one of them fitted.
+     * 140px keeps the rhythm and gives back roughly a thousand pixels across
+     * the page.
+     */
+    --section-pad: 140px;
+  }
+}
+
+/*
+ * Short screens.
+ *
+ * The type scale is fluid on *width*, which is the wrong axis for the machine
+ * most people read this on: a 1366x768 laptop is wide enough to trigger every
+ * clamp ceiling and short enough that a 160px headline plus two section pads
+ * leaves almost nothing. Tying the top of the scale to height as well means a
+ * large monitor keeps the editorial size it was designed at, and a laptop
+ * gets a version that fits on the screen.
+ *
+ * Only the three largest steps move. Body copy, labels and the small headings
+ * are already comfortable and shrinking them would cost legibility for no
+ * gain in fit.
+ */
+@media (min-width: 1024px) and (max-height: 900px) {
+  :root {
+    --section-pad: 108px;
+    --step-88: clamp(3rem, 1.3rem + 8.5vw, 4.25rem);
+    --step-120: clamp(3.5rem, 0.6rem + 14.5vw, 5.5rem);
+    --step-160: clamp(3.75rem, 0.1rem + 18vw, 7rem);
   }
 }

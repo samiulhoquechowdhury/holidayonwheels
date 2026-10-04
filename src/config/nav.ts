@@ -24,7 +24,7 @@ export const primaryNav: NavLink[] = [
   { label: "Destinations", href: "/destinations" },
   { label: "Activities", href: "/activities" },
   { label: "Motorcycle tours", href: "/motorcycle-tours" },
-  { label: "Bike & scooter", href: "/rentals" },
+  { label: "Bike & scooter rent", href: "/rentals" },
   { label: "Homestays", href: "/homestays" },
   { label: "Events", href: "/events" },
   { label: "Permits", href: "/ilp" },

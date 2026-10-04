@@ -32,6 +32,7 @@ export const metadata: Metadata = {
  * nothing else on the page has to change, because everything it renders is
  * already derived from the accessors in `src/content/account.ts`.
  */
+
 export default function AccountPage() {
   const upcoming = getUpcomingBookings();
   const past = getPastBookings();

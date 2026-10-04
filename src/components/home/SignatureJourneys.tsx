@@ -8,10 +8,10 @@ import {
   LuxeButtonLink,
 } from "@/components/primitives/LuxeButton";
 import { getTourBySlug } from "@/content/tours";
+import { stateColours } from "@/config/palette";
+import type { StateSlug } from "@/content/types";
 import { getDestinationName } from "@/content/destinations";
 import { stateShots } from "@/config/showcase";
-import { colourFor } from "@/config/palette";
-import { formatINR } from "@/lib/currency";
 import { cn } from "@/lib/cn";
 import type { Tour } from "@/content/types";
 
@@ -56,6 +56,27 @@ const SIGNATURE_SLUGS = [
   "tawang-and-sela-pass",
   "sikkim-north-gurudongmar",
 ] as const;
+
+/**
+ * The five states the three cards above do not cover.
+ *
+ * Derived from `SIGNATURE_SLUGS` rather than typed out, so editing the
+ * running order can never leave this list claiming a state is missing that is
+ * sitting in the row beside it.
+ */
+const SHOWN = new Set(
+  SIGNATURE_SLUGS.map((slug) => getTourBySlug(slug)?.states[0]).filter(Boolean),
+);
+const REST = (Object.keys(stateColours) as StateSlug[]).filter(
+  (state) => !SHOWN.has(state),
+);
+const REST_NAMES = listOf(REST.map((state) => getDestinationName(state)));
+
+/** `a, b and c` — British, so no Oxford comma. */
+function listOf(items: string[]): string {
+  if (items.length <= 1) return items[0] ?? "";
+  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+}
 
 export function SignatureJourneys() {
   const tours = SIGNATURE_SLUGS.map(getTourBySlug).filter(
@@ -118,25 +139,64 @@ export function SignatureJourneys() {
             </li>
           ) : null}
 
-          {/* The fourth tile is not a trip. A solid clay panel closing the
-              grid does two things a fourth photograph cannot: it stops the
-              bento reading as an incomplete row, and it puts the way into
-              the planner where the eye already is.
+          {/* The fourth tile is not a trip. It stops the bento reading as an
+              incomplete row and puts the way into the planner where the eye
+              already is.
 
-              It used to say "Browse the catalogue", which was true when
-              `/tours` was forty-seven cards and a filter rail. It is a
-              planner now, and the three trips above are the answer for
-              somebody who wants one we already run — so this tile is the
-              answer for everybody else, and it says so. */}
+              It also has a job the other three cannot do: say that the other
+              five states exist. Three cards out of eight states reads as a
+              catalogue of three, and somebody whose week is in Meghalaya has
+              no reason to believe this company goes there. So the tile wears
+              a fan of the five it is not showing — the same overlapping-print
+              device as the homestays stack on this page — and names them.
+
+              The prints are decorative and `aria-hidden`: the five names are
+              in the text below them, so nothing is said in pictures alone. */}
           <li className="lg:col-span-3">
             <Link
-              href="/destinations"
-              className="group flex h-full min-h-56 flex-col justify-between rounded-[var(--radius-card)] bg-clay p-7 text-clay-on transition-colors duration-[var(--dur)] ease-brand hover:bg-clay-deep"
+              href="/destinations#plan"
+              className="group flex h-full min-h-56 flex-col justify-between gap-6 overflow-hidden rounded-[var(--radius-card)] bg-clay p-7 text-clay-on transition-colors duration-[var(--dur)] ease-brand hover:bg-clay-deep"
             >
-              <span className="u-label">Not quite it?</span>
               <span>
-                <span className="block font-display text-36 leading-[var(--leading-display)]">
-                  Build one around your dates
+                <span className="u-label">Not quite it?</span>
+
+                <span
+                  aria-hidden="true"
+                  className="mt-5 flex h-20 items-center"
+                >
+                  {REST.map((state, index) => (
+                    <span
+                      key={state}
+                      className={cn(
+                        "relative block size-16 shrink-0 overflow-hidden rounded-[var(--radius-input)]",
+                        "border-2 border-clay shadow-[var(--shadow-soft)]",
+                        "transition-transform duration-[var(--dur)] ease-brand",
+                        index > 0 && "-ml-7",
+                        // Fanned, and opened a little under the pointer so the
+                        // stack reads as more than one object.
+                        index % 2 === 0 ? "-rotate-6" : "rotate-6",
+                        "motion-safe:group-hover:rotate-0",
+                      )}
+                      style={{ zIndex: REST.length - index }}
+                    >
+                      <Image
+                        src={stateShots[state] ?? ""}
+                        alt=""
+                        fill
+                        sizes="64px"
+                        className="object-cover"
+                      />
+                    </span>
+                  ))}
+                </span>
+              </span>
+
+              <span>
+                <span className="block font-display text-28 leading-[var(--leading-display)] lg:text-36">
+                  Customise your holiday as per your dates
+                </span>
+                <span className="mt-3 block text-14 text-clay-on/80">
+                  {REST_NAMES} are all on the map too.
                 </span>
                 <span className="mt-6 flex items-center justify-between">
                   <span className="u-label">Start planning</span>
@@ -166,7 +226,6 @@ function JourneyCard({
 }) {
   const state = tour.states[0];
   const image = stateShots[state];
-  const colour = colourFor(state);
 
   return (
     <Link
@@ -205,23 +264,23 @@ function JourneyCard({
         className="absolute inset-0 -z-10 bg-gradient-to-t from-[rgb(20_18_15/0.94)] from-10% via-[rgb(20_18_15/0.55)] via-45% to-transparent"
       />
 
-      {/* Metadata rides the top edge, away from the title block. The state
-          chip is filled in that state's own colour, which is how the palette
-          gets learned: the same magenta appears on the Manipur row of the
-          index two sections down. */}
-      <span className="absolute inset-x-6 top-6 flex items-start justify-between gap-4 lg:inset-x-8 lg:top-8">
-        <span
-          className="u-label rounded-full px-4 py-2 text-night-text"
-          style={{ backgroundColor: colour.surface }}
-        >
-          {tour.nights} nights · {tour.days} days
-        </span>
-        {tour.requiresILP ? (
+      {/* The length badge is gone, and so is the price below. This section is
+          the recommendation, not the catalogue — a reader here is deciding
+          whether a place appeals, and three cards each shouting a different
+          number turned that into a comparison between figures none of which
+          mean anything until the dates are chosen. Both still sit on the trip
+          page, where they are being chosen rather than skimmed.
+
+          The permit flag stays. It is the one fact that changes what somebody
+          has to do rather than what it costs, and it reads as reassurance
+          rather than as a price tag. */}
+      {tour.requiresILP ? (
+        <span className="absolute top-6 right-6 lg:top-8 lg:right-8">
           <span className="u-glass-dark u-label rounded-full px-4 py-2">
             ILP included
           </span>
-        ) : null}
-      </span>
+        </span>
+      ) : null}
 
       <span
         aria-hidden="true"
@@ -238,9 +297,6 @@ function JourneyCard({
           <span className="block text-18 lg:text-22">{tour.title}</span>
           <span className="mt-1.5 block text-14 text-night-text-soft">
             {tour.strapline}
-          </span>
-          <span className="u-num u-label mt-4 block text-clay">
-            From {formatINR(tour.fromPrice)} per person
           </span>
         </span>
         <ArrowButton tone="paper" />

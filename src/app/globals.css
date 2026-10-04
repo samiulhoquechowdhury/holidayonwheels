@@ -329,31 +329,6 @@
     color: var(--night-text);
   }
 
-  /*
-   * Outline list type — the eight-states index. Every row is drawn hollow and
-   * the hovered one fills in, so the list reads as one live object rather
-   * than eight links. The stroke is ink at low alpha rather than a grey: a
-   * true grey outline on warm paper turns blue.
-   */
-  .u-outline-row {
-    color: transparent;
-    /* Same rule as the knockout: the stroke has to carry an 88px word on its
-       own. At 1px and 32% these eight names were legible in the design file
-       and invisible on the page. */
-    -webkit-text-stroke: 1.6px rgb(46 42 36 / 0.5);
-    transition:
-      color var(--dur-micro) var(--ease),
-      -webkit-text-stroke-color var(--dur-micro) var(--ease);
-  }
-
-  /* Fills in that state's own colour. `--row-accent` is set per row, so the
-     index runs through the whole palette as you move down it — the single
-     most joyful thing on the page, and it costs one custom property. */
-  .u-outline-row[data-active="true"] {
-    color: var(--row-accent, var(--ink));
-    -webkit-text-stroke-color: var(--row-accent, var(--ink));
-  }
-
   /* ---- Surfaces, continued ---------------------------------------------- */
 
   /*

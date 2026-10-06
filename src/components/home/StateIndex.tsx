@@ -76,8 +76,16 @@ export function StateIndex() {
 
             return (
               <li key={state.slug}>
+                {/*
+                 * Into the planner on this state, not the state's write-up.
+                 * The row already *is* the write-up in miniature — name,
+                 * tagline, what it is known for, whether it needs a permit —
+                 * so sending the click to a longer version of what it just
+                 * read is asking somebody to read the same thing twice. The
+                 * planner opens on step two with the state answered.
+                 */}
                 <Link
-                  href={`/destinations/${state.slug}`}
+                  href={`/destinations?state=${state.slug}#plan`}
                   className="group relative isolate flex items-center gap-5 border-b border-[var(--ink-hairline)] py-7 transition-colors duration-[var(--dur)] ease-brand hover:border-transparent focus-visible:border-transparent lg:gap-12 lg:py-10"
                 >
                   {/* The coloured ground, wiping up from the baseline on the

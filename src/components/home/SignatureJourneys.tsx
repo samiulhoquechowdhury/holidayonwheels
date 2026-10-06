@@ -208,6 +208,12 @@ export function SignatureJourneys() {
  *
  * `feature` switches the crop from landscape to portrait and the label up two
  * sizes — the same component, not a second one, so the two never drift apart.
+ *
+ * The card opens the planner on its state rather than the trip's own page.
+ * Three named weeks are what makes the region concrete here, but the thing
+ * being sold is a trip built around somebody's dates — so the click goes
+ * where that starts, with the state already answered. The trips themselves
+ * are still reachable in full from each state's write-up.
  */
 function JourneyCard({
   tour,
@@ -221,7 +227,7 @@ function JourneyCard({
 
   return (
     <Link
-      href={`/tours/${tour.slug}`}
+      href={`/destinations?state=${state}#plan`}
       className={cn(
         "group relative isolate flex h-full flex-col justify-end overflow-hidden",
         "rounded-[var(--radius-card)] bg-night p-6 text-night-text lg:p-8",

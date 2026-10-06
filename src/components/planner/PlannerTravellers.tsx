@@ -89,75 +89,104 @@ export function PlannerTravellers({
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[1fr_340px] lg:gap-16">
-      <div className="flex min-w-0 flex-col gap-10">
-        <fieldset>
-          <legend className="text-22">How many of you</legend>
-          <div className="mt-5 border-t border-[var(--ink-hairline)]">
-            <Stepper
-              id="plan-adults"
-              label="Adults"
-              hint="Twelve and over"
-              value={value.adults}
-              min={1}
-              max={16}
-              onChange={(next) => set({ adults: next })}
-            />
-            <Stepper
-              id="plan-children"
-              label="Children"
-              hint="Under twelve, sharing with an adult"
-              value={value.children}
-              min={0}
-              max={8}
-              onChange={setChildren}
-            />
-          </div>
-
-          {value.children > 0 ? (
-            <div className="mt-6">
-              <p className="u-label text-ink-soft">
-                How old will they be when you travel?
-              </p>
-              <p className="mt-2 max-w-prose text-14 text-ink-faint">
-                It changes the itinerary rather than the paperwork: we hold the
-                high passes back for parties with young children, and price
-                under-twelves lower.
-              </p>
-              <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {value.childAges.map((age, index) => (
-                  <li key={index}>
-                    <label
-                      htmlFor={`plan-child-${index}`}
-                      className="u-label block text-ink-faint"
-                    >
-                      Child {index + 1}
-                    </label>
-                    <SelectInput
-                      id={`plan-child-${index}`}
-                      value={age}
-                      onChange={(event) =>
-                        set({
-                          childAges: value.childAges.map((current, i) =>
-                            i === index ? event.target.value : current,
-                          ),
-                        })
-                      }
-                      className="mt-2 w-full"
-                    >
-                      <option value="">Age</option>
-                      {Array.from({ length: 18 }, (_, i) => (
-                        <option key={i} value={String(i)}>
-                          {i === 0 ? "Under 1" : i}
-                        </option>
-                      ))}
-                    </SelectInput>
-                  </li>
-                ))}
-              </ul>
+    <div className="grid gap-8 lg:grid-cols-[1fr_340px] lg:gap-14">
+      {/*
+       * Two columns from `lg`, not one stack.
+       *
+       * Stacked, this screen ran 1,667px — 2.17 viewports on a 1366x768
+       * laptop — so it opened halfway down itself with the head count already
+       * scrolled off. Nothing here is long; it was simply all in one file of
+       * a column. The count and the free-text note go left, the contact
+       * fields right, and the whole form fits a laptop screen.
+       */}
+      <div className="grid min-w-0 gap-8 lg:grid-cols-2 lg:gap-10">
+        <div className="flex flex-col gap-8">
+          <fieldset>
+            <legend className="text-22">How many of you</legend>
+            <div className="mt-4 border-t border-[var(--ink-hairline)]">
+              <Stepper
+                id="plan-adults"
+                label="Adults"
+                hint="Twelve and over"
+                value={value.adults}
+                min={1}
+                max={16}
+                onChange={(next) => set({ adults: next })}
+              />
+              <Stepper
+                id="plan-children"
+                label="Children"
+                hint="Under twelve, sharing with an adult"
+                value={value.children}
+                min={0}
+                max={8}
+                onChange={setChildren}
+              />
             </div>
-          ) : null}
-        </fieldset>
+
+            {value.children > 0 ? (
+              <div className="mt-6">
+                <p className="u-label text-ink-soft">
+                  How old will they be when you travel?
+                </p>
+                <p className="mt-2 max-w-prose text-14 text-ink-faint">
+                  It changes the itinerary rather than the paperwork: we hold
+                  the high passes back for parties with young children, and
+                  price under-twelves lower.
+                </p>
+                <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {value.childAges.map((age, index) => (
+                    <li key={index}>
+                      <label
+                        htmlFor={`plan-child-${index}`}
+                        className="u-label block text-ink-faint"
+                      >
+                        Child {index + 1}
+                      </label>
+                      <SelectInput
+                        id={`plan-child-${index}`}
+                        value={age}
+                        onChange={(event) =>
+                          set({
+                            childAges: value.childAges.map((current, i) =>
+                              i === index ? event.target.value : current,
+                            ),
+                          })
+                        }
+                        className="mt-2 w-full"
+                      >
+                        <option value="">Age</option>
+                        {Array.from({ length: 18 }, (_, i) => (
+                          <option key={i} value={String(i)}>
+                            {i === 0 ? "Under 1" : i}
+                          </option>
+                        ))}
+                      </SelectInput>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </fieldset>
+
+          <Field
+            id="plan-notes"
+            label="Anything we should build around"
+            hint="A festival you want to be there for, a birthday, a knee that does not do steps, food you cannot eat."
+          >
+            <TextArea
+              id="plan-notes"
+              hasHint
+              // Three rows, not the primitive's five. This is an optional
+              // sentence about a birthday or a bad knee, and a box the depth of
+              // a letter asks for one.
+              rows={3}
+              className="min-h-24"
+              value={value.notes}
+              onChange={(event) => set({ notes: event.target.value })}
+            />
+          </Field>
+        </div>
 
         <fieldset>
           <legend className="text-22">Where to send it</legend>
@@ -167,13 +196,15 @@ export function PlannerTravellers({
             come back to us in a week.
           </p>
 
-          <div className="mt-6 grid gap-8 sm:grid-cols-2">
+          {/* Stacked. In a half-width column, name/email/mobile side by
+              side leaves each about 164px, which is narrower than the
+              content they hold. */}
+          <div className="mt-5 grid gap-5">
             <Field
               id="plan-name"
               label="Your name"
               required
               error={errors["plan-name"]}
-              className="sm:col-span-2"
             >
               <TextInput
                 id="plan-name"
@@ -234,7 +265,7 @@ export function PlannerTravellers({
           </div>
 
           {companionCount > 0 ? (
-            <div className="mt-8 border-t border-[var(--ink-hairline)] pt-6">
+            <div className="mt-6 border-t border-[var(--ink-hairline)] pt-5">
               <button
                 type="button"
                 onClick={() => setNamesOpen((open) => !open)}
@@ -282,24 +313,6 @@ export function PlannerTravellers({
             </div>
           ) : null}
         </fieldset>
-
-        <Field
-          id="plan-notes"
-          label="Anything we should build around"
-          hint="A festival you want to be there for, a birthday, a knee that does not do steps, food you cannot eat."
-        >
-          <TextArea
-            id="plan-notes"
-            hasHint
-            // Three rows, not the primitive's five. This is an optional
-            // sentence about a birthday or a bad knee, and a box the depth of
-            // a letter asks for one.
-            rows={3}
-            className="min-h-24"
-            value={value.notes}
-            onChange={(event) => set({ notes: event.target.value })}
-          />
-        </Field>
       </div>
 
       {/*

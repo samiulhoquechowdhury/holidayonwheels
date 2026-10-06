@@ -1639,9 +1639,6 @@ export function vehiclesForParty(heads: number): TransferOption[] {
   }));
 }
 
-/** Kept for the long middle days, which are about comfort rather than size. */
-export const VEHICLE_OPTIONS: TransferOption[] = vehiclesForParty(1);
-
 /** The distance, in kilometres, above which a day is a transfer day. */
 export const TRANSFER_DAY_KM = 60;
 

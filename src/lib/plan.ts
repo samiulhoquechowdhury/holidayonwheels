@@ -6,8 +6,6 @@ import {
 import { getRoute, type RouteLeg } from "@/content/routes";
 import {
   GATEWAY_POINTS,
-  TRANSFER_DAY_KM,
-  VEHICLE_OPTIONS,
   vehiclesForParty,
   optionsForPlace,
   type ActivityOption,
@@ -542,14 +540,17 @@ export function planTrip(input: PlanInput): TripPlan {
         options: gateway.drops,
         defaultId: gateway.drops[0].id,
       };
-    } else if ((day.distanceKm ?? 0) >= TRANSFER_DAY_KM) {
-      transfer = {
-        legend: `Getting there — ${day.distanceKm} km`,
-        note: "A private vehicle is already in the price. These are the days long enough that the vehicle itself starts to matter.",
-        options: VEHICLE_OPTIONS,
-        defaultId: VEHICLE_OPTIONS[0].id,
-      };
     }
+    /*
+     * No vehicle question on the long middle days any more.
+     *
+     * Every day over `TRANSFER_DAY_KM` used to offer the fleet again, so a
+     * nine-day trip asked which car you wanted five separate times — and each
+     * answer was independent, which meant a traveller could end up having
+     * silently ordered a tempo traveller on day three and a sedan on day six.
+     * The vehicle is one decision about the whole trip, so it is asked once,
+     * on the last day, where `vehicle` below puts it.
+     */
 
     /*
      * Sized off the whole party, children included. A four-year-old occupies

@@ -23,7 +23,14 @@ import { cn } from "@/lib/cn";
  */
 const CONTROL = cn(
   "min-h-12 w-full rounded-[var(--radius-input)] border bg-shell px-4 text-16",
-  "border-transparent transition-colors duration-[var(--dur-micro)] ease-brand",
+  /*
+   * A real hairline at rest, which is what the comment above has always
+   * claimed and the code never did: this was `border-transparent`, so a
+   * control was a filled rectangle with no edge. On paper that reads as a
+   * faint beige block rather than something you type into, and on a `shell`
+   * section it disappears completely — which it has now done twice.
+   */
+  "border-[var(--ink-hairline-strong)] transition-colors duration-[var(--dur-micro)] ease-brand",
   "hover:border-[var(--ink-hairline-strong)] focus:border-ink focus:bg-plate outline-none",
   "placeholder:text-ink-faint",
   "aria-[invalid=true]:border-ember",

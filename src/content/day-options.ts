@@ -70,6 +70,12 @@ export type ActivityOption = {
   price: number;
   /** Roughly how long it takes. */
   duration: string;
+  /**
+   * The tile's photograph. Defaults to the placeholder for the kind of thing
+   * it is — see `activityKindShots` — and can be overridden per activity as
+   * real photography arrives, exactly as `stay()` works for rooms.
+   */
+  image: string;
 };
 
 export type TransferOption = {
@@ -116,13 +122,78 @@ const stay = (
   image: image ?? roomShots[kind],
 });
 
+/**
+ * One frame per *kind* of thing to do, not per activity.
+ *
+ * Sixty-six activities would be sixty-six photographs to source and then to
+ * re-shoot, and the pattern for that problem already exists in this file:
+ * `roomShots` gives the sixty-four stays six frames keyed by room type. This
+ * is the same trade. Every frame was looked at before it went in and none is
+ * used anywhere else in the codebase.
+ *
+ * **Placeholders.** They are the right *subject* — a potter's wheel for the
+ * pottery afternoon, a raft on white water for the rafting — and the wrong
+ * place, as everything in MEDIA.md is until the shoot lands.
+ */
+const activityKindShots = {
+  heritage: shot("1772689773562-6f30d75e91e7"), // a painted temple interior
+  craft: shot("1760018861921-43af85ea6c4f"), // hands on a pottery wheel
+  wildlife: shot("1784820448106-2a8607f2c011"), // a safari vehicle in tall grass
+  boat: shot("1674074076625-a146d7c484c5"), // a poled country boat of passengers
+  rafting: shot("1642933196504-62107dac9258"), // a raft on white water
+  market: shot("1760263051323-fcd7da7040b0"), // a produce stall
+  outdoors: shot("1783371518185-632670dad296"), // a green valley and a river
+} as const;
+
+type ActivityKind = keyof typeof activityKindShots;
+
+/**
+ * Read off the name rather than carried on all sixty-six call sites.
+ *
+ * The alternative was a seventh argument on every `doing(...)`, which is
+ * sixty-six chances to pick the wrong one and a diff nobody would review.
+ * Order matters: the first match wins, so the most specific words come first.
+ */
+const KIND_WORDS: [ActivityKind, RegExp][] = [
+  // Split from one "water" kind: a whitewater raft under "Umananda island by
+  // country boat" is the wrong river entirely, and a punt under "Rafting the
+  // Manas" undersells it.
+  ["rafting", /raft|kayak|rapid/i],
+  ["boat", /boat|river|falls|angling|dolphin|lake|cruise|ferry|island/i],
+  [
+    "wildlife",
+    /safari|langur|elephant|rhino|bird|crane|yak|orchid|forest|park/i,
+  ],
+  ["craft", /mask|pottery|weav|textile|paper|loom|silk|craft|workshop/i],
+  ["market", /market|kitchen|tasting|food|cook|pluck|bazaar|tea/i],
+  [
+    "heritage",
+    /gompa|monast|temple|kamakhya|cemetery|capital|ruin|nuns|palace|heritage/i,
+  ],
+];
+
+function activityKind(name: string): ActivityKind {
+  for (const [kind, pattern] of KIND_WORDS) {
+    if (pattern.test(name)) return kind;
+  }
+  return "outdoors";
+}
+
 const doing = (
   id: string,
   name: string,
   blurb: string,
   price: number,
   duration: string,
-): ActivityOption => ({ id, name, blurb, price, duration });
+  image?: string,
+): ActivityOption => ({
+  id,
+  name,
+  blurb,
+  price,
+  duration,
+  image: image ?? activityKindShots[activityKind(name)],
+});
 
 /* ---------------------------------------------------------------------- */
 /* Places                                                                  */

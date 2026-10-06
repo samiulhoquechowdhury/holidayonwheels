@@ -303,11 +303,10 @@ export function PlannedItinerary({
                             : "Changes nothing on the price — just where we will be standing."
                         }
                       >
-                        <div className={TILE_GRID}>
+                        <div className={CARD_ROW}>
                           {options.transfer.options.map((option) => (
-                            <ChoiceTile
+                            <PickCard
                               key={option.id}
-                              type="radio"
                               name={`transfer-${day.day}`}
                               id={`transfer-${day.day}-${option.id}`}
                               checked={selection?.transferId === option.id}
@@ -317,14 +316,14 @@ export function PlannedItinerary({
                                   transferId: option.id,
                                 })
                               }
-                              label={option.name}
+                              title={option.name}
+                              image={option.image ?? ""}
+                              badge={option.price > 0 ? "Upgrade" : "Included"}
                               price={
                                 option.price > 0
                                   ? `+${formatINR(option.price)}`
-                                  : undefined
+                                  : "Included"
                               }
-                              image={option.image}
-                              imageAlt={option.blurb}
                               colour={colour}
                               ink={ink}
                             />
@@ -339,11 +338,10 @@ export function PlannedItinerary({
                         title={options.vehicle.legend}
                         hint={options.vehicle.note}
                       >
-                        <div className={TILE_GRID}>
+                        <div className={CARD_ROW}>
                           {options.vehicle.options.map((option) => (
-                            <ChoiceTile
+                            <PickCard
                               key={option.id}
-                              type="radio"
                               name={`vehicle-${day.day}`}
                               id={`vehicle-${day.day}-${option.id}`}
                               checked={selection?.vehicleId === option.id}
@@ -353,15 +351,18 @@ export function PlannedItinerary({
                                   vehicleId: option.id,
                                 })
                               }
-                              label={option.name}
+                              title={option.name}
+                              image={option.image ?? ""}
+                              badge={
+                                option.recommended
+                                  ? "We would send this"
+                                  : "Upgrade"
+                              }
                               price={
                                 option.price > 0
                                   ? `+${formatINR(option.price)}`
                                   : "Included"
                               }
-                              image={option.image}
-                              imageAlt={option.blurb}
-                              recommended={option.recommended}
                               colour={colour}
                               ink={ink}
                             />
@@ -385,9 +386,9 @@ export function PlannedItinerary({
                          * cards: the photograph is there to recognise the
                          * room, not to fill the column.
                          */}
-                        <div className="-mt-1 -mr-4 -ml-1 flex snap-x snap-mandatory scrollbar-none gap-3 overflow-x-auto pt-1 pr-4 pb-1 pl-1 sm:m-0 sm:grid sm:grid-cols-[repeat(auto-fill,minmax(9.5rem,11rem))] sm:gap-x-4 sm:gap-y-5 sm:overflow-visible sm:p-0">
+                        <div className={CARD_ROW}>
                           {options.stays.map((option) => (
-                            <StayCard
+                            <PickCard
                               key={option.id}
                               name={`stay-${day.day}`}
                               id={`stay-${day.day}-${option.id}`}
@@ -420,13 +421,13 @@ export function PlannedItinerary({
                         title="Add to the day"
                         hint={`Priced per person, so ×${heads}.`}
                       >
-                        <div className={TILE_GRID}>
+                        <div className={CARD_ROW}>
                           {options.activities.map((option) => {
                             const on =
                               selection?.activityIds.includes(option.id) ??
                               false;
                             return (
-                              <ChoiceTile
+                              <PickCard
                                 key={option.id}
                                 type="checkbox"
                                 name={`activity-${day.day}-${option.id}`}
@@ -443,7 +444,9 @@ export function PlannedItinerary({
                                       : [...current.activityIds, option.id],
                                   });
                                 }}
-                                label={option.name}
+                                title={option.name}
+                                image={option.image}
+                                badge={option.duration}
                                 price={
                                   option.price === 0
                                     ? "Free"
@@ -526,105 +529,17 @@ const FOCUS =
  * sentence-length rows never did, and the descriptions those rows carried
  * were the reason one open day ran to two screens.
  */
-const TILE_GRID = "grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-2.5";
-
-function ChoiceTile({
-  type,
-  name,
-  id,
-  checked,
-  onChange,
-  label,
-  price,
-  image,
-  imageAlt,
-  recommended,
-  colour,
-  ink,
-}: {
-  type: "radio" | "checkbox";
-  name: string;
-  id: string;
-  checked: boolean;
-  onChange: () => void;
-  label: string;
-  price?: string;
-  /**
-   * Optional. Where there is one it sits above the label as a wide strip
-   * rather than beside it: "Guwahati airport (GAU)" and "Guwahati railway
-   * station (GHY)" differ by two words, and a 40px thumbnail is not enough
-   * picture to tell a terminal from a platform at a glance.
-   */
-  image?: string;
-  imageAlt?: string;
-  /** Draws the "we would send this" flag. */
-  recommended?: boolean;
-  colour: string;
-  ink: string;
-}) {
-  return (
-    <label
-      htmlFor={id}
-      className={cn(
-        "flex h-full min-h-[4.5rem] cursor-pointer flex-col justify-between gap-2 rounded-[var(--radius-input)] border p-3",
-        image && "p-0 pb-3",
-        "transition-[border-color,background-color] duration-[var(--dur-micro)] ease-brand",
-        FOCUS,
-        checked
-          ? "bg-[rgb(46_42_36/0.03)]"
-          : "border-[var(--ink-hairline)] hover:border-[var(--ink-hairline-strong)]",
-      )}
-      style={checked ? { borderColor: colour } : undefined}
-    >
-      <input
-        id={id}
-        type={type}
-        name={name}
-        checked={checked}
-        onChange={onChange}
-        className="u-sr-only"
-      />
-      {image ? (
-        <span className="relative block aspect-[16/9] w-full overflow-hidden rounded-t-[calc(var(--radius-input)-1px)]">
-          <Image
-            src={image}
-            alt={imageAlt ?? ""}
-            fill
-            sizes="(max-width: 640px) 45vw, 220px"
-            className="object-cover"
-          />
-          {recommended ? (
-            <span
-              className="u-label absolute top-2 left-2 rounded-full px-2.5 py-1 text-[0.625rem] text-paper"
-              style={{ backgroundColor: ink }}
-            >
-              We would send this
-            </span>
-          ) : null}
-        </span>
-      ) : null}
-
-      <span className={cn("flex items-start gap-2.5", image && "px-3 pt-3")}>
-        <Mark type={type} checked={checked} colour={colour} />
-        <span className="min-w-0 text-14 leading-snug font-medium">
-          {label}
-        </span>
-      </span>
-      {price ? (
-        <span
-          className={cn(
-            "u-num pl-[1.875rem] text-14",
-            image && "px-3",
-            !checked && "text-ink-soft",
-          )}
-          style={checked ? { color: ink } : undefined}
-        >
-          {price}
-        </span>
-      ) : null}
-    </label>
-  );
-}
+/**
+ * The row every picture tile sits in — meeting points, rooms, things to add,
+ * and the vehicle.
+ *
+ * A swipeable row on a phone, because four cards stacked two-up is two
+ * screens of scrolling before the next question; an auto-filling grid from
+ * `sm`, capped at 11rem so a card stays the size of a thumbnail rather than
+ * stretching to fill the column.
+ */
+const CARD_ROW =
+  "-mt-1 -mr-4 -ml-1 flex snap-x snap-mandatory scrollbar-none gap-3 overflow-x-auto pt-1 pr-4 pb-1 pl-1 sm:m-0 sm:grid sm:grid-cols-[repeat(auto-fill,minmax(9.5rem,11rem))] sm:gap-x-4 sm:gap-y-5 sm:overflow-visible sm:p-0";
 
 /**
  * A room, chosen on sight.
@@ -633,7 +548,8 @@ function ChoiceTile({
  * and nothing else. The ring and the tick are both in the state's colour, and
  * the kind of place sits on the photograph so it costs no line of its own.
  */
-function StayCard({
+function PickCard({
+  type = "radio",
   name,
   id,
   checked,
@@ -645,6 +561,8 @@ function StayCard({
   colour,
   ink,
 }: {
+  /** Checkbox for the things you can take several of. */
+  type?: "radio" | "checkbox";
   name: string;
   id: string;
   checked: boolean;
@@ -660,13 +578,13 @@ function StayCard({
     <label
       htmlFor={id}
       className={cn(
-        "group/stay block w-[36vw] max-w-40 shrink-0 cursor-pointer snap-start rounded-[var(--radius-card)] sm:w-auto sm:max-w-none",
+        "group/pick block w-[36vw] max-w-40 shrink-0 cursor-pointer snap-start rounded-[var(--radius-card)] sm:w-auto sm:max-w-none",
         FOCUS,
       )}
     >
       <input
         id={id}
-        type="radio"
+        type={type}
         name={name}
         checked={checked}
         onChange={onChange}
@@ -686,7 +604,7 @@ function StayCard({
           alt=""
           fill
           sizes="(max-width: 640px) 36vw, 176px"
-          className="object-cover transition-transform duration-[var(--dur-image)] ease-brand motion-safe:group-hover/stay:scale-[1.05]"
+          className="object-cover transition-transform duration-[var(--dur-image)] ease-brand motion-safe:group-hover/pick:scale-[1.05]"
         />
 
         <span className="absolute bottom-1.5 left-1.5 rounded-full bg-paper/90 px-2 py-1 text-12 leading-none text-ink backdrop-blur-sm">
@@ -697,7 +615,10 @@ function StayCard({
         <span
           aria-hidden="true"
           className={cn(
-            "absolute top-1.5 right-1.5 grid size-6 place-items-center rounded-full border-2",
+            "absolute top-1.5 right-1.5 grid size-6 place-items-center border-2",
+            // Round for one-of, square for any-of — the same shape language
+            // the inline `Mark` uses, so a tile reads the same as a row.
+            type === "radio" ? "rounded-full" : "rounded-[7px]",
             "transition-colors duration-[var(--dur-micro)] ease-brand",
             checked
               ? "border-transparent"
@@ -719,38 +640,6 @@ function StayCard({
         {price}
       </span>
     </label>
-  );
-}
-
-/** A circle for a radio, a square for a checkbox — the shape says "pick one". */
-function Mark({
-  type,
-  checked,
-  colour,
-}: {
-  type: "radio" | "checkbox";
-  checked: boolean;
-  colour: string;
-}) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "mt-px grid size-5 shrink-0 place-items-center border",
-        "transition-colors duration-[var(--dur-micro)] ease-brand",
-        type === "radio" ? "rounded-full" : "rounded-[6px]",
-        checked ? "border-transparent" : "border-[var(--ink-hairline-strong)]",
-      )}
-      style={checked ? { backgroundColor: colour } : undefined}
-    >
-      {checked ? (
-        type === "radio" ? (
-          <span className="size-2 rounded-full bg-night-text" />
-        ) : (
-          <TickGlyph className="size-3.5 text-night-text" />
-        )
-      ) : null}
-    </span>
   );
 }
 

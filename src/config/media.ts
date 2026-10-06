@@ -37,8 +37,10 @@ export type HeroClip = {
 };
 
 /**
- * Three chapters, ordered west to east — the same geography the destinations
- * rail uses, so the hero reads as an opening statement of the same map.
+ * Three chapters, west to east. This one is still geographic on purpose: the
+ * reel is a sweep across the map rather than a list of products, so it reads
+ * left to right the way the map does. It no longer matches the destinations
+ * order, which is now editorial — see `content/destinations.ts`.
  */
 export const heroReel: HeroClip[] = [
   {

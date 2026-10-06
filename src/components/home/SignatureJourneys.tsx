@@ -5,8 +5,12 @@ import { ArrowButton } from "@/components/primitives/LuxeButton";
 import { getTourBySlug } from "@/content/tours";
 import { stateColours } from "@/config/palette";
 import type { StateSlug } from "@/content/types";
-import { getDestinationName } from "@/content/destinations";
+import {
+  getDestinationBySlug,
+  getDestinationName,
+} from "@/content/destinations";
 import { stateShots } from "@/config/showcase";
+import { MonthStrip } from "@/components/destinations/MonthStrip";
 import { cn } from "@/lib/cn";
 import type { Tour } from "@/content/types";
 
@@ -224,6 +228,7 @@ function JourneyCard({
 }) {
   const state = tour.states[0];
   const image = stateShots[state];
+  const destination = state ? getDestinationBySlug(state) : undefined;
 
   return (
     <Link
@@ -299,6 +304,19 @@ function JourneyCard({
         </span>
         <ArrowButton tone="paper" />
       </span>
+
+      {/* When this state is worth flying for. The same twelve cells as the
+          destinations page, so the shape is comparable across the site — on
+          the dark tone, because the state colours do not carry a 10px letter
+          over a photograph. */}
+      {destination ? (
+        <MonthStrip
+          months={destination.bestMonths}
+          colour=""
+          tone="onDark"
+          className="mt-5"
+        />
+      ) : null}
     </Link>
   );
 }

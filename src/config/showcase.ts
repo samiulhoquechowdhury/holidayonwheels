@@ -60,8 +60,8 @@ export const motoFilm = {
 } as const;
 
 /**
- * The eight states, west to east — the same order the destinations rail and
- * the hero reel use, so every index of the map on this site agrees.
+ * The eight states, keyed by slug. This is a lookup, not a running order —
+ * `content/destinations.ts` owns the order the site lists them in.
  */
 export const stateShots: Record<string, string> = {
   // River, country boat, palms — the closest thing in the pool to the

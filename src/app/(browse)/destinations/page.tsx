@@ -46,8 +46,9 @@ export const metadata: Metadata = {
  *    the single most useful upgrade on the page, and the only one that makes
  *    two states comparable at a glance.
  *
- * Order is west to east, matching the hero reel and the home index. Every
- * index of the map on this site agrees with every other.
+ * Order comes from `content/destinations.ts` and nowhere else, so this page
+ * and the home index cannot drift apart. It is editorial rather than
+ * geographic — see the note on that array.
  */
 export default async function DestinationsPage({
   searchParams,

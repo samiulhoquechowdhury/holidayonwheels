@@ -49,7 +49,7 @@ export function StateIndex() {
           <div>
             <Rise className="u-label mb-6 flex items-center gap-4 text-ink-faint">
               <span className="h-px w-12 bg-[var(--ink-hairline-strong)]" />
-              The eight states · west to east
+              The eight states
             </Rise>
             <SplitReveal className="max-w-3xl text-48 lg:text-88">
               Which one are you <Accent>drawn</Accent> to?

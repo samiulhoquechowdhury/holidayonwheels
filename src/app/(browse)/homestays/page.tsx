@@ -66,7 +66,7 @@ export default function HomestaysPage() {
 
   const lead = homestays.find((stay) => stay.featured) ?? homestays[0];
 
-  /* Grouped in the order the states appear in the list, west to east. */
+  /* Grouped in the order the states appear in `getDestinations()`. */
   const grouped = [...states].map((state) => ({
     state,
     name: getDestinationName(state),

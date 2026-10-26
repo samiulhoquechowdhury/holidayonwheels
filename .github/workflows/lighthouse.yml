@@ -10,7 +10,7 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # No `version:` here on purpose. package.json pins
       # `packageManager: pnpm@9.15.9`, and pnpm/action-setup@v4 aborts the

@@ -22,6 +22,11 @@ const WEEKDAY = new Intl.DateTimeFormat("en-GB", {
  * Today's cell carries the live reading and the rest carry a high and a low,
  * which is the only honest way to show them: a single number for a day three
  * days out implies a precision the forecast does not have.
+ *
+ * Each cell's emoji sits on the weekday line, which was empty space, so the
+ * strip did not grow a row to hold it. It is `aria-hidden` and purely
+ * decorative — the word underneath is what actually says the weather, and it
+ * stays whatever the reader's emoji font turns out to be.
  */
 export function WeatherStrip({
   weather,
@@ -55,7 +60,12 @@ export function WeatherStrip({
           className="flex min-w-0 flex-1 flex-col justify-between rounded-[8px] p-2 text-night-text sm:flex-[1.4] sm:p-2.5"
           style={{ backgroundColor: colour }}
         >
-          <span className="u-label opacity-90">Now</span>
+          <span className="flex items-center justify-between gap-1">
+            <span className="u-label opacity-90">Now</span>
+            <span aria-hidden="true" className="text-22 leading-none">
+              {weather.icon}
+            </span>
+          </span>
           <span className="u-num mt-2 block font-display text-28 leading-none">
             {weather.temperature}°
           </span>
@@ -69,8 +79,13 @@ export function WeatherStrip({
             key={day.date}
             className="flex min-w-0 flex-1 flex-col justify-between rounded-[8px] bg-[rgb(46_42_36/0.05)] p-2 sm:p-2.5"
           >
-            <span className="u-label text-ink-faint">
-              {WEEKDAY.format(new Date(`${day.date}T06:00:00+05:30`))}
+            <span className="flex items-center justify-between gap-1">
+              <span className="u-label text-ink-faint">
+                {WEEKDAY.format(new Date(`${day.date}T06:00:00+05:30`))}
+              </span>
+              <span aria-hidden="true" className="text-22 leading-none">
+                {day.icon}
+              </span>
             </span>
             <span className="u-num mt-2 block text-18 leading-none">
               {day.high}°

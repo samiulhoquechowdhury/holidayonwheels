@@ -7,10 +7,9 @@ import type { StateSlug } from "@/content/types";
  *
  * Arunachal Pradesh runs from a hundred metres to seven thousand. Quoting one
  * temperature for it would be worse than quoting none, so every reading here
- * is for a *named place* — the state capital, which is also where almost
- * every trip to that state begins — and the strip says which place it is.
- * That is the difference between a number somebody can act on and a number
- * that is merely true somewhere.
+ * is for a *named place* — the one a trip to that state is built around —
+ * and the strip says which place it is. That is the difference between a
+ * number somebody can act on and a number that is merely true somewhere.
  *
  * ## Licensing — read before launch
  *
@@ -36,18 +35,26 @@ import type { StateSlug } from "@/content/types";
  * One named place per state — the capital, which is also where almost every
  * trip into that state begins.
  *
- * Meghalaya is the exception: Sohra, not Shillong. Sohra is the wettest
- * inhabited place on earth and the reason most people come to the state, and
- * its rain is nothing like Shillong's fifty kilometres away. Shillong would
- * be the tidier answer and the less useful one.
+ * Two are not the capital, because the capital would be the tidier answer and
+ * the less useful one:
+ *
+ * - **Meghalaya is Cherrapunjee**, not Shillong. It is the wettest inhabited
+ *   place on earth and the reason most people come to the state, and its rain
+ *   is nothing like Shillong's fifty kilometres away. Shown under the name
+ *   travellers search for rather than Sohra, its official one.
+ * - **Arunachal is Tawang**, not Itanagar. Itanagar sits in the foothills at
+ *   a few hundred metres; Tawang is at three thousand, over the Sela Pass,
+ *   and is what the trip to that state is actually for. The two can differ by
+ *   fifteen degrees on the same afternoon, and it is the Tawang number that
+ *   decides what somebody packs.
  */
 const POINTS: Record<StateSlug, { place: string; lat: number; lon: number }> = {
   assam: { place: "Guwahati", lat: 26.1445, lon: 91.7362 },
-  "arunachal-pradesh": { place: "Itanagar", lat: 27.0844, lon: 93.6053 },
+  "arunachal-pradesh": { place: "Tawang", lat: 27.5861, lon: 91.8594 },
   sikkim: { place: "Gangtok", lat: 27.3314, lon: 88.6138 },
   mizoram: { place: "Aizawl", lat: 23.7271, lon: 92.7176 },
   nagaland: { place: "Kohima", lat: 25.6751, lon: 94.1086 },
-  meghalaya: { place: "Sohra", lat: 25.2702, lon: 91.7323 },
+  meghalaya: { place: "Cherrapunjee", lat: 25.2702, lon: 91.7323 },
   tripura: { place: "Agartala", lat: 23.8315, lon: 91.2868 },
   manipur: { place: "Imphal", lat: 24.817, lon: 93.9368 },
 };
@@ -58,6 +65,8 @@ export type DayForecast = {
   high: number;
   low: number;
   summary: string;
+  /** Decorative twin of `summary`; always rendered `aria-hidden`. */
+  icon: string;
 };
 
 export type StateWeather = {
@@ -65,6 +74,7 @@ export type StateWeather = {
   /** Right now, rounded — a decimal on a forecast is false precision. */
   temperature: number;
   summary: string;
+  icon: string;
   days: DayForecast[];
 };
 
@@ -78,18 +88,27 @@ export type StateWeather = {
  * Every word here fits a forecast cell at 390px without truncating, which is
  * why "Overcast" is "Cloudy" and "Thunderstorms" is "Storms". A word clipped
  * to "Overc…" tells a traveller nothing at all.
+ *
+ * The emoji that comes with each word is decoration and nothing more. It is
+ * rendered `aria-hidden` and the word is never dropped in its favour: emoji
+ * fonts differ enough between Windows, Android and iOS that a glyph alone
+ * would mean different weather to different people.
+ *
+ * Cloudy is the sun-behind-cloud glyph rather than the plain cloud, which is
+ * drawn white and disappears entirely against the pale forecast cells. Every
+ * glyph here carries some colour for that reason.
  */
-function describe(code: number): string {
-  if (code === 0) return "Clear";
-  if (code <= 2) return "Sunny";
-  if (code === 3) return "Cloudy";
-  if (code <= 48) return "Fog";
-  if (code <= 57) return "Drizzle";
-  if (code <= 67) return "Rain";
-  if (code <= 77) return "Snow";
-  if (code <= 82) return "Showers";
-  if (code <= 86) return "Snow";
-  return "Storms";
+function describe(code: number): { summary: string; icon: string } {
+  if (code === 0) return { summary: "Clear", icon: "\u2600\uFE0F" };
+  if (code <= 2) return { summary: "Sunny", icon: "\u{1F324}\uFE0F" };
+  if (code === 3) return { summary: "Cloudy", icon: "\u{1F325}\uFE0F" };
+  if (code <= 48) return { summary: "Fog", icon: "\u{1F32B}\uFE0F" };
+  if (code <= 57) return { summary: "Drizzle", icon: "\u{1F326}\uFE0F" };
+  if (code <= 67) return { summary: "Rain", icon: "\u{1F327}\uFE0F" };
+  if (code <= 77) return { summary: "Snow", icon: "\u{1F328}\uFE0F" };
+  if (code <= 82) return { summary: "Showers", icon: "\u{1F327}\uFE0F" };
+  if (code <= 86) return { summary: "Snow", icon: "\u{1F328}\uFE0F" };
+  return { summary: "Storms", icon: "\u26C8\uFE0F" };
 }
 
 type OpenMeteoEntry = {
@@ -150,12 +169,12 @@ export async function getStateWeather(): Promise<Record<
       out[slug] = {
         place: POINTS[slug].place,
         temperature: Math.round(temperature),
-        summary: describe(entry.current?.weather_code ?? 0),
+        ...describe(entry.current?.weather_code ?? 0),
         days: daily.time.slice(0, 4).map((date, i) => ({
           date,
           high: Math.round(daily.temperature_2m_max?.[i] ?? 0),
           low: Math.round(daily.temperature_2m_min?.[i] ?? 0),
-          summary: describe(daily.weather_code?.[i] ?? 0),
+          ...describe(daily.weather_code?.[i] ?? 0),
         })),
       };
     });

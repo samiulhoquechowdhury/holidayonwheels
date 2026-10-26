@@ -232,7 +232,18 @@ function JourneyCard({
 
   return (
     <Link
-      href={`/destinations?state=${state}#plan`}
+      // The state's own section, not the planner. A card like this one is an
+      // invitation, and dropping somebody straight into "who is travelling?"
+      // answers a question they have not finished asking. They land on the
+      // write-up — photograph, live weather, best months — and "Plan a trip
+      // to {state}" is the button at the end of it.
+      //
+      // Deliberately no `?state=`. That query string advances the planner off
+      // its first step, which sets `data-planner="flow"` on the root, which
+      // hides every `.u-flow-hide` block on the page — the eight write-ups
+      // among them. Asking for the state *and* its section would scroll to a
+      // section that had just been hidden.
+      href={`/destinations#${state}`}
       className={cn(
         "group relative isolate flex h-full flex-col justify-end overflow-hidden",
         "rounded-[var(--radius-card)] bg-night p-6 text-night-text lg:p-8",

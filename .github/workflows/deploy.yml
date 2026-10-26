@@ -15,9 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # No `version:` here on purpose. package.json pins
+      # `packageManager: pnpm@9.15.9`, and pnpm/action-setup@v4 aborts the
+      # job outright when the version is declared in both places rather than
+      # picking one. That conflict shipped in the first commit and failed
+      # every CI run the repository has ever had, at the setup step, before
+      # a line of our code was reached. One source of truth: package.json.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - uses: actions/setup-node@v4
         with:

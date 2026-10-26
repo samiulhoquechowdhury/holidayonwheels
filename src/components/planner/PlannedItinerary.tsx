@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { formatINR } from "@/lib/currency";
@@ -407,6 +408,11 @@ export function PlannedItinerary({
                                   ? "Included"
                                   : `+${formatINR(option.supplement)} / night`
                               }
+                              detailHref={
+                                option.homestaySlug
+                                  ? `/homestays/${option.homestaySlug}`
+                                  : `/stays/${option.id}`
+                              }
                               colour={colour}
                               ink={ink}
                             />
@@ -558,6 +564,7 @@ function PickCard({
   image,
   badge,
   price,
+  detailHref,
   colour,
   ink,
 }: {
@@ -571,75 +578,102 @@ function PickCard({
   image: string;
   badge: string;
   price: string;
+  /** Renders a "view details" link under the card where there is a page. */
+  detailHref?: string;
   colour: string;
   ink: string;
 }) {
   return (
-    <label
-      htmlFor={id}
-      className={cn(
-        "group/pick block w-[36vw] max-w-40 shrink-0 cursor-pointer snap-start rounded-[var(--radius-card)] sm:w-auto sm:max-w-none",
-        FOCUS,
-      )}
-    >
-      <input
-        id={id}
-        type={type}
-        name={name}
-        checked={checked}
-        onChange={onChange}
-        className="u-sr-only"
-      />
-
-      <span
-        className="relative block aspect-[4/3] overflow-hidden rounded-[var(--radius-input)] bg-shell transition-shadow duration-[var(--dur-micro)] ease-brand"
-        style={{
-          boxShadow: checked
-            ? `0 0 0 2px var(--paper), 0 0 0 4px ${colour}`
-            : undefined,
-        }}
+    <div className="w-[36vw] max-w-40 shrink-0 snap-start sm:w-auto sm:max-w-none">
+      <label
+        htmlFor={id}
+        className={cn(
+          "group/pick block w-full cursor-pointer rounded-[var(--radius-card)]",
+          FOCUS,
+        )}
       >
-        <Image
-          src={image}
-          alt=""
-          fill
-          sizes="(max-width: 640px) 36vw, 176px"
-          className="object-cover transition-transform duration-[var(--dur-image)] ease-brand motion-safe:group-hover/pick:scale-[1.05]"
+        <input
+          id={id}
+          type={type}
+          name={name}
+          checked={checked}
+          onChange={onChange}
+          className="u-sr-only"
         />
 
-        <span className="absolute bottom-1.5 left-1.5 rounded-full bg-paper/90 px-2 py-1 text-12 leading-none text-ink backdrop-blur-sm">
-          {badge}
-        </span>
-
-        {/* The tick. An empty ring until chosen, so it reads as selectable. */}
         <span
-          aria-hidden="true"
-          className={cn(
-            "absolute top-1.5 right-1.5 grid size-6 place-items-center border-2",
-            // Round for one-of, square for any-of — the same shape language
-            // the inline `Mark` uses, so a tile reads the same as a row.
-            type === "radio" ? "rounded-full" : "rounded-[7px]",
-            "transition-colors duration-[var(--dur-micro)] ease-brand",
-            checked
-              ? "border-transparent"
-              : "border-paper bg-[rgb(0_0_0/0.18)]",
-          )}
-          style={checked ? { backgroundColor: colour } : undefined}
+          className="relative block aspect-[4/3] overflow-hidden rounded-[var(--radius-input)] bg-shell transition-shadow duration-[var(--dur-micro)] ease-brand"
+          style={{
+            boxShadow: checked
+              ? `0 0 0 2px var(--paper), 0 0 0 4px ${colour}`
+              : undefined,
+          }}
         >
-          {checked ? <TickGlyph className="size-3.5 text-night-text" /> : null}
-        </span>
-      </span>
+          <Image
+            src={image}
+            alt=""
+            fill
+            sizes="(max-width: 640px) 36vw, 176px"
+            className="object-cover transition-transform duration-[var(--dur-image)] ease-brand motion-safe:group-hover/pick:scale-[1.05]"
+          />
 
-      <span className="mt-2 line-clamp-2 block text-14 leading-snug font-medium">
-        {title}
-      </span>
-      <span
-        className={cn("u-num mt-1 block text-14", !checked && "text-ink-soft")}
-        style={checked ? { color: ink } : undefined}
-      >
-        {price}
-      </span>
-    </label>
+          <span className="absolute bottom-1.5 left-1.5 rounded-full bg-paper/90 px-2 py-1 text-12 leading-none text-ink backdrop-blur-sm">
+            {badge}
+          </span>
+
+          {/* The tick. An empty ring until chosen, so it reads as selectable. */}
+          <span
+            aria-hidden="true"
+            className={cn(
+              "absolute top-1.5 right-1.5 grid size-6 place-items-center border-2",
+              // Round for one-of, square for any-of — the same shape language
+              // the inline `Mark` uses, so a tile reads the same as a row.
+              type === "radio" ? "rounded-full" : "rounded-[7px]",
+              "transition-colors duration-[var(--dur-micro)] ease-brand",
+              checked
+                ? "border-transparent"
+                : "border-paper bg-[rgb(0_0_0/0.18)]",
+            )}
+            style={checked ? { backgroundColor: colour } : undefined}
+          >
+            {checked ? (
+              <TickGlyph className="size-3.5 text-night-text" />
+            ) : null}
+          </span>
+        </span>
+
+        <span className="mt-2 line-clamp-2 block text-14 leading-snug font-medium">
+          {title}
+        </span>
+        <span
+          className={cn(
+            "u-num mt-1 block text-14",
+            !checked && "text-ink-soft",
+          )}
+          style={checked ? { color: ink } : undefined}
+        >
+          {price}
+        </span>
+      </label>
+
+      {/*
+       * Outside the label, deliberately. A link inside a `<label>` still
+       * toggles the control it belongs to, so "view details" would have
+       * silently changed the night's room on the way out.
+       */}
+      {detailHref ? (
+        <Link
+          href={detailHref}
+          className={cn(
+            "u-label mt-1.5 inline-block text-ink-faint underline underline-offset-4",
+            "transition-colors duration-[var(--dur-micro)] ease-brand hover:text-ink",
+            FOCUS,
+          )}
+        >
+          View details
+        </Link>
+      ) : null}
+    </div>
   );
 }
 

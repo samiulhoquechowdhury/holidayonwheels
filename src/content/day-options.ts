@@ -1717,3 +1717,122 @@ export function optionsForPlace(place: string | null): PlaceOptions {
   if (!place) return GENERIC;
   return PLACE_OPTIONS[place] ?? GENERIC;
 }
+
+/* ---------------------------------------------------------------------- */
+/* Stays, looked up on their own                                           */
+/* ---------------------------------------------------------------------- */
+
+/**
+ * Every stay in the file, flattened and keyed by id, with the place it
+ * belongs to carried alongside.
+ *
+ * Built once at module load by walking `PLACE_OPTIONS`, rather than
+ * maintained as a second list — a hand-kept index of sixty-six rooms is a
+ * hand-kept index that goes stale the first time somebody adds a lodge.
+ */
+const STAY_INDEX: Map<string, { stay: StayOption; place: string }> = (() => {
+  const index = new Map<string, { stay: StayOption; place: string }>();
+  for (const [place, options] of Object.entries(PLACE_OPTIONS)) {
+    for (const stay of options.stays) index.set(stay.id, { stay, place });
+  }
+  for (const stay of GENERIC.stays) {
+    if (!index.has(stay.id)) index.set(stay.id, { stay, place: "" });
+  }
+  return index;
+})();
+
+export function getStayById(id: string) {
+  return STAY_INDEX.get(id);
+}
+
+export function getAllStays() {
+  return [...STAY_INDEX.values()];
+}
+
+/**
+ * What each kind of room comes with.
+ *
+ * Keyed by kind, not written out sixty-six times, and the detail page says so
+ * in as many words. These are the things that class of room includes as
+ * standard on our trips; the specific property is confirmed in writing before
+ * anything is payable, which is true of every figure in this flow because it
+ * is an enquiry rather than a booking.
+ *
+ * **Not invented facilities.** Each list is what the planner already commits
+ * to elsewhere — meals are in the day's `meals` field, the vehicle and guide
+ * are in the trip price, permits are handled. Anything a property might have
+ * and might not (a pool, a spa, a lift) is deliberately absent, because a
+ * guessed amenity is the one kind of placeholder a traveller can be let down
+ * by on arrival.
+ */
+export const STAY_AMENITIES: Record<
+  StayOption["kind"],
+  { label: string; items: string[]; note: string }
+> = {
+  included: {
+    label: "What the trip price covers here",
+    items: [
+      "A private room with an attached bathroom",
+      "Hot water, morning and evening",
+      "Breakfast",
+      "Power backup for the hours the grid is out",
+      "Parking for the trip vehicle",
+    ],
+    note: "The room already in your trip price. Comfortable, clean and unremarkable, which on a nine-day road trip is most of what a bed has to be.",
+  },
+  hotel: {
+    label: "What this room comes with",
+    items: [
+      "A room with a view worth the supplement",
+      "Daily housekeeping and laundry on request",
+      "Hot water around the clock",
+      "Room service until late",
+      "Wi-fi in the room, not only the lobby",
+    ],
+    note: "A graded hotel room, booked for the outlook rather than the brand.",
+  },
+  heritage: {
+    label: "What this room comes with",
+    items: [
+      "A room in a working historic property",
+      "Period furniture, and the quirks that come with it",
+      "Breakfast and dinner cooked in the house",
+      "Garden or verandah you are welcome to sit in",
+      "Someone on the property who knows its history",
+    ],
+    note: "A planter's bungalow or a palace wing. Old buildings, so expect character ahead of consistency.",
+  },
+  homestay: {
+    label: "What staying here includes",
+    items: [
+      "A room in a house the family lives in",
+      "All meals, eaten with the household",
+      "Hot water, usually by bucket",
+      "The family's time, which is the point",
+      "No reception desk and no room service",
+    ],
+    note: "Somebody's home. The rate is set by the family and we take a booking commission and nothing else.",
+  },
+  lodge: {
+    label: "What this room comes with",
+    items: [
+      "A room inside or beside the park gate",
+      "All meals, timed around the safari hours",
+      "Early tea before a dawn departure",
+      "Secure parking and gear storage",
+      "Staff who know the gate timings",
+    ],
+    note: "Built for people leaving before dawn, which is what the mornings here ask of you.",
+  },
+  camp: {
+    label: "What this camp includes",
+    items: [
+      "A furnished tent with a proper bed",
+      "An attached or adjacent bathroom with hot water",
+      "All meals, cooked on site",
+      "Lighting and charging in the evening hours",
+      "Staff on site overnight",
+    ],
+    note: "Canvas, not a hut. Seasonal, and it closes when the river is high.",
+  },
+};

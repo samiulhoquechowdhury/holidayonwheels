@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
+import { STANDARD_EXCLUDES, STANDARD_INCLUDES } from "@/content/inclusions";
 import { cn } from "@/lib/cn";
 import { formatINR } from "@/lib/currency";
 import { formatLong, formatShort, formatWeekday } from "@/lib/date";
@@ -487,6 +488,75 @@ export function PlannedItinerary({
           </Section>
         </div>
       ) : null}
+
+      {/*
+       * The terms, under the thing they are the terms for.
+       *
+       * Same two lists the forty-seven catalogue trips carry, so somebody
+       * comparing their own itinerary against a packaged one is reading the
+       * same sentences in both places. They sit after the vehicle because
+       * that is the last thing chosen: by here the trip is complete, and the
+       * question stops being "what shall I pick" and becomes "what am I
+       * actually buying".
+       */}
+      <div className="mt-10 grid gap-4 border-t border-[var(--ink-hairline)] pt-8 sm:grid-cols-2">
+        <TermsCard title="What the price includes" items={STANDARD_INCLUDES} />
+        <TermsCard title="What it does not" items={STANDARD_EXCLUDES} muted />
+      </div>
+      <p className="mt-4 text-14 text-ink-faint">
+        Anything you add above is on top of this. We confirm the whole list in
+        writing before anything is payable.
+      </p>
+    </div>
+  );
+}
+
+/**
+ * One side of the bargain.
+ *
+ * Deliberately not a tick-and-cross pair. A red cross against seven lines
+ * reads as seven things going wrong, when every one of them is ordinary and
+ * expected — nobody thinks their flights were meant to be in the price. The
+ * excluded card is the same card with quieter marks and quieter text, which
+ * is the weight the information actually has.
+ */
+function TermsCard({
+  title,
+  items,
+  muted = false,
+}: {
+  title: string;
+  items: readonly string[];
+  muted?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-[var(--radius-panel)] border border-[var(--ink-hairline)] p-5",
+        muted ? "bg-transparent" : "bg-[rgb(46_42_36/0.035)]",
+      )}
+    >
+      <h3 className="text-16 font-semibold">{title}</h3>
+      <ul className="mt-4 grid gap-2.5">
+        {items.map((item) => (
+          <li
+            key={item}
+            className={cn(
+              "flex items-start gap-2.5 text-14",
+              muted ? "text-ink-faint" : "text-ink-soft",
+            )}
+          >
+            <span
+              aria-hidden="true"
+              className={cn(
+                "mt-[0.45rem] size-1.5 shrink-0 rounded-full",
+                muted ? "bg-[var(--ink-hairline-strong)]" : "bg-clay",
+              )}
+            />
+            {item}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

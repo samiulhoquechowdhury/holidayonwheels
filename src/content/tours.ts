@@ -1,4 +1,5 @@
 import type { Departure, PriceBand, Tour, TourType } from "./types";
+import { STANDARD_EXCLUDES, STANDARD_INCLUDES } from "./inclusions";
 import { buildItinerary, type DayKey } from "./day-library";
 import { addDays } from "@/lib/date";
 
@@ -13,26 +14,6 @@ import { addDays } from "@/lib/date";
  * Departure seats and dates are derived deterministically from the slug so
  * server and client always render the same figures.
  */
-
-const STANDARD_INCLUDES = [
-  "All accommodation on a twin-share basis",
-  "All ground transport in a private air-conditioned vehicle",
-  "An English-speaking guide from the region throughout",
-  "All permits, park fees and entry tickets listed in the itinerary",
-  "Meals as specified in the day-by-day",
-  "Airport and station transfers on arrival and departure days",
-  "24-hour on-trip support line",
-];
-
-const STANDARD_EXCLUDES = [
-  "Flights to and from the region",
-  "Travel insurance, which we require you to hold",
-  "Visas for non-Indian nationals",
-  "Meals not listed in the itinerary, and all drinks",
-  "Camera fees at monasteries and parks where charged separately",
-  "Tips for your guide and driver",
-  "Anything not explicitly listed as included",
-];
 
 /** Stable pseudo-random in [0,1) derived from a string. Never Math.random. */
 function seeded(seed: string, salt = 0): number {

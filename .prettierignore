@@ -1,4 +1,6 @@
 .next
+.next-verify
+.lighthouseci
 node_modules
 pnpm-lock.yaml
 public

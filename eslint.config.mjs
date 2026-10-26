@@ -38,6 +38,7 @@ const eslintConfig = [
       // problems from compiled chunks. CI never sees them because it builds
       // after linting; we build before.
       ".next-verify/**",
+      ".lighthouseci/**",
       "out/**",
       "build/**",
       "next-env.d.ts",

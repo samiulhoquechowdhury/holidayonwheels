@@ -68,14 +68,18 @@ export type DayOptions = {
     defaultId: string;
   } | null;
   /**
-   * The car itself, offered once, on the last day.
+   * The car itself, offered once for the whole trip.
    *
    * Separate from `transfer` because it is a different question with a
-   * different shape: `transfer` asks *where* on that one day, this asks
-   * *what* for the whole trip. It sits on the departure day because by then
-   * the traveller has seen every road the itinerary puts them on and knows
-   * what they are choosing a vehicle for — asked on day one it is a question
-   * about a journey nobody has read yet.
+   * different shape: `transfer` asks *where* on one day, this asks *what*
+   * for every day.
+   *
+   * Hung off the last day purely because the selection has to be stored
+   * somewhere and that is where `DaySelection.vehicleId` lives. **It is not
+   * rendered inside that day.** `PlannedItinerary` lifts it out and puts it
+   * under the whole itinerary, which is where a trip-level question belongs
+   * and the order the decision is actually made in: settle the days, then
+   * say what to drive them in.
    */
   vehicle: {
     legend: string;
@@ -548,8 +552,9 @@ export function planTrip(input: PlanInput): TripPlan {
      * nine-day trip asked which car you wanted five separate times — and each
      * answer was independent, which meant a traveller could end up having
      * silently ordered a tempo traveller on day three and a sedan on day six.
-     * The vehicle is one decision about the whole trip, so it is asked once,
-     * on the last day, where `vehicle` below puts it.
+     * The vehicle is one decision about the whole trip, so it is asked once.
+     * `vehicle` below carries it on the last day, and the itinerary renders
+     * it as its own section beneath every day rather than inside one.
      */
 
     /*
@@ -560,7 +565,7 @@ export function planTrip(input: PlanInput): TripPlan {
     const heads = input.adults + input.children;
     const vehicle: DayOptions["vehicle"] = isLast
       ? {
-          legend: "And what would you like to travel in?",
+          legend: "Choose your vehicle",
           note: `For ${heads} ${heads === 1 ? "traveller" : "travellers"} with luggage. The first is the one we would send, and it is already in the price.`,
           options: vehiclesForParty(heads),
           defaultId: vehiclesForParty(heads)[0].id,

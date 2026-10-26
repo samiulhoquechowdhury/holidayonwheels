@@ -386,8 +386,9 @@ export function PlannerResult({
                 </dl>
               ) : (
                 <p className="mt-2 text-14 text-ink-soft">
-                  Every day is on the room and the vehicle the price already
-                  covers. Open a day to change that.
+                  Every day is on the room the price already covers, and on the
+                  vehicle we would send. Open a day to change the rooms; the
+                  vehicle is under the last one.
                 </p>
               )}
             </div>

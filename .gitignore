@@ -25,6 +25,9 @@
 # apart from `.next` so it cannot clobber a running dev server. See
 # next.config.ts.
 /.next-verify/
+
+# Reports written by `lhci autorun` when the audit is run locally.
+/.lighthouseci/
 /out/
 
 # production

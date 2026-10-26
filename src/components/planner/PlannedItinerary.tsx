@@ -104,6 +104,22 @@ export function PlannedItinerary({
    * header moved. The header never visibly leaves your finger. Then the day
    * glides up to the top of the screen so its contents are in view.
    */
+  /*
+   * The car is one decision about the whole trip, so it is asked once, under
+   * the itinerary rather than inside a day.
+   *
+   * It used to live in the last day's panel, which put a trip-level question
+   * behind a disclosure triangle somebody had to know to open — and made it
+   * look like it applied to that one day's driving. Out here it is the thing
+   * you answer once every day above it has been settled, which is the order
+   * the decision actually happens in.
+   *
+   * `plan.ts` still hangs the options off the last day, because that is also
+   * where the selection is stored and where the quote reads it from. This is
+   * the one place that knows the difference.
+   */
+  const vehicleDay = dayOptions.find((entry) => entry.vehicle);
+
   const pending = useRef<{ day: number; anchorTop: number | null } | null>(
     null,
   );
@@ -333,45 +349,6 @@ export function PlannedItinerary({
                       </Section>
                     ) : null}
 
-                    {/* --- What you travel in -------------------------- */}
-                    {options.vehicle ? (
-                      <Section
-                        title={options.vehicle.legend}
-                        hint={options.vehicle.note}
-                      >
-                        <div className={CARD_ROW}>
-                          {options.vehicle.options.map((option) => (
-                            <PickCard
-                              key={option.id}
-                              name={`vehicle-${day.day}`}
-                              id={`vehicle-${day.day}-${option.id}`}
-                              checked={selection?.vehicleId === option.id}
-                              onChange={() =>
-                                onChange(day.day, {
-                                  ...emptySelection(selection),
-                                  vehicleId: option.id,
-                                })
-                              }
-                              title={option.name}
-                              image={option.image ?? ""}
-                              badge={
-                                option.recommended
-                                  ? "We would send this"
-                                  : "Upgrade"
-                              }
-                              price={
-                                option.price > 0
-                                  ? `+${formatINR(option.price)}`
-                                  : "Included"
-                              }
-                              colour={colour}
-                              ink={ink}
-                            />
-                          ))}
-                        </div>
-                      </Section>
-                    ) : null}
-
                     {/* --- Where you sleep ------------------------------ */}
                     {options.stays.length > 0 ? (
                       <Section
@@ -473,6 +450,43 @@ export function PlannedItinerary({
           );
         })}
       </ol>
+
+      {vehicleDay?.vehicle ? (
+        <div className="mt-10 border-t border-[var(--ink-hairline)] pt-8">
+          <Section
+            title={vehicleDay.vehicle.legend}
+            hint={vehicleDay.vehicle.note}
+            prominent
+          >
+            <div className={CARD_ROW}>
+              {vehicleDay.vehicle.options.map((option) => (
+                <PickCard
+                  key={option.id}
+                  name="vehicle"
+                  id={`vehicle-${option.id}`}
+                  checked={selections[vehicleDay.day]?.vehicleId === option.id}
+                  onChange={() =>
+                    onChange(vehicleDay.day, {
+                      ...emptySelection(selections[vehicleDay.day]),
+                      vehicleId: option.id,
+                    })
+                  }
+                  title={option.name}
+                  image={option.image ?? ""}
+                  badge={option.recommended ? "We would send this" : "Upgrade"}
+                  price={
+                    option.price > 0
+                      ? `+${formatINR(option.price)}`
+                      : "Included"
+                  }
+                  colour={colour}
+                  ink={ink}
+                />
+              ))}
+            </div>
+          </Section>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -506,16 +520,32 @@ function Fact({
 function Section({
   title,
   hint,
+  prominent = false,
   children,
 }: {
   title: string;
   hint: string;
+  /**
+   * For the one section that is not inside a day.
+   *
+   * The others are already under an open day's heading, which frames them.
+   * The vehicle sits on its own under the whole itinerary with nothing above
+   * it, so it carries a little more weight to read as a question in its own
+   * right rather than as a stray row after the last day.
+   */
+  prominent?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <fieldset className="min-w-0">
       <legend className="flex w-full flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <span className="text-16 font-medium">{title}</span>
+        <span
+          className={cn(
+            prominent ? "text-22 font-semibold" : "text-16 font-medium",
+          )}
+        >
+          {title}
+        </span>
       </legend>
       <p className="mt-1 text-14 text-ink-faint">{hint}</p>
       <div className="mt-4">{children}</div>

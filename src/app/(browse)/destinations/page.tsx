@@ -8,6 +8,8 @@ import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
 import { Accent } from "@/components/primitives/Accent";
 import { JumpBar } from "@/components/layout/JumpBar";
 import { MonthStrip } from "@/components/destinations/MonthStrip";
+import { WeatherStrip } from "@/components/destinations/WeatherStrip";
+import { getStateWeather, type StateWeather } from "@/lib/weather";
 import { getDestinations } from "@/content/destinations";
 import { TripPlanner } from "@/components/planner/TripPlanner";
 import type { PlannerState } from "@/components/planner/types";
@@ -62,6 +64,12 @@ export default async function DestinationsPage({
   };
 
   const destinations = getDestinations();
+  /*
+   * One batched request for all eight, revalidated every half hour, and null
+   * when the upstream is unreachable — a state block simply goes without its
+   * strip rather than the page failing because a forecast API did.
+   */
+  const weather = await getStateWeather();
   const tours = getTours();
   const summaries = getTourSummaries();
 
@@ -214,6 +222,7 @@ export default async function DestinationsPage({
             destination={destination}
             index={index}
             tripCount={tripCounts[destination.slug] ?? 0}
+            weather={weather?.[destination.slug]}
           />
         ))}
       </div>
@@ -234,10 +243,13 @@ function StateBlock({
   destination,
   index,
   tripCount,
+  weather,
 }: {
   destination: Destination;
   index: number;
   tripCount: number;
+  /** Absent when the forecast could not be fetched. */
+  weather?: StateWeather;
 }) {
   const colour = stateColours[destination.slug];
   const flip = index % 2 === 1;
@@ -259,7 +271,7 @@ function StateBlock({
         )}
       >
         {/* --- The photograph ------------------------------------------- */}
-        <div className="lg:col-span-5">
+        <div className="min-w-0 lg:col-span-5">
           <ParallaxMedia
             amount={12}
             className="aspect-[4/5] w-full rounded-[var(--radius-media)]"
@@ -276,7 +288,7 @@ function StateBlock({
         </div>
 
         {/* --- The argument --------------------------------------------- */}
-        <div className="lg:col-span-7">
+        <div className="min-w-0 lg:col-span-7">
           <Rise className="flex items-center gap-4">
             <span
               className="u-num font-display text-36 leading-none"
@@ -333,6 +345,14 @@ function StateBlock({
           </Rise>
 
           <Rise delay={0.16}>
+            {weather ? (
+              <WeatherStrip
+                weather={weather}
+                colour={colour.ink}
+                className="mt-8 max-w-xl"
+              />
+            ) : null}
+
             <MonthStrip
               months={destination.bestMonths}
               colour={colour.surface}

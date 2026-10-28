@@ -10,7 +10,307 @@ import { shot } from "@/config/showcase";
  * real addresses.
  */
 
-const homestays: Homestay[] = [
+/*
+ * ---------------------------------------------------------------------------
+ * PLACEHOLDER DATA — GUWAHATI. NOT REAL PROPERTIES. DO NOT LAUNCH ON THIS.
+ * ---------------------------------------------------------------------------
+ *
+ * Every field in the four entries below is invented: the houses, the families,
+ * the rates, the ratings and the review counts. They exist so the redesigned
+ * homestays page can be judged on layout and copy while the client's real
+ * Guwahati properties are outstanding.
+ *
+ * They are written to be replaced, not edited around:
+ *
+ *  - every slug starts `ghy-`, which is how `getGuwahatiHomestays()` finds
+ *    them and how you find them again;
+ *  - `reviewCount` and `rating` are the dangerous ones. A fabricated review
+ *    count is a specific factual claim about a real business and is the first
+ *    thing to delete if these ship by accident;
+ *  - the coordinates are real Guwahati localities, so the locator is honest
+ *    about geography even while the houses are not;
+ *  - photography is placeholder stock like the rest of the site. See
+ *    `config/showcase.ts` and MEDIA.md.
+ *
+ * The rest of this file — Majuli, Ziro, Khonoma and the other eight — is the
+ * original content set and is not placeholder in this sense.
+ */
+const GUWAHATI_PLACEHOLDERS: Homestay[] = [
+  {
+    slug: "ghy-uzan-bazar-house",
+    name: "The Uzan Bazar house",
+    strapline:
+      "A veranda, a garden, and the Brahmaputra at the end of the lane",
+    state: "assam",
+    region: "assam",
+    locality: "Uzan Bazar, Guwahati",
+    lat: 26.188,
+    lng: 91.759,
+    fromPrice: 3400,
+    maxGuests: 6,
+    bedrooms: 3,
+    rating: 4.8,
+    reviewCount: 94,
+    mealsIncluded: "breakfast",
+    featured: true,
+    intro:
+      "An old Assamese town house in the quarter the city started in, with a deep veranda on carved pillars, a garden that has been there longer than the road, and the river four minutes' walk away.",
+    body: [
+      "Uzan Bazar is the oldest part of Guwahati and still the quietest, which is not a sentence anyone expects to read about a city of a million people. The house sits behind a gate on a lane of similar houses, most of which have been replaced by flats.",
+      "Breakfast is on the veranda — luchi, aloo pitika, and tea from the family's own estate connections. Dinner is not served, and that is deliberate: Uzan Bazar has better food within walking distance than the kitchen is pretending to.",
+    ],
+    hostName: "Pranab and Nabanita Barua",
+    hostStory:
+      "Pranab's grandfather built the house in 1948 and Pranab has refused three offers from developers for it. He taught history at Cotton College for thirty years and will walk you round the quarter if you ask on the first night rather than the last.",
+    rooms: [
+      {
+        name: "The veranda room",
+        sleeps: 2,
+        perNight: 3400,
+        description:
+          "The front room, opening through double doors onto the long veranda and the garden.",
+        amenities: [
+          "Double bed",
+          "Private bathroom",
+          "Air conditioning",
+          "Desk",
+        ],
+      },
+      {
+        name: "The garden room",
+        sleeps: 3,
+        perNight: 4200,
+        description:
+          "At the back, quieter, with a window seat over the jackfruit tree.",
+        amenities: [
+          "Double bed and a single",
+          "Private bathroom",
+          "Air conditioning",
+          "Reading chair",
+        ],
+      },
+    ],
+    amenities: [
+      "Breakfast on the veranda",
+      "Airport pickup on request",
+      "Wifi throughout",
+      "Off-street parking inside the gate",
+      "Laundry, same day",
+    ],
+    houseRules: [
+      "No smoking inside the house; the veranda is fine",
+      "The gate is locked at eleven — tell them if you will be later",
+      "Shoes off in the bedrooms",
+    ],
+    heroAlt:
+      "A sunlit veranda on carved painted pillars with cane chairs, looking onto a green garden",
+    // sunlit veranda, ornate painted pillars, cane chairs, garden beyond
+    image: shot("1792772531515-45f54df5cdf3"),
+  },
+  {
+    slug: "ghy-kharghuli-hill-home",
+    name: "The Kharghuli hill home",
+    strapline: "Above the city, with the river laid out underneath it",
+    state: "assam",
+    region: "assam",
+    locality: "Kharghuli, Guwahati",
+    lat: 26.192,
+    lng: 91.748,
+    fromPrice: 2800,
+    maxGuests: 4,
+    bedrooms: 2,
+    rating: 4.7,
+    reviewCount: 61,
+    mealsIncluded: "half-board",
+    intro:
+      "A modern family house on the Kharghuli slope, ten minutes above the traffic, where the porch looks down the length of the Brahmaputra and the evenings are ten degrees more civilised than the road below.",
+    body: [
+      "Kharghuli is the hill the city's older money moved up onto, and the view is the whole reason. From the porch swing the river runs west to east across the entire horizon, and the Saraighat bridge lights come on at dusk.",
+      "Two rooms only, in the family's own house, with breakfast and dinner eaten with them at the table. If you want a hotel this is the wrong booking.",
+    ],
+    hostName: "Rituparna Goswami",
+    hostStory:
+      "Rituparna worked in Bengaluru for eleven years and came back in 2019 to look after her mother, who lives downstairs and does most of the cooking. She runs a small textile label from the back room and is a useful person to know if you want silk that is actually from Sualkuchi.",
+    rooms: [
+      {
+        name: "River-facing room",
+        sleeps: 2,
+        perNight: 3200,
+        description:
+          "The front bedroom, with the porch outside it and the whole river in the window.",
+        amenities: [
+          "Double bed",
+          "Private bathroom",
+          "Air conditioning",
+          "Porch access",
+        ],
+      },
+      {
+        name: "Hill-side room",
+        sleeps: 2,
+        perNight: 2800,
+        description:
+          "Looks back into the hill and the trees. Cooler, darker, and quieter in the mornings.",
+        amenities: ["Twin beds", "Private bathroom", "Ceiling fan"],
+      },
+    ],
+    amenities: [
+      "Breakfast and dinner with the family",
+      "The porch, and the view off it",
+      "Wifi",
+      "Parking on the slope",
+      "Airport pickup on request",
+    ],
+    houseRules: [
+      "Dinner is at eight and is not a buffet — say if you will miss it",
+      "The hill road is steep; large vehicles park at the bottom",
+      "No smoking anywhere on the property",
+    ],
+    heroAlt:
+      "A covered porch with a hanging swing, looking out over a garden from a hillside house",
+    // modern porch with a swing seat, looking out over a garden
+    image: shot("1711963383546-a8f78c3ab5f4"),
+  },
+  {
+    slug: "ghy-north-bank-house",
+    name: "The north bank house",
+    strapline: "Across the river, where the city stops being loud",
+    state: "assam",
+    region: "assam",
+    locality: "Rajaduar, North Guwahati",
+    lat: 26.2,
+    lng: 91.72,
+    fromPrice: 2400,
+    maxGuests: 5,
+    bedrooms: 3,
+    rating: 4.6,
+    reviewCount: 38,
+    mealsIncluded: "full-board",
+    intro:
+      "A low green house under palms on the north bank, twenty minutes by ferry from the city and a different century from it. Three rooms, all meals, and the Umananda temple boat from the ghat at the end of the road.",
+    body: [
+      "North Guwahati is technically the same city and functionally a village: paddy, ponds, satras, and a bazaar that shuts at eight. The ferry across takes twenty minutes and runs until dark; after that it is the long way round by the bridge.",
+      "All three meals are cooked in the house. Fish from the river most days, and the family grows the rest of it in the back.",
+    ],
+    hostName: "Dhiren and Mamoni Kalita",
+    hostStory:
+      "Dhiren ran the ferry ticket office for twenty-two years and knows every boatman on both banks by name. Mamoni cooks, and does not take suggestions about the fish.",
+    rooms: [
+      {
+        name: "Front room",
+        sleeps: 2,
+        perNight: 2400,
+        description:
+          "Off the main hall, with the garden and the palms outside.",
+        amenities: [
+          "Double bed",
+          "Private bathroom",
+          "Ceiling fan",
+          "Mosquito net",
+        ],
+      },
+      {
+        name: "Pond room",
+        sleeps: 3,
+        perNight: 3000,
+        description: "At the back, over the pond, with windows on two sides.",
+        amenities: [
+          "Double bed and a single",
+          "Shared bathroom",
+          "Ceiling fan",
+          "Mosquito net",
+        ],
+      },
+    ],
+    amenities: [
+      "All three meals, cooked in the house",
+      "Ferry timings, and someone who knows them",
+      "Bicycles",
+      "Solar backup during power cuts",
+      "Boat to Umananda arranged from the ghat",
+    ],
+    houseRules: [
+      "Cash preferred — the nearest ATM is back across the river",
+      "The last ferry is at dusk; plan the evening around it",
+      "Power is intermittent and the wifi is worse",
+    ],
+    heroAlt:
+      "A low green and white heritage house at the end of a palm-lined drive",
+    // green-painted old house, palm drive, quiet compound
+    image: shot("1759738103259-f2f9bb73a9d9"),
+  },
+  {
+    slug: "ghy-sualkuchi-weavers-house",
+    name: "The weavers' house at Sualkuchi",
+    strapline: "Sleep above the looms, in the village that makes the silk",
+    state: "assam",
+    region: "assam",
+    locality: "Sualkuchi, 32 km from Guwahati",
+    lat: 26.1667,
+    lng: 91.5667,
+    fromPrice: 2600,
+    maxGuests: 6,
+    bedrooms: 3,
+    rating: 4.9,
+    reviewCount: 52,
+    mealsIncluded: "full-board",
+    intro:
+      "A working weaving household in Sualkuchi, where the whole village makes muga and pat silk and has done for five hundred years. The looms run downstairs from six in the morning, which is both the charm and the warning.",
+    body: [
+      "Sualkuchi is not a craft demonstration. It is an industry: roughly seventeen thousand looms in a village of a few thousand households, and the sound of them is the sound of the place.",
+      "You are welcome at the loom and the family will put you on one, badly, for as long as you like. What they will not do is sell you a sari at tourist prices — the rate is the rate the traders pay, and they will tell you what it is.",
+    ],
+    hostName: "Hemanta and Junu Das",
+    hostStory:
+      "Four generations of Hemanta's family have woven in this house and Junu is the faster of the two by some distance. Their daughter is studying textile design in Delhi and is the one who insisted they take guests.",
+    rooms: [
+      {
+        name: "Upstairs front",
+        sleeps: 2,
+        perNight: 2600,
+        description:
+          "Over the loom room, with the village street below. Earplugs are in the drawer.",
+        amenities: [
+          "Double bed",
+          "Shared bathroom",
+          "Ceiling fan",
+          "Mosquito net",
+        ],
+      },
+      {
+        name: "Upstairs back",
+        sleeps: 4,
+        perNight: 3600,
+        description:
+          "The larger room, over the courtyard, away from the street and the looms.",
+        amenities: [
+          "Two double beds",
+          "Private bathroom",
+          "Ceiling fan",
+          "Mosquito net",
+        ],
+      },
+    ],
+    amenities: [
+      "All meals, eaten with the family",
+      "Time at the loom, with somebody who can actually weave",
+      "Silk bought at the trade rate, if you want any",
+      "Shared transport to Guwahati most mornings",
+      "Walking tour of the village's other workshops",
+    ],
+    houseRules: [
+      "The looms start at six. This is not negotiable and is the point",
+      "Ask before photographing anyone at work",
+      "Cash only",
+    ],
+    heroAlt:
+      "Weavers working a bright silk warp on a traditional loom in an open-sided village workshop",
+    // weaving on a loom in a bamboo-walled Assamese workshop
+    image: shot("1759738099669-d64b0656f6cf"),
+  },
+];
+
+const originalHomestays: Homestay[] = [
   {
     slug: "mishing-stilt-house-majuli",
     name: "The Mishing stilt house",
@@ -756,10 +1056,37 @@ const homestays: Homestay[] = [
   },
 ];
 
+/*
+ * Guwahati first, then the rest.
+ *
+ * The homestays page leads on Guwahati and holds the other seven states back
+ * as "coming soon", so the order here is the order the site reads them in and
+ * there is no sorting anywhere downstream.
+ */
+const homestays: Homestay[] = [...GUWAHATI_PLACEHOLDERS, ...originalHomestays];
+
 const bySlug = new Map(homestays.map((h) => [h.slug, h]));
 
 export function getHomestays(): Homestay[] {
   return homestays;
+}
+
+/**
+ * The houses that are actually bookable today.
+ *
+ * Selected by the `ghy-` slug prefix rather than by locality string, because
+ * "Sualkuchi, 32 km from Guwahati" does not contain the word on its own and a
+ * substring match would be one typo away from dropping a house off the page.
+ * The prefix is also the marker for the placeholder block above, so when real
+ * properties arrive this keeps working without being touched.
+ */
+export function getGuwahatiHomestays(): Homestay[] {
+  return homestays.filter((h) => h.slug.startsWith("ghy-"));
+}
+
+/** Everything not yet open for booking, for the "coming soon" block. */
+export function getUpcomingHomestays(): Homestay[] {
+  return homestays.filter((h) => !h.slug.startsWith("ghy-"));
 }
 
 export function getHomestayBySlug(slug: string): Homestay | undefined {

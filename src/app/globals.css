@@ -867,6 +867,56 @@
     transform: translateY(16px);
   }
 
+  /* ---- Confirm-card glow ------------------------------------------------- */
+
+  /*
+   * The one glow on the site, on the one card that asks for a decision.
+   *
+   * It sits on the confirm panel at the end of a drafted itinerary — after
+   * the days, the vehicle and the terms — where it is the only thing left to
+   * do. Everything above it is reading; this is the button, so it gets the
+   * single piece of ornament the design system allows itself.
+   *
+   * Colour comes from the state, through `--glow-c`, set inline from the
+   * same token as the border. Nothing is hardcoded here: Sikkim's marigold
+   * and Nagaland's red both have to work.
+   *
+   * The static shadow lives on the class and the keyframe only breathes it.
+   * That is deliberate — the global reduced-motion rule below kills every
+   * animation with `!important`, so a glow built *by* the animation would
+   * vanish entirely for those readers. Built this way they keep the glow and
+   * lose only the movement, which is the part that was the problem.
+   */
+  @keyframes confirm-glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 20px -8px color-mix(in srgb, var(--glow-c) 60%, transparent),
+        0 0 44px -16px color-mix(in srgb, var(--glow-c) 42%, transparent);
+    }
+    50% {
+      box-shadow:
+        0 0 28px -6px color-mix(in srgb, var(--glow-c) 78%, transparent),
+        0 0 68px -12px color-mix(in srgb, var(--glow-c) 56%, transparent);
+    }
+  }
+
+  .u-glow {
+    box-shadow:
+      0 0 24px -7px color-mix(in srgb, var(--glow-c) 68%, transparent),
+      0 0 54px -14px color-mix(in srgb, var(--glow-c) 48%, transparent);
+    animation: confirm-glow 4.2s ease-in-out infinite;
+  }
+
+  /*
+   * Stops once the request is in. A panel that reads "We have it" is not
+   * asking for anything, and a glow that keeps pulsing after the decision
+   * has been made is just an animation nobody can turn off.
+   */
+  .u-glow[data-settled="true"] {
+    animation: none;
+  }
+
   /* Hides content visually but keeps it for assistive tech. */
   .u-sr-only {
     position: absolute;

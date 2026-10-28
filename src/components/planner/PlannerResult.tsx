@@ -204,8 +204,11 @@ export function PlannerResult({
            */}
           <div
             id="plan-confirm"
-            className="mt-6 scroll-mt-[calc(var(--header-h)+1rem)] rounded-[var(--radius-card)] border bg-paper p-5 sm:p-6"
-            style={{ borderColor: colour }}
+            className="u-glow mt-6 scroll-mt-[calc(var(--header-h)+1rem)] rounded-[var(--radius-card)] border bg-paper p-5 sm:p-6"
+            data-settled={sent ? "true" : undefined}
+            style={
+              { borderColor: colour, "--glow-c": colour } as React.CSSProperties
+            }
           >
             {sent ? (
               <div>

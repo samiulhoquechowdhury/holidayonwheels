@@ -192,3 +192,21 @@ disallow direct pushes.
 4. Whether `beepdrive.com` accepts deep links. Until confirmed, `rentalUrl()`
    in `config/external.ts` drops all context and returns the homepage rather
    than guessing a query format.
+5. **The four Guwahati homestays are invented.** Names, families, rates,
+   ratings and review counts are all placeholder — see the block above
+   `GUWAHATI_PLACEHOLDERS` in `content/homestays.ts`. The homestays page
+   shows only these and lists every other state as "coming soon", so this is
+   the whole of that page. The fabricated `reviewCount` values are the part
+   that cannot ship: they are specific factual claims about a real business.
+6. **Two third-party services are on free tiers that do not cover commercial
+   use.** Both are one environment variable away from being correct, and
+   neither is set:
+   - `OPEN_METEO_API_KEY` — the destinations page's live weather. The free
+     endpoint is explicitly non-commercial. Setting the key switches the host
+     to `customer-api.open-meteo.com`; see `lib/weather.ts`.
+   - `NEXT_PUBLIC_MAP_TILE_URL` — the map under each homestay. It currently
+     falls back to `tile.openstreetmap.org`, whose usage policy covers
+     development, not a commercial site. Point it at MapTiler, Thunderforest
+     or Geoapify; they all serve the same `{z}/{x}/{y}` shape, so nothing
+     else moves. OpenStreetMap attribution is rendered under the map and is
+     required by the ODbL whatever the provider — do not remove it.

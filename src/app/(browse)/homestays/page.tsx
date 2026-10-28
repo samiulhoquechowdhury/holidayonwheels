@@ -379,10 +379,22 @@ function Figure({
   note?: string;
 }) {
   return (
+    /*
+     * The note lives inside the <dd>, not beside it.
+     *
+     * A <div> inside a <dl> may wrap a <dt>/<dd> pair and nothing else. A
+     * loose <p> in there is invalid, and axe flags the whole list for it.
+     */
     <div className="border-t border-[var(--ink-hairline)] pt-4">
       <dt className="u-label text-ink-faint">{label}</dt>
-      <dd className="u-num mt-2 font-display text-28 lg:text-36">{value}</dd>
-      {note ? <p className="u-label mt-1 text-ink-faint">{note}</p> : null}
+      <dd className="mt-2">
+        <span className="u-num block font-display text-28 lg:text-36">
+          {value}
+        </span>
+        {note ? (
+          <span className="u-label mt-1 block text-ink-faint">{note}</span>
+        ) : null}
+      </dd>
     </div>
   );
 }

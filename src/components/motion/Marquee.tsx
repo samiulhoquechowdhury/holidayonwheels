@@ -22,8 +22,9 @@ type MarqueeProps = {
  * forever for something the compositor can do alone. Hovering pauses it,
  * because a strip that carries readable words has to be readable.
  *
- * The second copy is `aria-hidden` — a screen reader should hear the eight
- * states once, not twice.
+ * The second copy is `aria-hidden` and `inert` — a screen reader should hear
+ * the eight states once, not twice, and nobody should be able to tab into a
+ * copy that exists only to make the loop seamless.
  */
 export function Marquee({
   children,
@@ -39,7 +40,17 @@ export function Marquee({
         style={{ "--marquee-dur": `${duration}s` } as React.CSSProperties}
       >
         <div className="flex shrink-0 items-center">{children}</div>
-        <div aria-hidden="true" className="flex shrink-0 items-center">
+        {/*
+         * `inert`, not just `aria-hidden`.
+         *
+         * The duplicate exists so the strip can loop seamlessly, and when
+         * its children are links — which on the offers marquee they are —
+         * `aria-hidden` alone hides them from a screen reader while leaving
+         * them in the tab order. Tabbing then lands on a control that is
+         * announced as nothing, twice per cycle. `inert` takes the subtree
+         * out of focus order as well, which is what was meant all along.
+         */}
+        <div inert aria-hidden="true" className="flex shrink-0 items-center">
           {children}
         </div>
       </div>

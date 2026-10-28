@@ -5,6 +5,8 @@ import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
 import { Reveal } from "@/components/layout/Reveal";
 import { StayBookingWidget } from "@/components/booking/StayBookingWidget";
+import { Amenities } from "@/components/homestays/Amenities";
+import { HouseLocator } from "@/components/homestays/LocatorMap";
 import { StayCard, TourCard } from "@/components/cards/ResultCard";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { Chip } from "@/components/primitives/Chip";
@@ -16,6 +18,7 @@ import {
   getHomestaysByState,
 } from "@/content/homestays";
 import { getDestinationName } from "@/content/destinations";
+import type { MealPlan } from "@/content/types";
 import { getToursByState, toTourSummary } from "@/content/tours";
 
 export function generateStaticParams() {
@@ -32,6 +35,23 @@ export async function generateMetadata({
   if (!stay) return {};
   return { title: stay.name, description: stay.intro.slice(0, 155) };
 }
+
+/**
+ * What each meal plan actually means on the night, in a sentence.
+ *
+ * The index shows these as two-word labels because it is comparing twelve
+ * houses; here there is room to say what you will be eating and with whom,
+ * which on a homestay is most of the decision.
+ */
+const MEALS_NOTE: Record<MealPlan, string> = {
+  "full-board":
+    "All three meals are cooked in the house and eaten with the family. Tell us about anything you cannot eat and the kitchen will work around it.",
+  "half-board":
+    "Breakfast and dinner are cooked in the house. Lunch is your own, and your hosts will tell you where to find it.",
+  breakfast:
+    "Breakfast is included. The family will point you at the places they eat the rest of the time.",
+  none: "No meals are included. There is somewhere to eat within walking distance and your hosts will say which.",
+};
 
 export default async function HomestayDetailPage({
   params,
@@ -98,57 +118,92 @@ export default async function HomestayDetailPage({
             },
             {
               id: "rooms",
-              label: "Rooms",
+              label: "Where you sleep",
               content: (
-                <ul className="grid gap-8 sm:grid-cols-2">
-                  {stay.rooms.map((room) => (
-                    <li
-                      key={room.name}
-                      className="flex flex-col rounded-[var(--radius-card)] bg-shell p-6"
-                    >
-                      <div className="flex items-baseline justify-between gap-3">
-                        <h3 className="text-22">{room.name}</h3>
-                        <p className="u-num shrink-0 text-16">
-                          {formatINR(room.perNight)}
+                <>
+                  <p className="mb-8 max-w-prose text-16 text-ink-soft">
+                    {stay.bedrooms} rooms, sleeping {stay.maxGuests} between
+                    them. Rates are per room per night, set by the house, and
+                    you can take one room or all of them.
+                  </p>
+                  <ul className="grid gap-8 sm:grid-cols-2">
+                    {stay.rooms.map((room) => (
+                      <li
+                        key={room.name}
+                        className="flex flex-col rounded-[var(--radius-card)] bg-shell p-6"
+                      >
+                        <div className="flex items-baseline justify-between gap-3">
+                          <h3 className="text-22">{room.name}</h3>
+                          <p className="u-num shrink-0 text-16">
+                            {formatINR(room.perNight)}
+                          </p>
+                        </div>
+                        <p className="u-label mt-2 text-ink-faint">
+                          Sleeps {room.sleeps} · per night
                         </p>
-                      </div>
-                      <p className="u-label mt-2 text-ink-faint">
-                        Sleeps {room.sleeps} · per night
-                      </p>
-                      <p className="mt-4 flex-1 text-16 text-ink-soft">
-                        {room.description}
-                      </p>
-                      <ul className="mt-5 flex flex-wrap gap-1.5">
-                        {room.amenities.map((amenity) => (
-                          <li key={amenity}>
-                            <Chip>{amenity}</Chip>
-                          </li>
-                        ))}
-                      </ul>
-                    </li>
-                  ))}
-                </ul>
+                        <p className="mt-4 flex-1 text-16 text-ink-soft">
+                          {room.description}
+                        </p>
+                        <ul className="mt-5 flex flex-wrap gap-1.5">
+                          {room.amenities.map((amenity) => (
+                            <li key={amenity}>
+                              <Chip>{amenity}</Chip>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ul>
+                </>
               ),
             },
             {
+              id: "amenities",
+              label: "What this place offers",
+              content: <Amenities amenities={stay.amenities} />,
+            },
+            {
+              id: "where",
+              label: "Where you will be",
+              content:
+                (
+                  /*
+                   * One column. The section's content measures 700px, so a
+                   * `[1fr_320px]` split left the map 324px wide with the text
+                   * beside it — a map too small to orient anybody and a
+                   * paragraph too narrow to read. Full width, note underneath.
+                   */
+                  <div className="min-w-0">
+                    <HouseLocator stay={stay} tall />
+                    <p className="mt-6 max-w-prose text-16 text-ink-soft">
+                      {getDestinationName(stay.state)}. The pin is the
+                      neighbourhood, not the doorstep — exact directions come
+                      with your booking confirmation, which is how the family
+                      would rather have it.
+                    </p>
+                  </div>
+                ),
+            },
+            {
               id: "practical",
-              label: "Practical",
+              label: "Things to know",
               content: (
                 <div className="grid gap-12 sm:grid-cols-2">
                   <div>
                     <Eyebrow tone="sage" className="mb-4">
-                      What is here
+                      Meals
                     </Eyebrow>
-                    <ul className="flex flex-col gap-3">
-                      {stay.amenities.map((item) => (
-                        <li key={item} className="flex gap-3 text-16">
-                          <span aria-hidden="true" className="text-sage">
-                            —
-                          </span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
+                    <p className="text-16 text-ink-soft">
+                      {MEALS_NOTE[stay.mealsIncluded]}
+                    </p>
+                    <Eyebrow tone="sage" className="mt-8 mb-4">
+                      Booking
+                    </Eyebrow>
+                    <p className="text-16 text-ink-soft">
+                      Nothing is payable here. We check the dates with the
+                      family and confirm the rate in writing, usually the same
+                      day.
+                    </p>
                   </div>
                   <div>
                     <Eyebrow className="mb-4">Before you book</Eyebrow>

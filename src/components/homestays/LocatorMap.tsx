@@ -249,12 +249,22 @@ const TILE_ROWS = [-1, 0];
 export function HouseLocator({
   stay,
   within,
+  tall = false,
   className,
 }: {
   stay: Homestay;
-  within: Homestay[];
+  /**
+   * The set this house is shown against. Defaults to the house alone, which
+   * is what the detail page wants — there is nothing to compare it to there,
+   * and a stray dot for an unrelated property would only raise a question
+   * the page does not answer.
+   */
+  within?: Homestay[];
+  /** Taller frame for the detail page, where the map is a section of its own. */
+  tall?: boolean;
   className?: string;
 }) {
+  const others_ = within ?? [stay];
   const centre = tileFor(stay.lat, stay.lng, MINI_ZOOM);
   const base = { x: Math.floor(centre.x), y: Math.floor(centre.y) };
   const template =
@@ -262,7 +272,7 @@ export function HouseLocator({
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
   /* Where the other houses fall on this same frame, in pixels from centre. */
-  const others = within
+  const others = others_
     .filter((other) => other.slug !== stay.slug)
     .map((other) => {
       const point = tileFor(other.lat, other.lng, MINI_ZOOM);
@@ -276,7 +286,10 @@ export function HouseLocator({
   return (
     <figure className={cn("min-w-0", className)}>
       <div
-        className="relative h-40 w-full overflow-hidden"
+        className={cn(
+          "relative w-full overflow-hidden",
+          tall ? "h-72 sm:h-80" : "h-40",
+        )}
         style={{
           /*
            * Dissolves on all four sides — no border, no box.

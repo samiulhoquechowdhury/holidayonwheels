@@ -30,12 +30,24 @@ export const shot = (id: string) =>
  * Hero footage. A forest waterfall — the closest stock analogue to Meghalaya
  * that reads at 21:9 without a recognisable non-Indian landmark in it.
  *
- * Streamed from a remote CDN rather than committed: 13MB of placeholder MP4
- * does not belong in the repository, and the real encode (≤ 4MB, see MEDIA.md)
- * will live in `public/media/` instead.
+ * Streamed from a remote CDN rather than committed: placeholder MP4 does not
+ * belong in the repository, and the real encode will live in `public/media/`
+ * instead.
+ *
+ * **The `sd_640_360` rendition, not `hd_1280_720`.** The HD file is 13.5MB and
+ * was on its own three times the whole page's byte budget — it took the home
+ * page's Lighthouse performance score to 0.35 and its LCP to 5.3s. Pexels'
+ * SD rendition of the same clip is 3.0MB, inside the ≤4MB encode budget in
+ * MEDIA.md, and this plays muted and looping behind a headline at 21:9 where
+ * nobody is reading detail out of it. The `sd_960_540` middle rendition is
+ * 7.8MB and does not fit.
+ *
+ * When the real footage lands it has to meet the same 4MB ceiling. That is
+ * not a stylistic preference; it is the difference between this page passing
+ * its performance budget and failing it.
  */
 export const heroFilm = {
-  src: "https://videos.pexels.com/video-files/2098989/2098989-hd_1280_720_30fps.mp4",
+  src: "https://videos.pexels.com/video-files/2098989/2098989-sd_640_360_30fps.mp4",
   poster: shot("1470071459604-3b5ec3a7fe05"),
   alt: "Water falling through dense forest into a still green pool",
 } as const;
@@ -51,10 +63,12 @@ export const heroFilm = {
  * light most stock motorcycle footage is shot in, so it sits beside the rest
  * of the site's photography instead of fighting it.
  *
- * 720p at 5MB. The real encode has to come in under 4MB — see MEDIA.md.
+ * The `sd_960_540` rendition, 3.3MB, inside the ≤4MB encode budget in
+ * MEDIA.md. The 720p file is 5.1MB and was the largest request on this page
+ * by an order of magnitude. The real encode has to meet the same ceiling.
  */
 export const motoFilm = {
-  src: "https://videos.pexels.com/video-files/2519660/2519660-hd_1280_720_24fps.mp4",
+  src: "https://videos.pexels.com/video-files/2519660/2519660-sd_960_540_24fps.mp4",
   poster: shot("1558981806-ec527fa84c39"),
   alt: "A rider's view over the handlebars on a curving forest road",
 } as const;

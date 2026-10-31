@@ -203,7 +203,7 @@ function tileFor(lat: number, lng: number, zoom: number) {
 
 const FADE = [
   "linear-gradient(to right, transparent 0%, #000 16%, #000 84%, transparent 100%)",
-  "linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%)",
+  "linear-gradient(to bottom, transparent 0%, #000 11%, #000 89%, transparent 100%)",
 ].join(", ");
 
 const TILE = 256;

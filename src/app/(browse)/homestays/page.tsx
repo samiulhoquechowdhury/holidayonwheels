@@ -8,7 +8,6 @@ import { HomestayBrowser } from "@/components/homestays/HomestayBrowser";
 import { getGuwahatiHomestays } from "@/content/homestays";
 import { getDestinationName, getDestinations } from "@/content/destinations";
 import { stateColours } from "@/config/palette";
-import { formatINR } from "@/lib/currency";
 
 export const metadata: Metadata = {
   title: "Homestays in Guwahati",
@@ -48,12 +47,6 @@ export const metadata: Metadata = {
 export default function HomestaysPage() {
   const houses = getGuwahatiHomestays();
 
-  const from = Math.min(...houses.map((stay) => stay.fromPrice));
-  const rating =
-    houses.reduce((sum, stay) => sum + stay.rating, 0) / houses.length;
-  const reviews = houses.reduce((sum, stay) => sum + stay.reviewCount, 0);
-  const beds = houses.reduce((sum, stay) => sum + stay.bedrooms, 0);
-
   /*
    * Every state we do not yet let you book a house in, west to east.
    *
@@ -73,41 +66,40 @@ export default function HomestaysPage() {
 
   return (
     <>
-      {/* --- Masthead ------------------------------------------------- */}
+      {/*
+       * No masthead.
+       *
+       * This is a results page, and a results page opens on results. The
+       * full-viewport headline that used to sit here — "Stay in somebody's
+       * house" over four display figures — spent a whole screen saying what
+       * the four cards underneath say better, and pushed the thing somebody
+       * came for below the fold. The reference does not do it and neither
+       * does this now: a line that says what you are looking at, then the
+       * filters, then the houses.
+       */}
       <SectionShell
         tint="paper"
         width="wide"
         spacing="flush"
-        className="pt-[calc(var(--header-h)+3rem)] pb-14 lg:pt-[calc(var(--header-h)+4.5rem)] lg:pb-20"
+        className="pt-[calc(var(--header-h)+2rem)] pb-10 lg:pt-[calc(var(--header-h)+2.5rem)] lg:pb-12"
       >
-        <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-end lg:gap-16">
-          <div className="min-w-0 lg:col-span-2">
-            <Eyebrow rule>{houses.length} houses · Guwahati</Eyebrow>
-            <h1 className="mt-7 max-w-2xl text-48 lg:text-88">
-              Stay in somebody&rsquo;s <Accent>house</Accent>
-            </h1>
-            <p className="mt-8 max-w-xl text-18 text-ink-soft lg:text-22">
-              Four families in and around Guwahati, each one living in the house
-              they let you into. They set their own rate. We take a booking
-              commission and nothing else.
-            </p>
-
-            <dl className="mt-12 grid max-w-3xl grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4">
-              <Figure label="Houses" value={String(houses.length)} />
-              <Figure label="From" value={formatINR(from)} note="a night" />
-              <Figure label="Rooms" value={String(beds)} note="in total" />
-              <Figure
-                label="Rated"
-                value={rating.toFixed(1)}
-                note={`${reviews.toLocaleString("en-IN")} reviews`}
-              />
-            </dl>
-          </div>
-        </div>
+        <h1 className="max-w-2xl text-28 lg:text-36">
+          Homestays in and around <Accent>Guwahati</Accent>
+        </h1>
+        <p className="mt-4 max-w-2xl text-16 text-ink-soft">
+          Every one is owned and run by the family living in it, and they set
+          their own rate. We take a booking commission and nothing else.
+        </p>
       </SectionShell>
 
       {/* --- The houses, browsable ------------------------------------ */}
-      <SectionShell id="houses" tint="paper" width="wide" spacing="tight">
+      <SectionShell
+        id="houses"
+        tint="paper"
+        width="wide"
+        spacing="flush"
+        className="pb-20 lg:pb-28"
+      >
         <HomestayBrowser houses={houses} />
       </SectionShell>
 
@@ -175,32 +167,3 @@ export default function HomestaysPage() {
  * is last because it is the thing you check after you have decided you like
  * the place, not before.
  */
-function Figure({
-  label,
-  value,
-  note,
-}: {
-  label: string;
-  value: string;
-  note?: string;
-}) {
-  return (
-    /*
-     * The note lives inside the <dd>, not beside it.
-     *
-     * A <div> inside a <dl> may wrap a <dt>/<dd> pair and nothing else. A
-     * loose <p> in there is invalid, and axe flags the whole list for it.
-     */
-    <div className="border-t border-[var(--ink-hairline)] pt-4">
-      <dt className="u-label text-ink-faint">{label}</dt>
-      <dd className="mt-2">
-        <span className="u-num block font-display text-28 lg:text-36">
-          {value}
-        </span>
-        {note ? (
-          <span className="u-label mt-1 block text-ink-faint">{note}</span>
-        ) : null}
-      </dd>
-    </div>
-  );
-}

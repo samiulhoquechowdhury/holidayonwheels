@@ -17,33 +17,170 @@ const KIND_LABEL: Record<StayOption["kind"], string> = {
   camp: "Tented camp",
 };
 
+type IconName =
+  | "bed"
+  | "water"
+  | "meal"
+  | "power"
+  | "wifi"
+  | "car"
+  | "person"
+  | "view"
+  | "home"
+  | "tent"
+  | "check";
+
+/**
+ * Which glyph goes beside which amenity, by keyword.
+ *
+ * Room amenities are written per kind of room and read like sentences —
+ * "Hot water, morning and evening", "Wi-fi in the room, not only the lobby",
+ * "Staff who know the gate timings". The homestays index already has a
+ * keyword classifier and it was the wrong tool here: tested against these
+ * forty-one strings it left twenty-five unmatched, because it sorts a *house*
+ * into facilities and these describe a *room*.
+ *
+ * So: its own table, ordered, first match wins. `check` is the fallback and
+ * is meant to be hit — a tick beside a line nobody wrote a keyword for is
+ * correct, where no icon at all would leave a ragged column.
+ */
+const ICON_RULES: { icon: IconName; test: RegExp }[] = [
+  { icon: "water", test: /hot water|shower|towel/i },
+  {
+    icon: "meal",
+    test: /breakfast|tea|meal|dinner|lunch|room service|kitchen/i,
+  },
+  { icon: "wifi", test: /wi-?fi|internet|signal/i },
+  { icon: "power", test: /power|grid|electric|charg|generator/i },
+  { icon: "car", test: /parking|vehicle|transfer|pickup|drive/i },
+  { icon: "view", test: /view|outlook|window|balcony|veranda/i },
+  { icon: "person", test: /staff|someone|somebody|family|host|service/i },
+  { icon: "tent", test: /canvas|camp|tent/i },
+  {
+    icon: "home",
+    test: /house|property|building|bungalow|palace|period|histor/i,
+  },
+  { icon: "bed", test: /room|bed|sleep/i },
+  /*
+   * After `bed`, not before `water`. "A private room with an attached
+   * bathroom" is a room, and leading with the plumbing put a water droplet
+   * on the line that describes the bed.
+   */
+  { icon: "water", test: /bath|washroom/i },
+];
+
+function iconFor(amenity: string): IconName {
+  return ICON_RULES.find((rule) => rule.test.test(amenity))?.icon ?? "check";
+}
+
+/** Line-drawn, 1.5 units, round caps — the weight used everywhere else. */
+function AmenityIcon({ name }: { name: IconName }) {
+  const paths: Record<IconName, React.ReactNode> = {
+    bed: (
+      <>
+        <path d="M3 17v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6" />
+        <path d="M3 17h18M3 14h18" />
+        <circle cx="7.5" cy="11.5" r="1.4" />
+      </>
+    ),
+    water: (
+      <path d="M12 3c3 3.6 4.5 6.3 4.5 8.4A4.5 4.5 0 0 1 12 16a4.5 4.5 0 0 1-4.5-4.6C7.5 9.3 9 6.6 12 3Z" />
+    ),
+    meal: (
+      <>
+        <path d="M4 10h16a8 8 0 0 1-8 8 8 8 0 0 1-8-8Z" />
+        <path d="M12 10V6M9 21h6" />
+      </>
+    ),
+    power: <path d="M13 3 5 14h6l-1 7 8-11h-6l1-7Z" />,
+    wifi: (
+      <>
+        <path d="M3 9a16 16 0 0 1 18 0" />
+        <path d="M6.5 13a11 11 0 0 1 11 0" />
+        <path d="M10 16.6a5 5 0 0 1 4 0" />
+        <path d="M12 20h.01" />
+      </>
+    ),
+    car: (
+      <>
+        <circle cx="6.5" cy="16.5" r="2.4" />
+        <circle cx="17.5" cy="16.5" r="2.4" />
+        <path d="M8.9 16.5h6.2M5 16.5 7.5 9h9l2.5 7.5" />
+      </>
+    ),
+    person: (
+      <>
+        <circle cx="12" cy="7" r="2.8" />
+        <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
+      </>
+    ),
+    view: (
+      <>
+        <rect x="4" y="4" width="16" height="16" rx="1.5" />
+        <path d="M4 12h16M12 4v16" />
+      </>
+    ),
+    home: (
+      <>
+        <path d="m3 10 9-6 9 6" />
+        <path d="M5.5 9.5V20h13V9.5" />
+        <path d="M10 20v-5h4v5" />
+      </>
+    ),
+    tent: (
+      <>
+        <path d="m12 4 8 16H4l8-16Z" />
+        <path d="M12 9v11" />
+      </>
+    ),
+    check: <path d="m4.5 12.5 5 5 10-11" />,
+  };
+
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="mt-0.5 size-[1.15rem] shrink-0 text-sage"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {paths[name]}
+    </svg>
+  );
+}
+
 /**
  * A room, in full, without leaving the itinerary.
  *
  * "View details" used to be a link to `/stays/[id]`. That page still exists
- * and is still the canonical, linkable, crawlable version of a room — but it
- * was the wrong default from inside a half-built itinerary. Somebody three
- * days into choosing nights, who wants to know whether the lodge has hot
- * water, had to leave the flow, read, and come back; and coming back means
- * finding their place again in an accordion of eight days.
+ * and is still the canonical, linkable version of a room — but it was the
+ * wrong default from inside a half-built itinerary: somebody three days into
+ * choosing nights had to leave the flow, read, and then find their place
+ * again in an accordion of eight days.
  *
- * So the same content opens over the page instead, and the dialog carries a
- * link to the full page for anyone who wants to send it to the person they
- * are travelling with.
+ * ## The shell
  *
- * ## Why the native element
+ * `<dialog showModal()>` gives the focus trap, Escape, top-layer stacking
+ * and restore-focus-on-close for nothing, and hand-rolled modals get all
+ * four wrong. Four things it does not give, all handled here:
  *
- * `<dialog showModal()>` gives the focus trap, the Escape key, the inert
- * background, the top-layer stacking and the restore-focus-on-close for
- * nothing. Every one of those is a thing hand-rolled modals get wrong, and
- * the alternative was a dependency or a hundred lines of `useEffect`.
- *
- * Two things it does not give, handled below: clicking the backdrop does not
- * close it, and `close()` does not animate. The first is one listener. The
- * second is why `open` state exists alongside the element's own — the
- * content fades in on open, and on close we let the element go immediately
- * rather than animating out, because an exit animation on a dialog you
- * dismissed is a delay between asking and getting.
+ *  1. **Centring.** The element is the full viewport — `inset-0`, no size of
+ *     its own — and centres the panel with a grid. Relying on the UA's
+ *     `margin: auto` made the dialog its own scroll container as well, so a
+ *     panel taller than the viewport sat wherever its overflow put it and
+ *     read as cropped rather than centred.
+ *  2. **Backdrop clicks.** One listener, below. Because the element fills
+ *     the viewport, a click that lands on it rather than on the panel is by
+ *     definition a click outside the content.
+ *  3. **The page behind.** `showModal()` makes the page inert to input, but
+ *     Lenis drives scrolling itself from wheel events on the window and does
+ *     not know a dialog is open — so the itinerary kept scrolling underneath
+ *     while you read. `stop()` on open, `start()` on close.
+ *  4. **Scroll chaining.** `overscroll-contain` stops a flick at the end of
+ *     the panel handing the rest of the gesture to the document.
  */
 export function StayDetailsDialog({ stay }: { stay: StayOption }) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -54,26 +191,27 @@ export function StayDetailsDialog({ stay }: { stay: StayOption }) {
     const node = ref.current;
     if (!node) return;
 
-    /*
-     * The backdrop is part of the dialog's own box, so a click that lands on
-     * the element itself — rather than on the panel inside it — is a click
-     * outside the content.
-     */
     const onClick = (event: MouseEvent) => {
       if (event.target === node) node.close();
     };
-    const onClose = () => setOpen(false);
+    const onClose = () => {
+      setOpen(false);
+      window.__lenis?.start?.();
+    };
 
     node.addEventListener("click", onClick);
     node.addEventListener("close", onClose);
     return () => {
       node.removeEventListener("click", onClick);
       node.removeEventListener("close", onClose);
+      /* If this unmounts while open, the page must not stay frozen. */
+      window.__lenis?.start?.();
     };
   }, []);
 
   const show = () => {
     setOpen(true);
+    window.__lenis?.stop?.();
     ref.current?.showModal();
   };
 
@@ -95,15 +233,23 @@ export function StayDetailsDialog({ stay }: { stay: StayOption }) {
         ref={ref}
         aria-labelledby={`stay-dialog-${stay.id}`}
         className={cn(
-          "m-auto w-[min(44rem,calc(100vw_-_2rem))] max-w-none bg-transparent p-0",
-          "backdrop:bg-[rgb(46_42_36/0.55)] backdrop:backdrop-blur-[2px]",
+          /* The element is the viewport; the panel inside it is the dialog. */
+          "fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none",
+          "place-items-center overflow-hidden bg-transparent p-4 open:grid",
+          "backdrop:bg-[rgb(28_25_21/0.62)] backdrop:backdrop-blur-md",
         )}
       >
-        {/* Rendered only while open, so the images of sixty-six rooms are
-            not all in the document at once. */}
+        {/* Mounted only while open, so sixty-six room photographs are not all
+            in the document at once. */}
         {open ? (
-          <div className="max-h-[min(42rem,calc(100dvh_-_2rem))] overflow-y-auto overscroll-contain rounded-[var(--radius-card)] bg-paper text-ink">
-            <div className="relative aspect-[16/9] w-full overflow-hidden">
+          <div
+            className={cn(
+              "u-scrollbar-slim flex max-h-[calc(100dvh_-_2rem)] w-full max-w-[44rem] flex-col",
+              "overflow-y-auto overscroll-contain rounded-[var(--radius-card)] bg-paper text-ink",
+              "shadow-[0_40px_90px_-30px_rgb(28_25_21/0.55)]",
+            )}
+          >
+            <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden">
               <Image
                 src={stay.image}
                 alt={stay.name}
@@ -160,16 +306,13 @@ export function StayDetailsDialog({ stay }: { stay: StayOption }) {
               </p>
 
               <h3 className="mt-7 text-18">{amenities.label}</h3>
-              <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
+              <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {amenities.items.map((item) => (
                   <li
                     key={item}
-                    className="flex items-start gap-2.5 text-16 text-ink-soft"
+                    className="flex items-start gap-3 text-16 text-ink-soft"
                   >
-                    <span
-                      aria-hidden="true"
-                      className="mt-2 size-1.5 shrink-0 rounded-full bg-clay"
-                    />
+                    <AmenityIcon name={iconFor(item)} />
                     {item}
                   </li>
                 ))}

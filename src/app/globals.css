@@ -606,6 +606,40 @@
     display: none;
   }
 
+  /*
+   * A scrollbar that belongs to this palette.
+   *
+   * For panels that scroll inside the page — the room dialog is the first —
+   * where the platform bar is a grey slab with no relationship to anything
+   * around it. Thin, inked at a tenth, and only as wide as it needs to be.
+   *
+   * `scrollbar-color` covers Firefox; the `::-webkit-` rules cover the rest.
+   * Both are needed and neither is enough on its own.
+   */
+  .u-scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(46 42 36 / 0.28) transparent;
+  }
+
+  .u-scrollbar-slim::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .u-scrollbar-slim::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .u-scrollbar-slim::-webkit-scrollbar-thumb {
+    background-clip: content-box;
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-color: rgb(46 42 36 / 0.22);
+  }
+
+  .u-scrollbar-slim::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(46 42 36 / 0.38);
+  }
+
   /* ---- Marquee ----------------------------------------------------------- */
 
   /*

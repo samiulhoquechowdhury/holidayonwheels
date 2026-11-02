@@ -127,7 +127,8 @@ type OpenMeteoEntry = {
  * Null rather than throwing, and null rather than a placeholder: a weather
  * strip showing invented numbers is worse than a page with no weather on it,
  * and the section that renders this simply does not appear when the upstream
- * is down. A travel page must not fall over because a forecast API did.
+ * is down, slow, rate-limited or unreachable. A travel page must not fall
+ * over because a forecast API did — and neither must a build.
  */
 export async function getStateWeather(): Promise<Record<
   StateSlug,
@@ -151,6 +152,22 @@ export async function getStateWeather(): Promise<Record<
       // Half an hour. A forecast that moves faster than that is noise, and
       // this way the whole site costs about 48 calls a day.
       next: { revalidate: 1800 },
+      /*
+       * Six seconds, then give up.
+       *
+       * `/destinations` is statically prerendered, so this call happens
+       * during `next build` — which means a third party's latency was on
+       * the critical path of our own build. Without a deadline a slow or
+       * hanging response does not degrade to "no weather strip", it hangs
+       * the build until the CI job is killed, and the same commit then
+       * builds in one workflow and fails in another for reasons nothing in
+       * the repository can explain.
+       *
+       * An abort lands in the `catch` below and returns null, which is
+       * already the documented behaviour for an upstream that is down. A
+       * forecast is the most expendable thing on the page; the page is not.
+       */
+      signal: AbortSignal.timeout(6000),
     });
     if (!response.ok) return null;
 

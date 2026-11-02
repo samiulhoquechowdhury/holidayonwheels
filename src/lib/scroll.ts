@@ -15,6 +15,17 @@ type LenisLike = {
     target: number,
     options?: { immediate?: boolean; duration?: number; force?: boolean },
   ) => void;
+  /**
+   * Pause and resume the smooth-scroll loop.
+   *
+   * A modal needs these. `dialog.showModal()` makes the page behind inert to
+   * pointer and keyboard input, but Lenis drives scrolling itself from wheel
+   * and touch events on the window and does not care that a dialog is open —
+   * so without `stop()` the page carries on scrolling underneath while you
+   * read, which is the one thing a modal is supposed to prevent.
+   */
+  stop?: () => void;
+  start?: () => void;
 };
 
 declare global {

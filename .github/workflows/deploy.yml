@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # No `version:` here on purpose. package.json pins
       # `packageManager: pnpm@9.15.9`, and pnpm/action-setup@v4 aborts the

@@ -133,8 +133,84 @@ riders who actually want a guided expedition from clicking away by mistake.
 
 Motorcycle **tours** stay in this repo. Only _rentals_ leave. Do not conflate them.
 
-Also absent by design: admin panel, real APIs, real payments. The payment step
-in checkout is mocked and says so on screen.
+Still absent by design: real payments. The payment step in checkout is mocked
+and says so on screen.
+
+No longer absent: **the admin, and the database behind it.** See § The office
+below.
+
+---
+
+## The office (`/admin`)
+
+An internal screen for the two things travellers send: contact messages and
+completed itineraries. Password-protected, `noindex`, and visually unlike the
+public site on purpose.
+
+### What it fixed on the way in
+
+The contact form and the planner's "Confirm booking" both used to call
+`setSent(true)` and nothing else. A traveller filled in their name, email,
+mobile and dates, was told _"We have it — someone will reply within one working
+day"_, and the message went nowhere: not emailed, not queued, not stored. That
+was the most serious defect in the project, because unlike every other
+placeholder it did not look like one. Both now acknowledge **only after the row
+exists**, and say so plainly when it does not.
+
+### Setting it up
+
+1. Create a Supabase project.
+2. Run `supabase/migrations/0001_enquiries_and_trip_requests.sql` in the SQL
+   editor. It is the record of what the live schema is — change the schema by
+   editing it, not in the dashboard.
+3. Copy `.env.example` to `.env.local` and fill in the four variables. The
+   session secret is its own random string, not the password:
+   `openssl rand -hex 32`.
+4. On Vercel, the same four go in Settings → Environment Variables.
+
+With the database unset the site still builds and runs; the admin says it is
+not configured rather than showing empty screens that look like no enquiries.
+
+### The security model
+
+RLS is on for both tables and **neither has a policy**, so `anon` can do
+nothing. The browser never talks to Supabase: every read and write goes
+through a server action holding the service-role key, which bypasses RLS.
+`src/lib/supabase.ts` opens with `import "server-only"` so importing it from a
+client component is a build error rather than a leaked key.
+
+Two consequences worth knowing:
+
+- **Every mutation re-checks the session.** `"use server"` publishes each
+  action as an HTTP endpoint anybody can post to; the layout's guard protects
+  rendering, not the actions behind the buttons.
+- **If a later phase queries from the browser, policies must be written
+  first.** Adding the anon key to a page without them would expose every
+  traveller's phone number.
+
+### The shared password
+
+One password, chosen knowingly over named accounts. It cannot tell you who did
+something and cannot be revoked for one person. Everything depending on that
+choice is behind `checkPassword` and `startSession` in
+`src/lib/admin-session.ts`; moving to named accounts replaces those two
+functions and adds a `staff` table, and no page, guard or cookie format
+changes.
+
+The guard lives in `src/app/admin/(guarded)/layout.tsx`, not in middleware —
+middleware runs on the edge runtime where `node:crypto` does not exist, and a
+guard that cannot verify a signature is not a guard. **Anything new that must
+be protected goes inside `(guarded)/`.** A page added at `app/admin/whatever/`
+would be as public as the login screen and would look identical in a browser.
+
+### Not built yet
+
+The second and third parts of the brief — editing homestay and tour content,
+and changing rates and availability without a deploy — are not here. They need
+their own tables and a migration path off `src/content/*.ts`, which the site
+currently builds against at compile time. Enquiries and itineraries went first
+because they are the part the business cannot operate without, and because
+they were actively losing customer data every day they were not built.
 
 ---
 
@@ -184,6 +260,15 @@ disallow direct pushes.
 
 ## Open questions still outstanding
 
+0. **No Supabase project exists yet, so the write path has never run against a
+   real database.** The schema, the server actions and the admin are written
+   and the _unconfigured_ path is tested end to end — signed-out access,
+   forged cookies, wrong passwords, empty states, sign-out. What is untested
+   is an actual `insert`: nobody has created the project or run
+   `0001_enquiries_and_trip_requests.sql`. Do that first and send one enquiry
+   and one itinerary through before this is treated as working. Until then the
+   forms refuse to acknowledge anything, which is correct but is not the same
+   as being finished.
 1. Final domain — `site.url` is a placeholder.
 2. **Which wordmark is correct.** The supplied logo reads "Holiday on Hill —
    Northeast India"; `site.name` is "Holidays on Wheels". The logo is wired in

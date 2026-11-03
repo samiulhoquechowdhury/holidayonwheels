@@ -4,6 +4,7 @@ import { site } from "@/config/site";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ChromeGate } from "@/components/layout/ChromeGate";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -68,12 +69,18 @@ export default function RootLayout({
         <a className="u-skip-link" href="#main">
           Skip to content
         </a>
-        <Header />
+        {/* Both gated: `/admin` is an internal tool and gets none of the
+            public site's furniture. See `ChromeGate`. */}
+        <ChromeGate>
+          <Header />
+        </ChromeGate>
         <main id="main">{children}</main>
         {/* Off while the planner is mid-flow — see `.u-flow-hide`. */}
-        <div className="u-flow-hide">
-          <Footer />
-        </div>
+        <ChromeGate>
+          <div className="u-flow-hide">
+            <Footer />
+          </div>
+        </ChromeGate>
       </body>
     </html>
   );

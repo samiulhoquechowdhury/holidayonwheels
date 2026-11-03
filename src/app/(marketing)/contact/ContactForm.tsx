@@ -11,6 +11,8 @@ import {
 import { Button } from "@/components/primitives/Button";
 import { Chip } from "@/components/primitives/Chip";
 import { getDestinations } from "@/content/destinations";
+import { submitEnquiry } from "./actions";
+import { site } from "@/config/site";
 
 /**
  * Enquiry form. No backend in this phase — it validates and acknowledges.
@@ -19,6 +21,8 @@ import { getDestinations } from "@/content/destinations";
 export function ContactForm() {
   const destinations = getDestinations();
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState<"unconfigured" | "failed" | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [values, setValues] = useState({
     name: "",
@@ -42,7 +46,7 @@ export function ContactForm() {
     document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
   }, [errors]);
 
-  function submit(event: React.FormEvent) {
+  async function submit(event: React.FormEvent) {
     event.preventDefault();
     const found: Record<string, string> = {};
     if (values.name.trim().length < 2) found.name = "Tell us what to call you.";
@@ -52,9 +56,42 @@ export function ContactForm() {
       found.message =
         "A couple of sentences at least — the more specific you are, the more useful our reply.";
     setErrors(found);
+    setFailed(null);
 
     if (Object.keys(found).length > 0) return;
-    setSent(true);
+
+    /*
+     * The acknowledgement waits for the write.
+     *
+     * This form used to call `setSent(true)` here and nothing else: it told
+     * everybody who filled it in that their message had been received when
+     * no message had been sent anywhere. That is the one kind of bug worth
+     * being slow about — "We have it" is now rendered only after the row
+     * exists, and every other outcome says plainly that it does not.
+     */
+    setSending(true);
+    const result = await submitEnquiry(values).catch(
+      () => ({ ok: false, reason: "failed" }) as const,
+    );
+    setSending(false);
+
+    if (result.ok) {
+      setSent(true);
+      return;
+    }
+
+    if (result.reason === "invalid") {
+      setErrors(result.errors);
+      return;
+    }
+
+    /*
+     * Both remaining reasons mean the same thing to the person reading:
+     * their message did not arrive. They differ for us — `unconfigured` is
+     * ours to fix and `failed` may pass on a retry — so the copy offers the
+     * phone and email that do work, which are on this same page.
+     */
+    setFailed(result.reason === "unconfigured" ? "unconfigured" : "failed");
   }
 
   if (sent) {
@@ -161,8 +198,37 @@ export function ContactForm() {
       </FieldSet>
 
       <div className="mt-12 border-t border-[var(--ink-hairline)] pt-8">
-        <Button type="submit" variant="primary" size="lg">
-          Send enquiry
+        {/*
+          A failure says so where the button is, not at the top of a long form
+          somebody has already scrolled past. `role="alert"` so a screen reader
+          hears it the moment it appears, since the button it sits beside has
+          just stopped being the thing in focus.
+        */}
+        {failed ? (
+          <p
+            role="alert"
+            className="mb-6 max-w-prose rounded-[var(--radius-input)] border border-clay bg-sand px-4 py-3 text-16 text-ink"
+          >
+            That did not send, and we would rather tell you than pretend. Email{" "}
+            <a
+              href={`mailto:${site.contact.email}`}
+              className="underline underline-offset-4"
+            >
+              {site.contact.email}
+            </a>{" "}
+            or call{" "}
+            <a
+              href={`tel:${site.contact.phone.replace(/\s+/g, "")}`}
+              className="underline underline-offset-4"
+            >
+              {site.contact.phone}
+            </a>
+            {failed === "failed" ? " — or try again in a moment." : "."}
+          </p>
+        ) : null}
+
+        <Button type="submit" variant="primary" size="lg" disabled={sending}>
+          {sending ? "Sending…" : "Send enquiry"}
         </Button>
         <p className="mt-4 max-w-prose text-14 text-ink-soft">
           We reply within one working day. We do not add you to a mailing list

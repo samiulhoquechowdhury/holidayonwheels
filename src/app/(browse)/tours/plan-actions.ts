@@ -4,6 +4,7 @@ import { planTrip, type PlanInput, type TripPlan } from "@/lib/plan";
 import { isPartyType } from "@/lib/party";
 import { getDestinationBySlug } from "@/content/destinations";
 import { nightsBetween, toISO } from "@/lib/date";
+import { saveTrip, type SaveTripResult } from "@/lib/trips";
 import type { StateSlug } from "@/content/types";
 
 /**
@@ -96,4 +97,20 @@ function isISODate(value: unknown): value is string {
 function clamp(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) return min;
   return Math.min(max, Math.max(min, value));
+}
+
+/**
+ * Store a completed itinerary.
+ *
+ * Separate from `planTripAction` on purpose: planning is read-only and
+ * happens several times as somebody changes their mind, while this happens
+ * once, at the end, and writes a row. Collapsing them would store nine drafts
+ * for every trip actually sent.
+ *
+ * The payload is re-validated in `saveTrip` against `tripSchema`, for the
+ * same reason stated at the top of this file — the client produced these
+ * values, which is exactly why they are not trusted.
+ */
+export async function submitTripAction(raw: unknown): Promise<SaveTripResult> {
+  return saveTrip(raw);
 }

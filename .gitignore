@@ -21,10 +21,12 @@
 # success while writing a tree with no BUILD_ID and missing CSS. The recovery
 # is to move the directory aside and rebuild; these are the leftovers of that.
 /.next.old.*/
-# Output of `NEXT_DIST_DIR=.next-verify pnpm build` — a verification build kept
-# apart from `.next` so it cannot clobber a running dev server. See
+# Output of any `NEXT_DIST_DIR=.next-<something>` build — a verification or
+# scratch build kept apart from `.next` so it cannot clobber a running dev
+# server. The glob rather than one entry per name: every new dist dir
+# otherwise shows up as 8,000 lint errors before anybody remembers why. See
 # next.config.ts.
-/.next-verify/
+/.next-*/
 
 # Reports written by `lhci autorun` when the audit is run locally.
 /.lighthouseci/
@@ -45,6 +47,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# …except the template, which carries no secrets and is the only record of
+# which variables the app needs. Ignoring it is how a new machine finds out
+# the hard way.
+!.env.example
 
 # vercel
 .vercel

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import { formatMedium } from "@/lib/date";
 import { Media } from "@/components/primitives/Media";
 import { Chip } from "@/components/primitives/Chip";
@@ -211,7 +211,7 @@ export function ResultCard({
                   dark && "text-night-text",
                 )}
               >
-                {formatINR(price)}
+                <Price rupees={price} />
               </span>
               <span className={cn("u-label", soft)}>
                 {priceUnit ?? DEFAULT_UNIT[variant]}

@@ -214,6 +214,49 @@ they were actively losing customer data every day they were not built.
 
 ---
 
+## Prices in another currency
+
+A switcher in the header shows every headline price in one of twelve foreign
+currencies beside the rupee figure: `₹3,400 (≈ $36) a night`.
+
+**The rupee figure never moves and never disappears.** That is the whole
+design rule, and it is a commercial one rather than a stylistic one: prices
+here are quoted, invoiced and charged in rupees, and a tour operator whose
+site appears to quote in dollars has to honour dollars. So the conversion is
+additive, marked `≈`, in quieter type, and every converted amount carries
+"charged in rupees" for assistive technology. The footer states it in words
+whenever a foreign currency is selected.
+
+### What is converted, and what is not
+
+Converted: the absolute prices a visitor evaluates or commits to — card
+"from" prices, per-person and per-night figures, booking totals, the deposit,
+the planner's grand total.
+
+Not converted: relative supplements such as `+₹1,800 / night` inside the day
+accordions. They modify a figure that is already shown converted, and
+doubling the text in the densest part of the planner would cost more than it
+gives. `/admin` and `/account` stay in rupees throughout — one is internal,
+the other shows bookings already made.
+
+### How it works
+
+Rates come from `open.er-api.com` once per six hours, fetched **on the
+server** in the root layout and handed down as a prop, so switching currency
+costs no request at all. `getRates` returns `null` on any failure and every
+consumer treats null as "rupees only" — the switcher does not even render.
+It has a six-second timeout for the same reason the weather call does.
+
+The _choice_ lives in `localStorage`, not a cookie, and the context is a
+client component. Reading a cookie on the server would opt every route that
+shows a price out of static rendering, which is nearly all of them — 191
+prerendered pages to change the symbol in front of a number. The honest
+consequence: first paint is always rupees and the chosen currency appears a
+moment later. Rupees is the right thing to show before we know, because
+rupees is what the price is.
+
+---
+
 ## Media
 
 No photography or video exists yet — see **[MEDIA.md](MEDIA.md)** for the full
@@ -299,6 +342,11 @@ disallow direct pushes.
    - `OPEN_METEO_API_KEY` — the destinations page's live weather. The free
      endpoint is explicitly non-commercial. Setting the key switches the host
      to `customer-api.open-meteo.com`; see `lib/weather.ts`.
+   - **exchangerate-api.com** — the currency switcher's rates. The keyless
+     `open.er-api.com` tier requires attribution, which is rendered in the
+     footer, but its terms should be checked for commercial use before
+     launch. A paid key changes one URL in `src/lib/fx.ts`; without any
+     rates the switcher simply does not render and prices stay in rupees.
    - `NEXT_PUBLIC_MAP_TILE_URL` — the map under each homestay. It currently
      falls back to `tile.openstreetmap.org`, whose usage policy covers
      development, not a commercial site. Point it at MapTiler, Thunderforest

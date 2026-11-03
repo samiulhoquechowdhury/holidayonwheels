@@ -11,7 +11,7 @@ import {
 } from "@/components/primitives/LuxeButton";
 import { getFeaturedMotorcycleTours } from "@/content/motorcycle-tours";
 import { motoShots, editorial } from "@/config/showcase";
-import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 
 /**
  * The one dark band on the page.
@@ -131,7 +131,7 @@ export function ExpeditionBand() {
                   </span>
                   <span className="flex items-end justify-between gap-4">
                     <span className="u-num u-label text-clay">
-                      From {formatINR(tour.fromPrice)}
+                      From <Price rupees={tour.fromPrice} />
                     </span>
                     <ArrowButton tone="paper" className="size-10" />
                   </span>

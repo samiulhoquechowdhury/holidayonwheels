@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CurrencySwitcher } from "@/components/currency/CurrencySwitcher";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   motion,
@@ -180,6 +181,14 @@ export function Header() {
            * shows at every width — signing in is not a desktop-only thing.
            */}
           <div className="flex shrink-0 items-center gap-2 md:gap-3">
+            {/*
+             * Hidden below `sm`. On a phone the bar already carries the
+             * wordmark, the account control and the menu toggle, and a fourth
+             * control squeezes the first three; the same switcher sits in the
+             * drawer, which is where a phone's secondary controls belong.
+             * It renders nothing at all if rates are unavailable.
+             */}
+            <CurrencySwitcher className="max-sm:hidden" />
             <AccountButton />
             <div className="xl:hidden">
               <StairToggle

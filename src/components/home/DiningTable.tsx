@@ -4,7 +4,7 @@ import { SectionHeader } from "@/components/layout/SectionHeader";
 import { Rise } from "@/components/motion/Rise";
 import { ArrowButton } from "@/components/primitives/LuxeButton";
 import { diningExperiences } from "@/config/dining";
-import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import { cn } from "@/lib/cn";
 import type { DiningExperience } from "@/config/dining";
 
@@ -146,7 +146,7 @@ function DiningCard({
           <div className="min-w-0">
             <p className="u-label text-ink-faint">{item.where}</p>
             <p className="u-num u-label mt-2 text-clay-ink">
-              From {formatINR(item.fromPrice)} per person
+              From <Price rupees={item.fromPrice} /> per person
             </p>
           </div>
           {feature ? <ArrowButton tone="ink" /> : null}

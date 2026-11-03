@@ -15,6 +15,7 @@ import {
 } from "@/content/activities";
 import { activityShots } from "@/config/showcase";
 import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import type { Activity } from "@/content/types";
 
 export function generateStaticParams() {
@@ -202,7 +203,7 @@ function ActivityPanel({ activity }: { activity: Activity }) {
     <div className="rounded-[var(--radius-panel)] border border-[var(--ink-hairline)] bg-paper p-7">
       <p className="u-label text-ink-faint">From</p>
       <p className="u-num mt-2 font-display text-48 leading-none">
-        {formatINR(activity.fromPrice)}
+        <Price rupees={activity.fromPrice} variant="stacked" />
       </p>
       <p className="mt-2 text-14 text-ink-soft">per person</p>
 

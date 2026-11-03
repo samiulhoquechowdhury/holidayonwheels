@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import { formatLong, formatMedium, formatRange } from "@/lib/date";
 import { Chip } from "@/components/primitives/Chip";
 import { Accent } from "@/components/primitives/Accent";
@@ -293,7 +294,7 @@ export function PlannerResult({
                       {extras.total > 0 ? "Total, with your choices" : "Total"}
                     </p>
                     <p className="u-num mt-1 text-28">
-                      {formatINR(grandTotal)}
+                      <Price rupees={grandTotal} variant="stacked" />
                     </p>
                   </div>
                 </div>
@@ -376,7 +377,7 @@ export function PlannerResult({
           >
             <p className="u-label text-ink-faint">The trip</p>
             <p className="u-num mt-3 font-display text-48 leading-none">
-              {formatINR(plan.quote.perAdult)}
+              <Price rupees={plan.quote.perAdult} />
               <span className="ml-2 font-sans text-14 text-ink-soft">
                 per adult
               </span>
@@ -445,11 +446,13 @@ export function PlannerResult({
 
             <div className="mt-6 flex items-baseline justify-between gap-4 border-t border-[var(--ink-hairline)] pt-6">
               <span className="text-16">Total</span>
-              <span className="u-num text-22">{formatINR(grandTotal)}</span>
+              <span className="u-num text-22">
+                <Price rupees={grandTotal} />
+              </span>
             </div>
             <p className="mt-3 text-14 text-ink-soft">
-              {formatINR(deposit)} confirms it; the balance is due six weeks
-              before you fly.
+              <Price rupees={deposit} /> confirms it; the balance is due six
+              weeks before you fly.
             </p>
 
             <p className="mt-6 border-t border-[var(--ink-hairline)] pt-5 text-12 text-ink-faint">
@@ -539,7 +542,7 @@ export function PlannerResult({
                     {match.strapline}
                   </span>
                   <span className="u-num mt-4 block text-16">
-                    From {formatINR(match.fromPrice)}
+                    From <Price rupees={match.fromPrice} />
                     {match.nextDeparture ? (
                       <span className="u-label ml-3 text-ink-faint">
                         next {formatMedium(match.nextDeparture)}
@@ -578,7 +581,7 @@ export function PlannerResult({
               {extras.total > 0 ? "Total, with your extras" : "Total"}
             </span>
             <span className="u-num block truncate text-18">
-              {formatINR(grandTotal)}
+              <Price rupees={grandTotal} />
             </span>
           </span>
           <LuxeButton

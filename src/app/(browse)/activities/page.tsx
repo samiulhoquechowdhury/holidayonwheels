@@ -17,7 +17,7 @@ import {
 } from "@/content/activities";
 import { activityShots } from "@/config/showcase";
 import { paletteCycle } from "@/config/palette";
-import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 
 export const metadata: Metadata = {
   title: "Things to do around Guwahati",
@@ -94,7 +94,7 @@ export default function ActivitiesPage() {
               </Point>
               <Point term="The price is per person">
                 Transport from your hotel, the guide and entry fees are in it.
-                From {formatINR(range.fromPrice)}.
+                From <Price rupees={range.fromPrice} />.
               </Point>
               <Point term="Added to a trip, or on its own">
                 Most people slot one into a spare morning. You do not need to be
@@ -147,7 +147,7 @@ export default function ActivitiesPage() {
                     <span>{distanceLabel(lead.distanceKm)}</span>
                     <span aria-hidden="true">·</span>
                     <span className="u-num text-clay-ink">
-                      From {formatINR(lead.fromPrice)}
+                      From <Price rupees={lead.fromPrice} />
                     </span>
                   </span>
                 </span>
@@ -278,7 +278,7 @@ export default function ActivitiesPage() {
                       </Cell>
                       <Cell label="When">{activity.bestTime}</Cell>
                       <span className="u-num text-16 md:text-right">
-                        {formatINR(activity.fromPrice)}
+                        <Price rupees={activity.fromPrice} />
                       </span>
                     </Link>
                   </li>

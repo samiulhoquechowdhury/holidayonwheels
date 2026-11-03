@@ -10,7 +10,7 @@ import {
 import { getFeaturedHomestays } from "@/content/homestays";
 import { getDestinationName } from "@/content/destinations";
 import { stayShots, faces } from "@/config/showcase";
-import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 
 /**
  * Homestays.
@@ -171,7 +171,7 @@ export function StayStack() {
                       {stay.locality} · hosted by {stay.hostName}
                     </span>
                     <span className="u-num u-label mt-4 block text-clay-ink">
-                      {formatINR(stay.fromPrice)} a night
+                      <Price rupees={stay.fromPrice} /> a night
                     </span>
                   </span>
                   <ArrowButton tone="glass" className="size-10" />

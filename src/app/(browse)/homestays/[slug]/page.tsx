@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
@@ -6,6 +7,8 @@ import { Reveal } from "@/components/layout/Reveal";
 import { Media } from "@/components/primitives/Media";
 import { StayBookingWidget } from "@/components/booking/StayBookingWidget";
 import { Amenities } from "@/components/homestays/Amenities";
+import { HouseFacts } from "@/components/homestays/HouseFacts";
+import { HouseGallery } from "@/components/homestays/HouseGallery";
 import { HouseLocator } from "@/components/homestays/LocatorMap";
 import { StayCard, TourCard } from "@/components/cards/ResultCard";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
@@ -43,14 +46,6 @@ export async function generateMetadata({
  * houses; here there is room to say what you will be eating and with whom,
  * which on a homestay is most of the decision.
  */
-/** The two-word label, for the specs line. */
-const MEALS: Record<MealPlan, string> = {
-  "full-board": "All meals",
-  "half-board": "Breakfast and dinner",
-  breakfast: "Breakfast",
-  none: "No meals",
-};
-
 const MEALS_NOTE: Record<MealPlan, string> = {
   "full-board":
     "All three meals are cooked in the house and eaten with the family. Tell us about anything you cannot eat and the kitchen will work around it.",
@@ -77,6 +72,12 @@ export default async function HomestayPage({
   const nearby = getHomestaysByState(stay.state).filter((s) => s.slug !== slug);
   const tours = getToursByState(stay.state).slice(0, 3);
   const stateName = getDestinationName(stay.state);
+  /* Hero first, then the rest of the set. `filter` because `image` is
+     optional on the type and a hole in the middle of a strip is worse than
+     a shorter strip. */
+  const gallery = [stay.image, ...(stay.gallery ?? [])].filter(
+    (src): src is string => Boolean(src),
+  );
 
   return (
     <>
@@ -92,42 +93,106 @@ export default async function HomestayPage({
            * Deliberately not wrapped in `Reveal` — this is the LCP element
            * and a scroll reveal starts at opacity 0.
            */}
-          <h1 className="lg:text-56 max-w-3xl text-36">{stay.name}</h1>
-          <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-16 text-ink-soft">
+          {/* The way back to the list you came from. A detail page reached
+              by a click needs a way out that is not the browser's back
+              button — there was none, which on a phone meant the only route
+              back to the other three houses was the main navigation. */}
+          <Link
+            href="/homestays"
+            className="u-label inline-flex min-h-9 items-center gap-2 text-ink-faint transition-colors hover:text-ink"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="size-3.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M14 6 8 12l6 6" />
+            </svg>
+            All homestays
+          </Link>
+
+          <h1 className="lg:text-56 mt-4 max-w-3xl text-36">{stay.name}</h1>
+
+          {/*
+           * Separators between the items, not after them.
+           *
+           * This was `<span>·</span>` siblings in a wrapping flex row, which
+           * on a 390px phone wrapped after "94 reviews" and left the middot
+           * stranded at the end of the line with nothing following it. The
+           * separator now belongs to the item it precedes, so it wraps with
+           * it and can never end a line.
+           */}
+          <p className="mt-4 flex flex-wrap items-center text-16 text-ink-soft">
             <span className="u-num">
               <span aria-hidden="true" className="text-clay-ink">
                 ★
               </span>{" "}
               {stay.rating.toFixed(1)}
             </span>
-            <span aria-hidden="true">·</span>
-            <span className="u-num">{stay.reviewCount} reviews</span>
-            <span aria-hidden="true">·</span>
-            <span>
+            <span className="u-num">
+              <span aria-hidden="true" className="px-3">
+                ·
+              </span>
+              {stay.reviewCount} reviews
+            </span>
+            {/*
+              The locality takes its own line on a phone, with no separator.
+              Attaching the separator to the item it precedes stopped it
+              being stranded at the end of a line and promptly stranded it at
+              the *start* of the next one instead — a dangling middot either
+              way. Below `sm` there is no separator to dangle, because there
+              is nothing beside it to separate.
+            */}
+            <span className="w-full sm:w-auto">
+              <span aria-hidden="true" className="hidden px-3 sm:inline">
+                ·
+              </span>
               {stay.locality}, {stateName}
             </span>
           </p>
 
+          {/* The specs, above the fold rather than buried in the first
+              paragraph block a thousand pixels down. See `HouseFacts`. */}
+          <HouseFacts stay={stay} className="mt-6" />
+
           {/*
-           * One photograph, wide.
+           * The photographs.
            *
-           * Airbnb runs a five-up grid here with "show all photos" over it.
-           * There is one photograph per house in the content, and filling
-           * four more slots with generated placeholder art would read as
-           * four more rooms nobody has seen. One real picture, given the
-           * width the grid would have had.
+           * Where a house has a set, this is a capped frame with a strip of
+           * squares under it — see `HouseGallery` for why the big one is
+           * shorter than it was and why the thumbnails are square.
+           *
+           * Where it has only the one, `Media` still renders it, because
+           * `Media` is also the tier that holds the aspect ratio when there
+           * is no image at all. A single-photograph house gets a single
+           * photograph rather than a strip padded out with stock that
+           * belongs to no particular building.
            */}
-          <div className="mt-8 overflow-hidden rounded-[var(--radius-media)]">
-            <Media
+          {gallery.length > 1 ? (
+            <HouseGallery
+              images={gallery}
               alt={stay.heroAlt}
-              src={stay.image}
-              seed={stay.slug}
-              region={stay.region}
-              aspect="16/9"
-              priority
-              sizes="(max-width: 1024px) 100vw, 1200px"
+              className="mt-8"
             />
-          </div>
+          ) : (
+            <div className="mt-8 overflow-hidden rounded-[var(--radius-media)]">
+              <Media
+                alt={stay.heroAlt}
+                src={stay.image}
+                seed={stay.slug}
+                region={stay.region}
+                aspect="16/9"
+                priority
+                sizes="(max-width: 1024px) 100vw, 1200px"
+                className="h-[clamp(14rem,46vh,30rem)]"
+              />
+            </div>
+          )}
         </div>
 
         <div className="u-container pt-14 pb-24 lg:pt-20 lg:pb-36">
@@ -139,15 +204,10 @@ export default async function HomestayPage({
                   {stay.bedrooms === 1 ? "A room" : "A house"} kept by{" "}
                   {stay.hostName}
                 </h2>
-                <p className="u-label mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-faint">
-                  <span>Sleeps {stay.maxGuests}</span>
-                  <span aria-hidden="true">·</span>
-                  <span>
-                    {stay.bedrooms} {stay.bedrooms === 1 ? "room" : "rooms"}
-                  </span>
-                  <span aria-hidden="true">·</span>
-                  <span>{MEALS[stay.mealsIncluded]}</span>
-                </p>
+                {/* The specs line that used to sit here now sits under the
+                    title as `HouseFacts`, where somebody can read it before
+                    scrolling. Repeating it here would be the same four facts
+                    twice on one screen. */}
                 <p className="mt-6 max-w-prose text-18 text-ink-soft">
                   {stay.intro}
                 </p>

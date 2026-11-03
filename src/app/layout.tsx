@@ -36,6 +36,33 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={fontVariables}>
+      <head>
+        {/*
+         * Open the connection to the image host before anything asks for an
+         * image.
+         *
+         * Every photograph on the site is served from this origin, and the
+         * one above the fold is the LCP element on most routes. Without a
+         * hint the browser only starts DNS, TCP and TLS when it parses that
+         * `<img>`, which on a throttled connection is three round trips of
+         * nothing happening — `/tours/[slug]` was painting its first content
+         * in 0.4s and its largest in 3.1s, with no main-thread work in
+         * between to explain the gap.
+         *
+         * `crossOrigin` is required: images are fetched anonymously, and a
+         * preconnect without it opens a *different* connection from the one
+         * the fetch then uses, so the warm socket goes unused.
+         *
+         * This goes when the photography moves to `public/media/` and the
+         * origin becomes our own — see MEDIA.md.
+         */}
+        <link
+          rel="preconnect"
+          href="https://images.unsplash.com"
+          crossOrigin=""
+        />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+      </head>
       <body>
         <SmoothScroll />
         <a className="u-skip-link" href="#main">

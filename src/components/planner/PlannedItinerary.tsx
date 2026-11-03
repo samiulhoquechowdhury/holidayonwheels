@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import { STANDARD_EXCLUDES, STANDARD_INCLUDES } from "@/content/inclusions";
+import type { StayOption } from "@/content/day-options";
+import { StayDetailsDialog } from "./StayDetailsDialog";
 import { cn } from "@/lib/cn";
 import { formatINR } from "@/lib/currency";
 import { formatLong, formatShort, formatWeekday } from "@/lib/date";
@@ -386,11 +387,7 @@ export function PlannedItinerary({
                                   ? "Included"
                                   : `+${formatINR(option.supplement)} / night`
                               }
-                              detailHref={
-                                option.homestaySlug
-                                  ? `/homestays/${option.homestaySlug}`
-                                  : `/stays/${option.id}`
-                              }
+                              details={option}
                               colour={colour}
                               ink={ink}
                             />
@@ -664,7 +661,7 @@ function PickCard({
   image,
   badge,
   price,
-  detailHref,
+  details,
   colour,
   ink,
 }: {
@@ -679,7 +676,14 @@ function PickCard({
   badge: string;
   price: string;
   /** Renders a "view details" link under the card where there is a page. */
-  detailHref?: string;
+  /**
+   * The room this card is for, where there is one.
+   *
+   * Only stays pass it — a meeting point and a vehicle have nothing more to
+   * say than the card already says. Its presence is what puts "view details"
+   * on the card.
+   */
+  details?: StayOption;
   colour: string;
   ink: string;
 }) {
@@ -757,22 +761,11 @@ function PickCard({
       </label>
 
       {/*
-       * Outside the label, deliberately. A link inside a `<label>` still
-       * toggles the control it belongs to, so "view details" would have
+       * Outside the label, deliberately. A control inside a `<label>` still
+       * toggles the input it belongs to, so "view details" would have
        * silently changed the night's room on the way out.
        */}
-      {detailHref ? (
-        <Link
-          href={detailHref}
-          className={cn(
-            "u-label mt-1.5 inline-block text-ink-faint underline underline-offset-4",
-            "transition-colors duration-[var(--dur-micro)] ease-brand hover:text-ink",
-            FOCUS,
-          )}
-        >
-          View details
-        </Link>
-      ) : null}
+      {details ? <StayDetailsDialog stay={details} /> : null}
     </div>
   );
 }

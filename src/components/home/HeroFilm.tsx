@@ -113,7 +113,17 @@ export function HeroFilm({
             playing ? "opacity-100" : "opacity-0",
           )}
           src={film.src}
-          poster={film.poster}
+          /*
+           * No `poster` here on purpose.
+           *
+           * The `next/image` above is the poster, sized and served at the
+           * width it is drawn at. Setting the attribute as well made the
+           * browser fetch the same photograph a second time at its full
+           * original resolution — 1.4MB on the home page — to paint it
+           * underneath a `<video>` that is `opacity-0` until it plays, so
+           * nobody ever saw it. It was the second-largest request on the
+           * page after the footage itself.
+           */
           autoPlay
           muted
           loop

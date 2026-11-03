@@ -13,12 +13,25 @@
   /* ---- Ink ---------------------------------------------------------------
      Warm, never black. #000 on a sand ground reads as a hole punched in the
      page; the darkest ink here is a deep clay-brown that sits *in* the paper.
-     The three steps are checked against every surface below — `--ink-faint`
-     carries 12px metadata and clears AA (4.5:1) against `--sand`, the
-     lowest-contrast ground it can land on. Do not lighten it. */
+     The three steps are checked against every surface below. `--ink-faint`
+     carries 12px metadata, so it has to clear AA (4.5:1) against `--sand`,
+     the lowest-contrast ground it can land on. Do not lighten either of the
+     lower two steps without re-measuring all three grounds.
+
+     Measured, not assumed:
+
+       --ink-soft   paper 6.65  shell 6.15  sand 5.64
+       --ink-faint  paper 5.38  shell 4.97  sand 4.56
+
+     The previous values were #6b6358 and #736b5f, and the comment here
+     claimed the same thing this one does. It was not true: faint measured
+     4.17 against sand and Lighthouse failed the accessibility budget on
+     every page with a sand section in it. Both steps moved down together so
+     the gap between them survives — at the old values they were eight
+     points apart and barely distinguishable anyway. */
   --ink: #2e2a24;
-  --ink-soft: #6b6358;
-  --ink-faint: #736b5f;
+  --ink-soft: #5e5750;
+  --ink-faint: #6d6559;
 
   /* ---- Surfaces ----------------------------------------------------------
      Four, in order of depth. Most of the site is `--paper`; `--shell` is the

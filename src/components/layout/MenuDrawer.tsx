@@ -5,6 +5,7 @@ import { useEffect, useRef, type RefObject } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Logo } from "./Logo";
 import { primaryNav, secondaryNav, legalNav } from "@/config/nav";
+import { CurrencySwitcher } from "@/components/currency/CurrencySwitcher";
 import { ButtonLink } from "@/components/primitives/Button";
 import { OutboundLink } from "@/components/primitives/OutboundLink";
 import { BEEPDRIVE_URL } from "@/config/external";
@@ -218,6 +219,23 @@ export function MenuDrawer({
                   <ButtonLink href="/destinations#plan" size="lg" block>
                     Plan a trip
                   </ButtonLink>
+                </div>
+
+                {/*
+                  The currency switcher, for the widths where the header has
+                  no room for it.
+
+                  Below `sm` the bar is already carrying the mark, the
+                  account control and the menu toggle, so the switcher is
+                  hidden there — and without this it was hidden *and*
+                  nowhere else, which left the feature unreachable on a phone
+                  for exactly the visitors it exists for. It renders nothing
+                  at all when rates are unavailable, so this row disappears
+                  with it rather than labelling an absent control.
+                */}
+                <div className="mt-8 flex items-center justify-between gap-4 sm:hidden">
+                  <span className="u-label text-ink-soft">Show prices in</span>
+                  <CurrencySwitcher />
                 </div>
 
                 {/* The two links here are the only ones in the sheet a thumb

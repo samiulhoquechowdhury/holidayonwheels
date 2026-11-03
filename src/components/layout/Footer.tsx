@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { site } from "@/config/site";
 import { footerNav, legalNav } from "@/config/nav";
+import { CurrencyNote } from "@/components/currency/CurrencySwitcher";
 import { Logo } from "./Logo";
 import { OutboundLink } from "@/components/primitives/OutboundLink";
 import { ButtonLink } from "@/components/primitives/Button";
@@ -122,7 +123,16 @@ export function Footer() {
         </div>
 
         {/* ---- Legal ----------------------------------------------------- */}
-        <div className="mt-20 flex flex-col gap-6 border-t border-[var(--night-hairline)] pt-10 lg:flex-row lg:items-center lg:justify-between">
+        {/*
+          The currency caveat and the rate provider's attribution, which its
+          free tier requires. Renders nothing while prices are in rupees —
+          there is no conversion to qualify — and sits above the copyright
+          line because it is a statement about the prices on the page, not a
+          credit.
+        */}
+        <CurrencyNote className="mt-16 max-w-prose text-night-text-soft" />
+
+        <div className="mt-10 flex flex-col gap-6 border-t border-[var(--night-hairline)] pt-10 lg:flex-row lg:items-center lg:justify-between">
           <p className="u-label text-night-text-soft">
             © {year} {site.name}
           </p>

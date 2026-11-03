@@ -4,6 +4,9 @@ import { site } from "@/config/site";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ChromeGate } from "@/components/layout/ChromeGate";
+import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
+import { getRates } from "@/lib/fx";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -31,9 +34,19 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  /*
+   * Exchange rates, fetched once and handed to the whole tree.
+   *
+   * On the server, and cached for six hours, so switching currency costs no
+   * request at all — the rates are already in the page. `getRates` returns
+   * null on any failure and every consumer treats null as "rupees only", so
+   * this cannot break a page or a build: it has a six-second timeout for the
+   * same reason the weather call does.
+   */
+  const rates = await getRates();
   return (
     <html lang="en" className={fontVariables}>
       <head>
@@ -64,16 +77,24 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
       <body>
-        <SmoothScroll />
-        <a className="u-skip-link" href="#main">
-          Skip to content
-        </a>
-        <Header />
-        <main id="main">{children}</main>
-        {/* Off while the planner is mid-flow — see `.u-flow-hide`. */}
-        <div className="u-flow-hide">
-          <Footer />
-        </div>
+        <CurrencyProvider rates={rates}>
+          <SmoothScroll />
+          <a className="u-skip-link" href="#main">
+            Skip to content
+          </a>
+          {/* Both gated: `/admin` is an internal tool and gets none of the
+            public site's furniture. See `ChromeGate`. */}
+          <ChromeGate>
+            <Header />
+          </ChromeGate>
+          <main id="main">{children}</main>
+          {/* Off while the planner is mid-flow — see `.u-flow-hide`. */}
+          <ChromeGate>
+            <div className="u-flow-hide">
+              <Footer />
+            </div>
+          </ChromeGate>
+        </CurrencyProvider>
       </body>
     </html>
   );

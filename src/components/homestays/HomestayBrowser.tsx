@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import { LocatorMap } from "@/components/homestays/LocatorMap";
 import type { Homestay, MealPlan } from "@/content/types";
 
@@ -250,7 +250,9 @@ function HouseCard({ stay, priority }: { stay: Homestay; priority?: boolean }) {
       </span>
 
       <span className="mt-3 block text-16">
-        <span className="u-num font-medium">{formatINR(stay.fromPrice)}</span>{" "}
+        <span className="u-num font-medium">
+          <Price rupees={stay.fromPrice} />
+        </span>{" "}
         <span className="text-ink-soft">a night</span>
       </span>
 

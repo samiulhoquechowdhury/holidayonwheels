@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { formatShort } from "@/lib/date";
-import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import type { TripPlan } from "@/lib/plan";
 
 /**
@@ -74,7 +74,7 @@ export function LocalPicks({
                     <p className="u-label u-num mt-2 text-ink-faint">
                       {formatShort(event.startDate)} –{" "}
                       {formatShort(event.endDate)} · from{" "}
-                      {formatINR(event.fromPrice)}
+                      <Price rupees={event.fromPrice} />
                     </p>
                   </Link>
                 </li>
@@ -137,7 +137,7 @@ function Places({ places }: { places: TripPlan["localPicks"]["cafes"] }) {
           <p className="mt-1 text-14 text-ink-soft">{place.note}</p>
           {place.fromPrice ? (
             <p className="u-label u-num mt-2 text-ink-faint">
-              About {formatINR(place.fromPrice)} a head
+              About <Price rupees={place.fromPrice} /> a head
             </p>
           ) : null}
         </li>

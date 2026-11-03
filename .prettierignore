@@ -1,5 +1,6 @@
 .next
-.next-verify
+# Any alternate dist dir from NEXT_DIST_DIR=.next-<something>.
+.next-*
 .lighthouseci
 node_modules
 pnpm-lock.yaml

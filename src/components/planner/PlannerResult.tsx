@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import { formatLong, formatMedium, formatRange } from "@/lib/date";
 import { Chip } from "@/components/primitives/Chip";
 import { Accent } from "@/components/primitives/Accent";
@@ -62,7 +63,18 @@ export function PlannerResult({
 }: {
   plan: TripPlan;
   sent: boolean;
-  onSend: () => void;
+  /**
+   * Store the itinerary. Resolves `true` once the row exists.
+   *
+   * The selections and the two totals are computed in here, so they have to
+   * travel up — the parent holds the traveller's details and the plan, and
+   * neither half can write the row alone.
+   */
+  onSend: (detail: {
+    selections: Selections;
+    total: number;
+    deposit: number;
+  }) => Promise<boolean>;
   onChangeDates: () => void;
   onRestart: () => void;
 }) {
@@ -89,6 +101,8 @@ export function PlannerResult({
    * component on `plan.reference`, so a re-planned trip gets fresh
    * selections rather than carrying a Sikkim lodge onto a Meghalaya day.
    */
+  const [sending, setSending] = useState(false);
+  const [sendFailed, setSendFailed] = useState(false);
   const [selections, setSelections] = useState<Selections>(() =>
     defaultSelections(plan.dayOptions),
   );
@@ -107,8 +121,26 @@ export function PlannerResult({
    * that succeeds somewhere off-screen looks exactly like one that did
    * nothing.
    */
-  function send() {
-    onSend();
+  async function send() {
+    setSendFailed(false);
+    setSending(true);
+    const stored = await onSend({ selections, total: grandTotal, deposit });
+    setSending(false);
+
+    /*
+     * The confirmation is shown only if the row exists.
+     *
+     * This used to call `onSend()` and scroll, with nothing in between — the
+     * traveller was told their itinerary had been sent whether or not
+     * anything had been stored. A quote with somebody's dates, party and
+     * total on it is the last thing on this site that should be acknowledged
+     * optimistically.
+     */
+    if (!stored) {
+      setSendFailed(true);
+      return;
+    }
+
     requestAnimationFrame(() => {
       const block = document.getElementById("plan-confirm");
       if (block) glideToElement(block);
@@ -262,7 +294,7 @@ export function PlannerResult({
                       {extras.total > 0 ? "Total, with your choices" : "Total"}
                     </p>
                     <p className="u-num mt-1 text-28">
-                      {formatINR(grandTotal)}
+                      <Price rupees={grandTotal} variant="stacked" />
                     </p>
                   </div>
                 </div>
@@ -275,6 +307,21 @@ export function PlannerResult({
                  * nobody was ready to make. The reassurance sits beside it,
                  * where the eye goes just before the click.
                  */}
+                {/* A send that did not land says so here, beside the button
+                    that failed, and keeps the itinerary on screen so nothing
+                    anybody spent ten minutes choosing is lost. */}
+                {sendFailed ? (
+                  <p
+                    role="alert"
+                    className="mt-5 rounded-[var(--radius-input)] border border-ember px-4 py-3 text-16 text-ember-ink"
+                  >
+                    That did not send, and your itinerary has not reached us.
+                    Nothing on this page has been lost — try again in a moment,
+                    or call us and read out the reference{" "}
+                    <span className="u-num">{plan.reference}</span>.
+                  </p>
+                ) : null}
+
                 <div className="mt-5 flex flex-col gap-3 border-t border-[var(--ink-hairline)] pt-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
                   <p className="text-14 text-ink-faint lg:max-w-xs">
                     No payment now — we confirm availability and the final price
@@ -290,13 +337,14 @@ export function PlannerResult({
                   <LuxeButton
                     variant="clay"
                     onClick={send}
+                    disabled={sending}
                     // Desktop only. Below `lg` the pinned bar at the foot of the
                     // screen carries this same button, and two "Confirm
                     // booking" buttons on one phone screen reads as two
                     // different things to press.
                     className="shrink-0 max-lg:hidden"
                   >
-                    Confirm booking
+                    {sending ? "Sending…" : "Confirm booking"}
                   </LuxeButton>
                 </div>
               </div>
@@ -329,7 +377,7 @@ export function PlannerResult({
           >
             <p className="u-label text-ink-faint">The trip</p>
             <p className="u-num mt-3 font-display text-48 leading-none">
-              {formatINR(plan.quote.perAdult)}
+              <Price rupees={plan.quote.perAdult} />
               <span className="ml-2 font-sans text-14 text-ink-soft">
                 per adult
               </span>
@@ -398,11 +446,13 @@ export function PlannerResult({
 
             <div className="mt-6 flex items-baseline justify-between gap-4 border-t border-[var(--ink-hairline)] pt-6">
               <span className="text-16">Total</span>
-              <span className="u-num text-22">{formatINR(grandTotal)}</span>
+              <span className="u-num text-22">
+                <Price rupees={grandTotal} />
+              </span>
             </div>
             <p className="mt-3 text-14 text-ink-soft">
-              {formatINR(deposit)} confirms it; the balance is due six weeks
-              before you fly.
+              <Price rupees={deposit} /> confirms it; the balance is due six
+              weeks before you fly.
             </p>
 
             <p className="mt-6 border-t border-[var(--ink-hairline)] pt-5 text-12 text-ink-faint">
@@ -492,7 +542,7 @@ export function PlannerResult({
                     {match.strapline}
                   </span>
                   <span className="u-num mt-4 block text-16">
-                    From {formatINR(match.fromPrice)}
+                    From <Price rupees={match.fromPrice} />
                     {match.nextDeparture ? (
                       <span className="u-label ml-3 text-ink-faint">
                         next {formatMedium(match.nextDeparture)}
@@ -531,11 +581,16 @@ export function PlannerResult({
               {extras.total > 0 ? "Total, with your extras" : "Total"}
             </span>
             <span className="u-num block truncate text-18">
-              {formatINR(grandTotal)}
+              <Price rupees={grandTotal} />
             </span>
           </span>
-          <LuxeButton variant="clay" onClick={send} className="shrink-0">
-            Confirm booking
+          <LuxeButton
+            variant="clay"
+            onClick={send}
+            disabled={sending}
+            className="shrink-0"
+          >
+            {sending ? "Sending…" : "Confirm booking"}
           </LuxeButton>
         </div>
       ) : null}

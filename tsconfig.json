@@ -29,5 +29,11 @@
     "next-env.d.ts",
     ".next-verify/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  // `**/*.ts` sweeps the whole tree, so any alternate dist dir created with
+  // NEXT_DIST_DIR — `.next-verify`, `.next-admin` — gets typechecked too, and
+  // its generated route types go stale the moment a file moves. Next also
+  // appends each such directory to `include` on its own when it builds. Both
+  // are excluded here; the real build's types under `.next/types` are the
+  // ones that matter and stay.
+  "exclude": ["node_modules", ".next-*"]
 }

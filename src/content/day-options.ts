@@ -60,6 +60,13 @@ export type StayOption = {
    * arrives.
    */
   image: string;
+  /**
+   * The rest of the set, after `image`: the bathroom, somewhere to sit, the
+   * building from outside. Unset falls back to the placeholders for the
+   * `kind` — see `roomGalleries` — so a property that gets photographed
+   * properly gets its own strip by setting this one field and nothing else.
+   */
+  gallery?: string[];
 };
 
 export type ActivityOption = {

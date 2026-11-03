@@ -3,7 +3,7 @@ import { HeroFilm } from "./HeroFilm";
 import { Accent } from "@/components/primitives/Accent";
 import { headlineChips } from "@/config/showcase";
 import { LocalClock } from "./LocalClock";
-import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import { cn } from "@/lib/cn";
 
 /**
@@ -90,7 +90,7 @@ export function LuxeHero({ fromPrice }: { fromPrice: number }) {
                   Seven nights, from
                 </span>
                 <span className="u-num mt-1 block font-display text-28">
-                  {formatINR(fromPrice)}
+                  <Price rupees={fromPrice} variant="stacked" />
                 </span>
               </span>
               <span className="u-label hidden max-w-28 text-right leading-relaxed text-ink-faint sm:block">

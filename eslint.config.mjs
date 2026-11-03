@@ -33,11 +33,11 @@ const eslintConfig = [
     ignores: [
       "node_modules/**",
       ".next/**",
-      // Output of `NEXT_DIST_DIR=.next-verify pnpm build`. Without this a
+      // Output of any `NEXT_DIST_DIR=.next-<something>` build. Without this a
       // local `eslint .` — which is exactly what CI runs — drowns in ~8,600
       // problems from compiled chunks. CI never sees them because it builds
       // after linting; we build before.
-      ".next-verify/**",
+      ".next-*/**",
       ".lighthouseci/**",
       "out/**",
       "build/**",

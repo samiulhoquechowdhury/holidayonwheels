@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import { addDays, formatMedium } from "@/lib/date";
 import { Button } from "@/components/primitives/Button";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
@@ -77,7 +78,7 @@ export function StayBookingWidget({
         <div className="flex items-baseline justify-between gap-3">
           <Eyebrow>From</Eyebrow>
           <p className="u-num font-display text-28 leading-none">
-            {formatINR(stay.fromPrice)}
+            <Price rupees={stay.fromPrice} variant="stacked" />
           </p>
         </div>
         <p className="u-label mt-1 text-right text-ink-soft">per night</p>
@@ -190,7 +191,7 @@ export function StayBookingWidget({
           <div className="mt-4 flex items-baseline justify-between gap-4 border-t border-[var(--ink-hairline)] pt-4">
             <p className="u-label">Total</p>
             <p className="u-num font-display text-22 leading-none">
-              {formatINR(quote.total)}
+              <Price rupees={quote.total} variant="stacked" />
             </p>
           </div>
         </div>

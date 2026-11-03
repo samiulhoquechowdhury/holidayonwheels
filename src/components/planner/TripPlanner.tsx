@@ -19,7 +19,10 @@ import {
   partyDef,
   type PartyType,
 } from "@/lib/party";
-import { planTripAction } from "@/app/(browse)/tours/plan-actions";
+import {
+  planTripAction,
+  submitTripAction,
+} from "@/app/(browse)/tours/plan-actions";
 import type { PlannerState } from "./types";
 import type { TripPlan } from "@/lib/plan";
 import type { StateSlug } from "@/content/types";
@@ -445,7 +448,38 @@ export function TripPlanner({
             key={plan.reference}
             plan={plan}
             sent={sent}
-            onSend={() => setSent(true)}
+            /*
+             * The row is written here, not in `PlannerResult`, because the
+             * two halves of it live in different places: the itinerary and
+             * the traveller's details are this component's state, and the
+             * day-by-day selections and the totals are the child's. `sent`
+             * flips only once the insert has succeeded.
+             */
+            onSend={async (detail) => {
+              const result = await submitTripAction({
+                reference: plan.reference,
+                state: plan.state,
+                stateName: plan.stateName,
+                party: plan.party,
+                startDate: plan.startDate,
+                endDate: plan.endDate,
+                nights: plan.nights,
+                adults: plan.adults,
+                children: plan.children,
+                childAges: draft.childAges,
+                lead: draft.lead,
+                companions: draft.companions,
+                notes: draft.notes,
+                selections: detail.selections,
+                plan: plan as unknown as Record<string, unknown>,
+                total: detail.total,
+                deposit: detail.deposit,
+              }).catch(() => ({ ok: false }) as const);
+
+              if (!result.ok) return false;
+              setSent(true);
+              return true;
+            }}
             onChangeDates={() => setStep("dates")}
             onRestart={restart}
           />

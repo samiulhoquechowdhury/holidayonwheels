@@ -10,7 +10,7 @@ import { HouseLocator } from "@/components/homestays/LocatorMap";
 import { StayCard, TourCard } from "@/components/cards/ResultCard";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { Chip } from "@/components/primitives/Chip";
-import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import { toISO } from "@/lib/date";
 import {
   getHomestayBySlug,
@@ -182,7 +182,7 @@ export default async function HomestayPage({
                       <div className="flex items-baseline justify-between gap-3">
                         <h3 className="text-18">{room.name}</h3>
                         <p className="u-num shrink-0 text-16">
-                          {formatINR(room.perNight)}
+                          <Price rupees={room.perNight} />
                         </p>
                       </div>
                       <p className="u-label mt-2 text-ink-faint">

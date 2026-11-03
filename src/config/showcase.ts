@@ -122,6 +122,72 @@ export const roomShots: Record<string, string> = {
 };
 
 /**
+ * Three more views per kind of room, for the thumbnail strip in the room
+ * dialog. The hero in `roomShots` is the first frame; these follow it.
+ *
+ * ## What these are, and what they are not
+ *
+ * They are **per kind, not per property** — exactly like the hero above them,
+ * and for the same reason: there is no real photography yet, so a hotel room
+ * in Guwahati and a hotel room in Dimapur show the same four frames. That is
+ * already true of the single image and the strip does not make it more true.
+ * It does make it more *visible*, which is the honest trade: four frames of
+ * one anonymous hotel read as a room you can look around, and the real set
+ * drops in through `StayOption.gallery` one property at a time without
+ * touching this file or the component.
+ *
+ * They are not four pictures of the same bed. The strip exists to answer the
+ * questions a single hero cannot — is there a proper bathroom, is there
+ * anywhere to sit, what does the building look like from outside — so each
+ * kind gets a different *subject* in each frame rather than a different
+ * angle on the same one. Four bedrooms in a row would look like a gallery
+ * and tell you nothing.
+ *
+ * Every one of these eighteen was looked at before it went in, at the size
+ * it renders, and six candidates were thrown out at that step: a "library"
+ * that was a red neon lobby bar, a "sunlit lobby" that was almost black, a
+ * "veranda" that was unreadable roof beams, an atrium so loud it read as a
+ * shopping centre, a chalet that read unmistakably Swiss, and a riverside
+ * camp that was a flooded quarry. Alt text is not a photograph.
+ *
+ * Still placeholder, still Unsplash, still going when the shoot lands — see
+ * MEDIA.md. None is reused anywhere else in this file or in `creators.ts`,
+ * `dining.ts` or `day-options.ts`.
+ */
+export const roomGalleries: Record<string, string[]> = {
+  included: [
+    shot("1584622650111-993a426fbf0a"), // the bathroom: white, plain, a shower
+    shot("1759038086832-795644825e3a"), // reception and the chairs by it
+    shot("1628414233354-bec86a0e35ce"), // a chair at the window
+  ],
+  hotel: [
+    shot("1587527901949-ab0341697c1e"), // marble bathroom, glass shower
+    shot("1775866914943-ba1415a35afc"), // the lobby, tall and lit
+    shot("1780488792974-61efba45089d"), // a window seat to read in
+  ],
+  homestay: [
+    shot("1636647511729-6703539ba71f"), // somebody cooking, in the kitchen
+    shot("1792060025709-6a413b1a0a5b"), // the house, timber, from the garden
+    shot("1792782418351-77a679ef408b"), // two chairs out on the deck
+  ],
+  heritage: [
+    shot("1781010080417-240b32d76d63"), // the staircase, carpeted, chandelier
+    shot("1507652313519-d4e9174996dd"), // a freestanding bath
+    shot("1712063680618-c1883afb1a5a"), // the hall, on a chequerboard floor
+  ],
+  lodge: [
+    shot("1775283537748-4fc2b5fb28c0"), // the balcony, over forest
+    shot("1783099994017-f17c0f56d5a0"), // a table outside, hills behind it
+    shot("1785245647104-8b068b15794b"), // a shelter on the lawn
+  ],
+  camp: [
+    shot("1738838072982-d0e578967643"), // a tent on grass above the river
+    shot("1657664069074-8b245ee46be9"), // a tent pitched over a rocky stream
+    shot("1787707268367-7cc65f890f58"), // canvas in the trees, water below
+  ],
+};
+
+/**
  * One frame per activity, and every one of them is its own.
  *
  * These used to be borrowed from the state and journey sets, so the food walk

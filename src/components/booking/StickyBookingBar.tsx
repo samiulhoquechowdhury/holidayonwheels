@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { formatINR } from "@/lib/currency";
+import { Price } from "@/components/currency/Price";
 import { Button } from "@/components/primitives/Button";
 import { stickySpring } from "@/lib/motion";
 
@@ -63,7 +63,7 @@ export function StickyBookingBar({
             <div className="min-w-0">
               <p className="u-label truncate text-ink-soft">{label}</p>
               <p className="u-num mt-0.5 font-display text-22 leading-none">
-                {formatINR(amount)}
+                <Price rupees={amount} />
               </p>
               <p className="u-sr-only">{amountLabel}</p>
             </div>

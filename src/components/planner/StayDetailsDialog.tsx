@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { formatINR } from "@/lib/currency";
+import { roomGalleries } from "@/config/showcase";
 import { STAY_AMENITIES } from "@/content/day-options";
 import type { StayOption } from "@/content/day-options";
 
@@ -181,11 +182,57 @@ function AmenityIcon({ name }: { name: IconName }) {
  *     while you read. `stop()` on open, `start()` on close.
  *  4. **Scroll chaining.** `overscroll-contain` stops a flick at the end of
  *     the panel handing the rest of the gesture to the document.
+ *
+ * ## `data-lenis-prevent`, and why the panel would not scroll
+ *
+ * Point 3 above caused the bug reported against it. Lenis, once stopped,
+ * does not merely decline to scroll — it swallows the event. From its
+ * `onVirtualScroll`, in order:
+ *
+ * ```js
+ * if (composedPath.find((node) => node.hasAttribute?.('data-lenis-prevent')))
+ *   return;                                  // ← the escape hatch, first
+ * if (this.isStopped || this.isLocked) {
+ *   if (event.cancelable) event.preventDefault();   // ← every wheel event
+ *   return;
+ * }
+ * ```
+ *
+ * Lenis listens on the window with `passive: false`, and a `<dialog>` in the
+ * top layer is still a DOM descendant of `<body>`, so a wheel event over
+ * this panel reaches that handler and gets `preventDefault()`d — which is
+ * precisely the default action the panel needed in order to scroll. The
+ * result was a modal that scrolled by keyboard, by scrollbar drag and by
+ * `scrollTop` but not by wheel or trackpad, which is to say: not at all, for
+ * anybody actually using it.
+ *
+ * `data-lenis-prevent` on the scroll container is the documented opt-out,
+ * and it is tested *before* the `isStopped` branch, so the attribute and
+ * `stop()` are not in conflict — they divide the viewport between them.
+ * Wheel over the panel: native scrolling, Lenis never looks at it. Wheel
+ * over the backdrop: Lenis eats it and the page stays put. Both are wanted,
+ * which is why the fix is to add the attribute rather than to drop `stop()`.
+ *
+ * It also has to be on the element that scrolls, not on the `<dialog>`:
+ * Lenis walks the composed path, so an ancestor would do, but the ancestor
+ * here *is* the backdrop, and marking that would hand the page's scroll back
+ * to the wheel the moment the pointer left the panel.
  */
 export function StayDetailsDialog({ stay }: { stay: StayOption }) {
   const ref = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
+  const [frame, setFrame] = useState(0);
   const amenities = STAY_AMENITIES[stay.kind];
+
+  /*
+   * The hero photograph first, then the rest of the set.
+   *
+   * `stay.gallery` is the per-property override and `roomGalleries` the
+   * fallback for the kind of room — the same two-step `stay.image` already
+   * uses, so a property that gets real photography gets a real set with one
+   * edit and no change here.
+   */
+  const frames = [stay.image, ...(stay.gallery ?? roomGalleries[stay.kind])];
 
   useEffect(() => {
     const node = ref.current;
@@ -196,6 +243,8 @@ export function StayDetailsDialog({ stay }: { stay: StayOption }) {
     };
     const onClose = () => {
       setOpen(false);
+      /* Reopening shows the room, not whichever bathroom you left on. */
+      setFrame(0);
       window.__lenis?.start?.();
     };
 
@@ -243,6 +292,11 @@ export function StayDetailsDialog({ stay }: { stay: StayOption }) {
             in the document at once. */}
         {open ? (
           <div
+            /* See the note on `data-lenis-prevent` above. Without it the
+               wheel does nothing in here, because Lenis is stopped and a
+               stopped Lenis calls preventDefault on every wheel event that
+               reaches the window — including the ones over this panel. */
+            data-lenis-prevent
             className={cn(
               "u-scrollbar-slim flex max-h-[calc(100dvh_-_2rem)] w-full max-w-[44rem] flex-col",
               "overflow-y-auto overscroll-contain rounded-[var(--radius-card)] bg-paper text-ink",
@@ -251,8 +305,16 @@ export function StayDetailsDialog({ stay }: { stay: StayOption }) {
           >
             <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden">
               <Image
-                src={stay.image}
-                alt={stay.name}
+                /* Keyed on the URL so switching frames is a new element
+                   rather than a mutated `src`, which is what lets the
+                   browser keep each decoded frame in its cache. */
+                key={frames[frame]}
+                src={frames[frame]}
+                alt={
+                  frame === 0
+                    ? stay.name
+                    : `${stay.name} — photograph ${frame + 1} of ${frames.length}`
+                }
                 fill
                 sizes="(max-width: 768px) 100vw, 704px"
                 className="object-cover"
@@ -275,6 +337,64 @@ export function StayDetailsDialog({ stay }: { stay: StayOption }) {
                   <path d="m6 6 12 12M18 6 6 18" />
                 </svg>
               </button>
+
+              {/* Which frame of how many, over the photograph rather than
+                  under it — the strip below says the same thing, and this
+                  is for the moment before you have noticed the strip. */}
+              <p className="u-glass u-num absolute bottom-3 left-3 rounded-full px-3 py-1 text-14 text-ink">
+                {frame + 1} / {frames.length}
+              </p>
+            </div>
+
+            {/*
+              The rest of the set, as squares.
+
+              Square because these are four different subjects — a bathroom, a
+              lawn, a staircase — and a square is the one crop that treats a
+              tall subject and a wide one alike. At 16/9 the staircase would
+              lose its top and the lawn would lose its sky, and a row of
+              thumbnails that each lie about their own frame is worse than no
+              row at all.
+
+              Buttons, not a carousel. Four frames do not need arrows, and a
+              strip where every frame is visible and directly reachable needs
+              no concept of "next".
+            */}
+            <div
+              role="group"
+              aria-label={`Photographs of ${stay.name}`}
+              className="flex shrink-0 scrollbar-none gap-2.5 overflow-x-auto px-6 pt-4 lg:px-8"
+            >
+              {frames.map((src, index) => {
+                const current = index === frame;
+                return (
+                  <button
+                    key={src}
+                    type="button"
+                    onClick={() => setFrame(index)}
+                    aria-pressed={current}
+                    aria-label={`Photograph ${index + 1} of ${frames.length}`}
+                    className={cn(
+                      /* `--radius-input`, not `--radius-card`: 20px on a
+                         72px square is most of the square. */
+                      "relative size-16 shrink-0 overflow-hidden rounded-[var(--radius-input)] bg-shell sm:size-[4.5rem]",
+                      "transition-opacity duration-[var(--dur-micro)] ease-brand",
+                      "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage",
+                      current
+                        ? "opacity-100 ring-2 ring-ink ring-offset-2 ring-offset-paper"
+                        : "opacity-60 hover:opacity-100",
+                    )}
+                  >
+                    <Image
+                      src={src}
+                      alt=""
+                      fill
+                      sizes="72px"
+                      className="object-cover"
+                    />
+                  </button>
+                );
+              })}
             </div>
 
             <div className="p-6 lg:p-8">

@@ -183,10 +183,12 @@ export function Header() {
           <div className="flex shrink-0 items-center gap-2 md:gap-3">
             {/*
              * Hidden below `sm`. On a phone the bar already carries the
-             * wordmark, the account control and the menu toggle, and a fourth
-             * control squeezes the first three; the same switcher sits in the
-             * drawer, which is where a phone's secondary controls belong.
-             * It renders nothing at all if rates are unavailable.
+             * wordmark, the account control and the menu toggle, and a
+             * fourth control squeezes the first three. `MenuDrawer` renders
+             * the same switcher under "Show prices in", which is where a
+             * phone's secondary controls belong — that row is not optional
+             * decoration, it is the only way to reach this feature below
+             * `sm`. It renders nothing at all if rates are unavailable.
              */}
             <CurrencySwitcher className="max-sm:hidden" />
             <AccountButton />

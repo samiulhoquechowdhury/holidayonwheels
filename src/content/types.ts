@@ -184,6 +184,13 @@ export type Homestay = {
   reviewCount: number;
   heroAlt: string;
   image?: string;
+  /**
+   * More of the same house, after `image`: the rooms, the yard, the way in.
+   * Shown as a thumbnail strip under the main photograph, and omitted
+   * entirely where it is unset — a house with one picture gets one picture
+   * rather than a strip padded out with something else's.
+   */
+  gallery?: string[];
   featured?: boolean;
 };
 

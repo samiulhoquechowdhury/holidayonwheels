@@ -106,6 +106,16 @@ const GUWAHATI_PLACEHOLDERS: Homestay[] = [
       "A sunlit veranda on carved painted pillars with cane chairs, looking onto a green garden",
     // sunlit veranda, ornate painted pillars, cane chairs, garden beyond
     image: shot("1792772531515-45f54df5cdf3"),
+    /*
+     * The first is from the same shoot as the hero — sequential id, the
+     * same carved painted arches — so for once the interior really is the
+     * inside of the building in the picture above it.
+     */
+    gallery: [
+      shot("1792772531460-cac3de7b0dc2"), // inside, the same carved arches
+      shot("1763762626519-e096aa376ba9"), // the courtyard and its tree
+      shot("1791378656412-dc21aa443cba"), // a room, block-printed wall
+    ],
   },
   {
     slug: "ghy-kharghuli-hill-home",
@@ -170,6 +180,11 @@ const GUWAHATI_PLACEHOLDERS: Homestay[] = [
       "A covered porch with a hanging swing, looking out over a garden from a hillside house",
     // modern porch with a swing seat, looking out over a garden
     image: shot("1711963383546-a8f78c3ab5f4"),
+    gallery: [
+      shot("1760007717604-5a0c574ead62"), // the river, from the hill
+      shot("1765547090903-348b711f0eee"), // a room, timber and light
+      shot("1765421619567-e52e0a8a6c7b"), // the drive, and the big tree
+    ],
   },
   {
     slug: "ghy-north-bank-house",
@@ -238,6 +253,11 @@ const GUWAHATI_PLACEHOLDERS: Homestay[] = [
       "A low green and white heritage house at the end of a palm-lined drive",
     // green-painted old house, palm drive, quiet compound
     image: shot("1759738103259-f2f9bb73a9d9"),
+    gallery: [
+      shot("1759738094899-b05622c5de7f"), // the ferry you arrive on
+      shot("1759139445627-5ce9d5fac8f9"), // two beds, iron frames
+      shot("1774705558131-72417ced0f3f"), // the path through the garden
+    ],
   },
   {
     slug: "ghy-sualkuchi-weavers-house",
@@ -307,6 +327,16 @@ const GUWAHATI_PLACEHOLDERS: Homestay[] = [
       "Weavers working a bright silk warp on a traditional loom in an open-sided village workshop",
     // weaving on a loom in a bamboo-walled Assamese workshop
     image: shot("1759738099669-d64b0656f6cf"),
+    /*
+     * Not three looms. The hero is already people at the loom, so this is
+     * the warp, then the house: a third photograph of weaving would have
+     * said nothing new about where you would be sleeping.
+     */
+    gallery: [
+      shot("1643766883805-829d9ad95c42"), // the warp, close
+      shot("1765421619698-5fc83510ca16"), // the way in
+      shot("1774705558164-0790438ef1fb"), // the yard
+    ],
   },
 ];
 

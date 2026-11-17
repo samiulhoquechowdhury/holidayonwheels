@@ -116,15 +116,34 @@ export function HouseFacts({
 }) {
   const bath = bathroom(stay);
 
+  /*
+   * Every fact is conditional, and the strip can legitimately be empty.
+   *
+   * The four Guwahati houses are real businesses that have given us names
+   * and photographs and not yet their occupancy, room count or meals. A
+   * fact nobody has told us is left out rather than defaulted — "Sleeps
+   * undefined" is a bug, but "Sleeps 2" invented to fill the row is worse,
+   * because it looks correct.
+   */
   const facts: { icon: FactIcon; label: string }[] = [
-    { icon: "guests", label: `Sleeps ${stay.maxGuests}` },
-    {
-      icon: "rooms",
-      label: `${stay.bedrooms} ${stay.bedrooms === 1 ? "room" : "rooms"}`,
-    },
-    { icon: "meals", label: MEAL_SHORT[stay.mealsIncluded] },
+    ...(stay.maxGuests
+      ? [{ icon: "guests" as const, label: `Sleeps ${stay.maxGuests}` }]
+      : []),
+    ...(stay.bedrooms
+      ? [
+          {
+            icon: "rooms" as const,
+            label: `${stay.bedrooms} ${stay.bedrooms === 1 ? "room" : "rooms"}`,
+          },
+        ]
+      : []),
+    ...(stay.mealsIncluded
+      ? [{ icon: "meals" as const, label: MEAL_SHORT[stay.mealsIncluded] }]
+      : []),
     ...(bath ? [{ icon: "bath" as const, label: bath }] : []),
   ];
+
+  if (facts.length === 0) return null;
 
   return (
     <ul

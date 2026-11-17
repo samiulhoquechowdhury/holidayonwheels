@@ -5,7 +5,9 @@ import { Accent } from "@/components/primitives/Accent";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { LuxeButtonLink } from "@/components/primitives/LuxeButton";
 import { HomestayBrowser } from "@/components/homestays/HomestayBrowser";
+import { CafeStrip } from "@/components/homestays/CafeStrip";
 import { getGuwahatiHomestays } from "@/content/homestays";
+import { getCafes } from "@/content/cafes";
 import { getDestinationName, getDestinations } from "@/content/destinations";
 import { stateColours } from "@/config/palette";
 
@@ -46,6 +48,7 @@ export const metadata: Metadata = {
  */
 export default function HomestaysPage() {
   const houses = getGuwahatiHomestays();
+  const cafes = getCafes();
 
   /*
    * Every state we do not yet let you book a house in, west to east.
@@ -142,6 +145,38 @@ export default function HomestaysPage() {
           and we will put it in the itinerary.
         </p>
       </SectionShell>
+
+      {/* --- Where to eat, while you are there --------------------- */}
+      {cafes.length > 0 ? (
+        <SectionShell id="cafes" tint="shell" width="wide">
+          <Eyebrow rule>Eating in Guwahati</Eyebrow>
+          <h2 className="mt-6 max-w-2xl text-36 lg:text-48">
+            Cafés we actually <Accent>send people to</Accent>
+          </h2>
+          <p className="mt-6 max-w-xl text-18 text-ink-soft">
+            Four places in the city, photographed by the people who run them.
+            Not a directory and not a ranking — the short list we would give a
+            guest staying in one of the houses above.
+          </p>
+
+          <div className="mt-12">
+            <CafeStrip cafes={cafes} />
+          </div>
+
+          {/*
+            Said once, plainly, rather than faked four times on the cards.
+            We were given names, neighbourhoods and photographs; hours and
+            prices were not among them, and a café that turns out to be shut
+            on the evening a visitor drove across town is the café's problem,
+            not ours — which is exactly why we do not guess.
+          */}
+          <p className="mt-10 max-w-xl text-16 text-ink-soft">
+            We have not listed opening hours or prices because we have not been
+            given them, and we would rather say so than guess. Ask us when you
+            book and we will check before you go.
+          </p>
+        </SectionShell>
+      ) : null}
 
       <SectionShell tint="night" spacing="tight" width="wide">
         <div className="flex flex-wrap items-end justify-between gap-8">

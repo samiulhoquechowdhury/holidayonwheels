@@ -22,13 +22,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "next-env.d.ts",
-    ".next-verify/types/**/*.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next-env.d.ts"],
   // `**/*.ts` sweeps the whole tree, so any alternate dist dir created with
   // NEXT_DIST_DIR — `.next-verify`, `.next-admin` — gets typechecked too, and
   // its generated route types go stale the moment a file moves. Next also

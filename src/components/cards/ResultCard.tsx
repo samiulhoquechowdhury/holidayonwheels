@@ -27,7 +27,12 @@ export type ResultCardProps = {
   strapline?: string;
   /** Small mono line above the title — usually the place. */
   eyebrow: string;
-  price: number;
+  /**
+   * Undefined where the business has not given us a rate — see the Guwahati
+   * houses in `content/homestays.ts`. Rendered as "Rate on request", never
+   * as a zero, which already means "free" two lines below.
+   */
+  price?: number;
   /** "per person", "per night", "per ticket" — always stated. */
   priceUnit?: string;
   /** Alt text describing the place. Required — never "image". */
@@ -192,8 +197,11 @@ export function ResultCard({
             rule,
           )}
         >
-          {/* A free event says "free", not "from ₹0". */}
-          {price === 0 ? (
+          {/* A free event says "free", not "from ₹0"; a house whose rate we
+              have not been given says so rather than showing a number. */}
+          {price === undefined ? (
+            <p className={cn("text-16", soft)}>Rate on request</p>
+          ) : price === 0 ? (
             <p
               className={cn(
                 "font-display text-22 leading-none",
@@ -401,16 +409,28 @@ export function StayCard({
       imageAlt={stay.heroAlt}
       imageSrc={stay.image}
       region={stay.region}
+      /*
+       * Chips only for facts the house has actually given us. A chip reading
+       * "Sleeps undefined" is a bug; one reading "Sleeps 2" because that is a
+       * reasonable guess is worse, because nobody will catch it.
+       */
       chips={[
-        `Sleeps ${stay.maxGuests}`,
-        `${stay.bedrooms} bedrooms`,
+        stay.maxGuests ? `Sleeps ${stay.maxGuests}` : null,
+        stay.bedrooms ? `${stay.bedrooms} bedrooms` : null,
         stay.mealsIncluded === "full-board"
           ? "All meals"
           : stay.mealsIncluded === "half-board"
             ? "Breakfast & dinner"
-            : "Breakfast",
-      ]}
-      note={`${stay.rating.toFixed(1)} · ${stay.reviewCount} reviews`}
+            : stay.mealsIncluded === "breakfast"
+              ? "Breakfast"
+              : null,
+      ].filter((chip): chip is string => chip !== null)}
+      /* No invented reviews. Unrated houses simply carry no note. */
+      note={
+        stay.rating !== undefined && stay.reviewCount !== undefined
+          ? `${stay.rating.toFixed(1)} · ${stay.reviewCount} reviews`
+          : undefined
+      }
       priority={priority}
       sizes={sizes}
     />

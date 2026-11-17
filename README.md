@@ -268,6 +268,43 @@ the real files in causes no layout shift.
 
 ---
 
+## Photography: the client's own
+
+`public/media/` now carries real photographs for the four Guwahati homestays
+and the four cafés — four images each, from the client's Drive folder.
+
+### They are pre-sized, because the custom loader cannot resize them
+
+`images.loader` in `next.config.ts` points at `lib/image-loader.ts`, which
+replaces Next's optimiser for **every** image. Remote Unsplash URLs are handed
+to imgix with a width; anything else is returned untouched. Untouched means a
+1600px photograph being sent whole to an 80px thumbnail.
+
+So each photograph is written to disk three times and the loader picks the
+bucket:
+
+    01.webp        1600px   hero
+    01-800.webp     800px
+    01-400.webp     400px   cards and thumbnails
+
+`next/image` calls the loader once per `srcset` candidate, so the browser
+still gets a real `srcset` and no server does any work. **Whoever adds a
+photograph adds all three files** — a missing `-400` is a 404 at a breakpoint
+nobody tests on a desktop. 27MB of originals became 5.1MB this way.
+
+When all media is local, delete `images.loader` and `images.loaderFile` and
+the built-in optimiser takes over, and this convention can go with it.
+
+### The cafés
+
+`content/cafes.ts` — four Guwahati cafés shown below the "coming soon" block
+on `/homestays`. Names, localities and photographs only: **no hours, prices,
+menus or ratings**, because none were supplied. The fields are there for when
+they are. A café card is the easy place to pad with plausible furniture, and
+the business wears the complaint when a visitor arrives on a day it is shut.
+
+---
+
 ## Quality floor
 
 Enforced in CI by `.github/workflows/lighthouse.yml` against `lighthouserc.json`:
@@ -320,12 +357,19 @@ disallow direct pushes.
 4. Whether `beepdrive.com` accepts deep links. Until confirmed, `rentalUrl()`
    in `config/external.ts` drops all context and returns the homepage rather
    than guessing a query format.
-5. **The four Guwahati homestays are invented.** Names, families, rates,
-   ratings and review counts are all placeholder — see the block above
-   `GUWAHATI_PLACEHOLDERS` in `content/homestays.ts`. The homestays page
-   shows only these and lists every other state as "coming soon", so this is
-   the whole of that page. The fabricated `reviewCount` values are the part
-   that cannot ship: they are specific factual claims about a real business.
+5. **The four Guwahati homestays are real now, but half-described.**
+   `GUWAHATI_PLACEHOLDERS` is gone; `GUWAHATI_HOUSES` holds Nishant
+   Kharghuli, Sukoon at Commerce Point, Hatigaon and Weekend Villa, with the
+   client's own photographs. What we have is names, neighbourhoods and
+   pictures. What is still missing, and is **unset rather than guessed**:
+   rates, the families' names, room counts and occupancy, meals, house
+   rules. Until a rate arrives each house shows "Rate on request" and the
+   detail page renders `StayEnquiryPanel` instead of the booking widget —
+   see `lib/homestay.ts`. Send the rates and the entries fill in with no
+   code change.
+   Two smaller things for the client: six of Hatigaon's twelve photographs
+   have marketing text burned into the image and are unused, and the
+   coordinates are neighbourhood centroids rather than surveyed addresses.
 6. **The Lighthouse budgets are temporarily below the brief's floor.** The
    brief asks for performance 0.9, best-practices 0.95 and LCP 2.5s;
    `lighthouserc.json` currently asserts 0.65, a warning, and a warning.

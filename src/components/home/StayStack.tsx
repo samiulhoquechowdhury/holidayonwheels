@@ -168,10 +168,17 @@ export function StayStack() {
                   <span className="min-w-0">
                     <span className="block text-22">{stay.name}</span>
                     <span className="mt-1.5 block text-14 text-ink-soft">
-                      {stay.locality} · hosted by {stay.hostName}
+                      {stay.locality}
+                      {stay.hostName ? ` · hosted by ${stay.hostName}` : ""}
                     </span>
                     <span className="u-num u-label mt-4 block text-clay-ink">
-                      <Price rupees={stay.fromPrice} /> a night
+                      {stay.fromPrice !== undefined ? (
+                        <>
+                          <Price rupees={stay.fromPrice} /> a night
+                        </>
+                      ) : (
+                        "Rate on request"
+                      )}
                     </span>
                   </span>
                   <ArrowButton tone="glass" className="size-10" />

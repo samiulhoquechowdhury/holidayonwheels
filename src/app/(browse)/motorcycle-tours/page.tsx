@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import { PageHero } from "@/components/layout/PageHero";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
 import { Reveal } from "@/components/layout/Reveal";
 import { MotoCard } from "@/components/cards/ResultCard";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
+import { Accent } from "@/components/primitives/Accent";
 import { getMotorcycleTours } from "@/content/motorcycle-tours";
-import { motoFilm } from "@/config/showcase";
-import { HeroFilm } from "@/components/home/HeroFilm";
 
 export const metadata: Metadata = {
   title: "Motorcycle expeditions",
@@ -40,58 +38,41 @@ export default function MotorcycleToursPage() {
   return (
     <>
       {/*
-        The still is dropped from the hero and a film runs under it instead,
-        the same way the home page opens. It is the right trade on this page
-        specifically: a photograph of a parked motorcycle says what is being
-        sold, and fourteen seconds of a road bending away under the
-        handlebars says why anyone would want it. Nothing else on the site
-        gets a second film.
+        No hero, no film.
+
+        This page used to open with a full `PageHero` and then a second
+        full-width film under it — two screens of furniture before the first
+        expedition. The film was the only second video on the site and it
+        was the heaviest asset on the page; what somebody arrives here for
+        is the list of rides and what each one costs.
+
+        So it opens on the rides. The headline keeps the one sentence that
+        actually sells the product — the support vehicle — because that is
+        the difference between an expedition and a group of people on bikes
+        hoping for the best, and it is the thing a photograph could not say
+        anyway.
       */}
-      <PageHero
-        eyebrow={`${tours.length} expeditions`}
-        title="Guided rides, with a truck behind you"
-        accent="truck"
-        media={false}
-        intro="Group motorcycle expeditions across the Northeast. Every departure runs with a lead rider, a sweep rider and a support pickup — which is the difference between an expedition and a group of people on bikes hoping for the best."
+      <SectionShell
         tint="paper"
-        region="nagaland"
-      />
-
-      <SectionShell tint="paper" spacing="tight" width="wide">
-        <HeroFilm
-          film={motoFilm}
-          className="aspect-[4/5] sm:aspect-[16/10] lg:aspect-[21/9]"
-        >
-          <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-4 p-5 sm:p-7 lg:p-9">
-            <span className="u-glass u-label inline-flex items-center gap-3 rounded-full px-5 py-3 text-ink">
-              <span
-                aria-hidden="true"
-                className="size-1.5 rounded-full bg-naga"
-              />
-              Lead rider, sweep rider, support truck
-            </span>
-
-            <span className="u-glass flex items-center gap-5 rounded-[var(--radius-card)] px-5 py-3.5 sm:px-6 sm:py-4">
-              <span>
-                <span className="u-label block text-ink-faint">
-                  Highest pass crossed
-                </span>
-                <span className="u-num mt-1 block font-display text-28">
-                  4,170 m
-                </span>
-              </span>
-              <span className="u-label hidden max-w-28 text-right leading-relaxed text-ink-faint sm:block">
-                oxygen carried above 4,000
-              </span>
-            </span>
-          </div>
-        </HeroFilm>
+        width="wide"
+        spacing="flush"
+        className="pt-[calc(var(--header-h)+2rem)] pb-10 lg:pt-[calc(var(--header-h)+2.5rem)] lg:pb-12"
+      >
+        <Eyebrow rule>{tours.length} expeditions</Eyebrow>
+        <h1 className="lg:text-56 mt-6 max-w-3xl text-36">
+          Guided rides, with a <Accent>truck</Accent> behind you
+        </h1>
+        <p className="mt-6 max-w-2xl text-18 text-ink-soft">
+          Group motorcycle expeditions across the Northeast. Every departure
+          runs with a lead rider, a sweep rider and a support pickup — which is
+          the difference between an expedition and a group of people on bikes
+          hoping for the best.
+        </p>
       </SectionShell>
 
-      <SectionShell tint="paper">
-        <h2 className="u-label mb-8 border-b border-[var(--ink-hairline)] pb-4 text-ink-soft">
-          {tours.length} expeditions
-        </h2>
+      {/* The count is in the eyebrow above now; repeating it here was the
+          same two words twice on one screen. */}
+      <SectionShell tint="paper" spacing="flush" className="pb-20 lg:pb-28">
         <ul className="grid gap-x-8 gap-y-16 sm:grid-cols-2 xl:grid-cols-3">
           {tours.map((tour, index) => (
             <li key={tour.slug}>

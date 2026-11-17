@@ -594,46 +594,6 @@ const seeds: MotoSeed[] = [
     ],
     departureDates: ["2026-09-24", "2026-10-15", "2027-03-18", "2027-04-15"],
   },
-  {
-    slug: "tripura-and-the-southern-plains",
-    title: "Tripura and the southern plains",
-    strapline: "A gentle five days for a first tour",
-    states: ["tripura", "assam"],
-    region: "tripura",
-    distanceKm: 580,
-    maxAltitude: 940,
-    fromPrice: 68000,
-    groupSizeMax: 12,
-    difficulty: "moderate",
-    startsAt: "Agartala",
-    endsAt: "Agartala",
-    requiresILP: false,
-    ridingExperience:
-      "Suitable for a first guided tour. Warm, flat, short days, and no permits.",
-    intro:
-      "Five easy days around Tripura: Unakoti, Neermahal, and the Jampui hills at 940 metres for the orange season. Short riding days, warm weather, and the least demanding route we run.",
-    terrain: [
-      "Good state highway throughout",
-      "One moderate hill climb into the Jampui range",
-      "Rough village lanes on the Unakoti approach",
-    ],
-    highlights: [
-      "Unakoti's rock reliefs",
-      "Neermahal across Rudrasagar",
-      "The Jampui hills in orange season",
-    ],
-    heroAlt:
-      "A motorcycle on a quiet plains road running between paddy fields towards the Jampui hills, Tripura",
-    bikes: ROADSTER,
-    itinerary: [
-      "agartalaArrive",
-      "unakoti",
-      "restDay",
-      "neermahal",
-      "departAgartala",
-    ],
-    departureDates: ["2026-11-21", "2026-12-19", "2027-01-23", "2027-02-20"],
-  },
 ];
 
 const motorcycleTours: MotorcycleTour[] = seeds.map(makeMoto);

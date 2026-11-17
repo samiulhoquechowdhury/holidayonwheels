@@ -169,19 +169,37 @@ export type Homestay = {
   /** Approximate coordinates for the index map. */
   lat: number;
   lng: number;
-  fromPrice: number;
-  maxGuests: number;
-  bedrooms: number;
+  /**
+   * Nightly rate, per room, from. **Optional on purpose.**
+   *
+   * The four Guwahati houses are real businesses whose rates we have not
+   * been given, and a price is the one field on a listing nobody treats as
+   * provisional. Absent means "ask us", which the cards and the detail page
+   * say in words; it does not mean free, and it must never be defaulted to a
+   * number to keep a component happy.
+   */
+  fromPrice?: number;
+  /** Unset where the house has not told us. See `fromPrice`. */
+  maxGuests?: number;
+  /** Unset where the house has not told us. See `fromPrice`. */
+  bedrooms?: number;
   intro: string;
   body: string[];
-  hostName: string;
-  hostStory: string;
+  /** The family's own name. Unset until they have told us to print it. */
+  hostName?: string;
+  hostStory?: string;
   rooms: HomestayRoomType[];
   amenities: string[];
   houseRules: string[];
-  mealsIncluded: MealPlan;
-  rating: number;
-  reviewCount: number;
+  /** Unset where unknown — not defaulted to `none`, which is a claim. */
+  mealsIncluded?: MealPlan;
+  /**
+   * A rating and a review count are the most dangerous fields in this file:
+   * invented, they are specific factual claims about a named business. Both
+   * stay unset until there are real reviews behind them.
+   */
+  rating?: number;
+  reviewCount?: number;
   heroAlt: string;
   image?: string;
   /**
@@ -191,6 +209,17 @@ export type Homestay = {
    * rather than a strip padded out with something else's.
    */
   gallery?: string[];
+  /**
+   * Who the house will take, as the house itself states it.
+   *
+   * These are **policies, not observations**. Whether a place accepts
+   * unmarried couples, or allows a gathering, is a decision its owners make
+   * and sometimes a legally sensitive one in India — it cannot be read off a
+   * photograph and must never be inferred from the size of a room. Unset
+   * means nobody has told us, and the filter treats it that way: the option
+   * is offered but matches nothing until a value arrives.
+   */
+  suitability?: ("couples" | "families" | "groups")[];
   featured?: boolean;
 };
 

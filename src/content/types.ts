@@ -209,6 +209,17 @@ export type Homestay = {
    * rather than a strip padded out with something else's.
    */
   gallery?: string[];
+  /**
+   * Who the house will take, as the house itself states it.
+   *
+   * These are **policies, not observations**. Whether a place accepts
+   * unmarried couples, or allows a gathering, is a decision its owners make
+   * and sometimes a legally sensitive one in India — it cannot be read off a
+   * photograph and must never be inferred from the size of a room. Unset
+   * means nobody has told us, and the filter treats it that way: the option
+   * is offered but matches nothing until a value arrives.
+   */
+  suitability?: ("couples" | "families" | "groups")[];
   featured?: boolean;
 };
 

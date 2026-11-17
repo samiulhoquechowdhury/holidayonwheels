@@ -10,9 +10,10 @@ import { isBookable } from "@/lib/homestay";
 import { StayEnquiryPanel } from "@/components/booking/StayEnquiryPanel";
 import { Amenities } from "@/components/homestays/Amenities";
 import { HouseFacts } from "@/components/homestays/HouseFacts";
+import { HouseHighlights } from "@/components/homestays/HouseHighlights";
 import { HouseGallery } from "@/components/homestays/HouseGallery";
 import { HouseLocator } from "@/components/homestays/LocatorMap";
-import { StayCard, TourCard } from "@/components/cards/ResultCard";
+import { StayCard } from "@/components/cards/ResultCard";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { Chip } from "@/components/primitives/Chip";
 import { Price } from "@/components/currency/Price";
@@ -24,7 +25,6 @@ import {
 } from "@/content/homestays";
 import { getDestinationName } from "@/content/destinations";
 import type { MealPlan } from "@/content/types";
-import { getToursByState, toTourSummary } from "@/content/tours";
 
 export function generateStaticParams() {
   return getHomestays().map((stay) => ({ slug: stay.slug }));
@@ -72,7 +72,6 @@ export default async function HomestayPage({
   const today = toISO(new Date());
 
   const nearby = getHomestaysByState(stay.state).filter((s) => s.slug !== slug);
-  const tours = getToursByState(stay.state).slice(0, 3);
   const stateName = getDestinationName(stay.state);
   /* Hero first, then the rest of the set. `filter` because `image` is
      optional on the type and a hole in the middle of a strip is worse than
@@ -169,6 +168,21 @@ export default async function HomestayPage({
             </span>
           </p>
 
+          {/*
+            What kind of place this is. Every hotel listing carries the
+            property type near the name, and on these four houses it is also
+            the only categorical fact above the fold that survives — the
+            occupancy and room counts `HouseFacts` used to print have not
+            been supplied.
+
+            The neighbourhood is deliberately *not* repeated here. It is on
+            the line directly above, and "Kharghuli" twice within eight
+            pixels reads as a templating mistake rather than as emphasis.
+          */}
+          <p className="mt-5">
+            <Chip tone="sage">Homestay</Chip>
+          </p>
+
           {/* The specs, above the fold rather than buried in the first
               paragraph block a thousand pixels down. See `HouseFacts`. */}
           <HouseFacts stay={stay} className="mt-6" />
@@ -231,7 +245,10 @@ export default async function HomestayPage({
                     title as `HouseFacts`, where somebody can read it before
                     scrolling. Repeating it here would be the same four facts
                     twice on one screen. */}
-                <p className="mt-6 max-w-prose text-18 text-ink-soft">
+                {/* The decisive facts, before the prose that buries them. */}
+                <HouseHighlights stay={stay} className="mt-7 max-w-prose" />
+
+                <p className="mt-7 max-w-prose text-18 text-ink-soft">
                   {stay.intro}
                 </p>
 
@@ -385,32 +402,6 @@ export default async function HomestayPage({
           </div>
         </div>
       </article>
-
-      {tours.length > 0 ? (
-        <>
-          <SectionShell tint="sand">
-            <SectionHeader
-              eyebrow="Guided trips nearby"
-              title={`Tours through ${getDestinationName(stay.state)}`}
-              intro="Book the stay and the trip together and we line the transfers up between them."
-              link={{ href: "/destinations#plan", label: "Plan a trip" }}
-              align="split"
-            />
-            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-              {tours.map((tour, index) => (
-                <li key={tour.slug}>
-                  <Reveal delay={index * 0.06}>
-                    <TourCard
-                      tour={toTourSummary(tour)}
-                      sizes="(max-width: 640px) 100vw, 400px"
-                    />
-                  </Reveal>
-                </li>
-              ))}
-            </ul>
-          </SectionShell>
-        </>
-      ) : null}
 
       {nearby.length > 0 ? (
         <>

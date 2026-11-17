@@ -23,16 +23,44 @@ import type { ImageLoaderProps } from "next/image";
  * photography once it lands in `public/media/` — is returned untouched and
  * served as a static file.
  *
- * **Remove this when the real assets arrive.** Local files served through a
- * custom loader are not optimised at all, which is the wrong trade the moment
- * the images are ours; delete `images.loader` and `images.loaderFile` from
- * next.config.ts at the same time and the built-in optimiser takes over again.
+ * ## Local media under `/media/` is pre-sized, not unoptimised
+ *
+ * A custom loader replaces Next's optimiser for *every* image, local ones
+ * included — so a 1600px photograph would be sent whole to an 80px
+ * thumbnail. That is the trade this file's header used to warn about, and
+ * the client's photographs have now started arriving, so it is a live
+ * problem rather than a future one.
+ *
+ * The answer is to pre-generate the widths instead of resizing on demand.
+ * Each photograph under `public/media/` is written three times —
+ * `01.webp` at 1600, `01-800.webp`, `01-400.webp` — and this picks the
+ * smallest one that covers the requested width. `next/image` calls the
+ * loader once per `srcset` candidate, so the browser still gets a real
+ * `srcset` and downloads the right file, with no server-side work at all.
+ *
+ * **Keep the three files in step.** A missing `-400` is a 404 at a
+ * breakpoint nobody tests on a desktop; `scripts/` has no generator yet, so
+ * whoever adds a photograph adds all three. See MEDIA.md.
  */
+
+/** Widths written to disk for every file under `public/media/`. */
+const BUCKETS = [400, 800] as const;
+
 export default function imageLoader({
   src,
   width,
   quality,
 }: ImageLoaderProps): string {
+  if (src.startsWith("/media/")) {
+    /*
+     * The canonical path is the 1600 file, so anything wider than the
+     * largest bucket is already correct and falls through untouched.
+     */
+    const bucket = BUCKETS.find((b) => width <= b);
+    if (!bucket) return src;
+    return src.replace(/\.webp$/, `-${bucket}.webp`);
+  }
+
   if (!src.startsWith("https://images.unsplash.com/")) return src;
 
   const url = new URL(src);

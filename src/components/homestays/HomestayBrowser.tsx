@@ -47,7 +47,7 @@ function haystack(stay: Homestay): string {
   return [
     ...stay.amenities,
     ...stay.rooms.flatMap((room) => room.amenities),
-    MEALS[stay.mealsIncluded],
+    stay.mealsIncluded ? MEALS[stay.mealsIncluded] : "",
   ].join(" | ");
 }
 
@@ -231,34 +231,69 @@ function HouseCard({ stay, priority }: { stay: Homestay; priority?: boolean }) {
         <span className="u-label min-w-0 truncate text-ink-faint">
           Homestay in {stay.locality.split(",")[0]}
         </span>
-        <span className="u-num shrink-0 text-14">
-          <span aria-hidden="true" className="text-clay-ink">
-            ★
-          </span>{" "}
-          {stay.rating.toFixed(1)}{" "}
-          <span className="text-ink-faint">({stay.reviewCount})</span>
-        </span>
+        {/* Only where there are real reviews behind it. An unrated house
+            shows nothing rather than a zero or an invented score. */}
+        {stay.rating !== undefined ? (
+          <span className="u-num shrink-0 text-14">
+            <span aria-hidden="true" className="text-clay-ink">
+              ★
+            </span>{" "}
+            {stay.rating.toFixed(1)}
+            {stay.reviewCount !== undefined ? (
+              <span className="text-ink-faint"> ({stay.reviewCount})</span>
+            ) : null}
+          </span>
+        ) : null}
       </span>
 
       <span className="mt-1.5 block text-18 group-hover:underline">
         {stay.name}
       </span>
 
-      <span className="u-label mt-1.5 block text-ink-faint">
-        {stay.bedrooms} {stay.bedrooms === 1 ? "room" : "rooms"} · sleeps{" "}
-        {stay.maxGuests} · {MEALS[stay.mealsIncluded]}
-      </span>
+      {/* Built from whatever the house has told us, joined with middots, and
+          omitted entirely when that is nothing. */}
+      {(() => {
+        const meta = [
+          stay.bedrooms
+            ? `${stay.bedrooms} ${stay.bedrooms === 1 ? "room" : "rooms"}`
+            : null,
+          stay.maxGuests ? `sleeps ${stay.maxGuests}` : null,
+          stay.mealsIncluded ? MEALS[stay.mealsIncluded] : null,
+        ].filter(Boolean);
+        return meta.length > 0 ? (
+          <span className="u-label mt-1.5 block text-ink-faint">
+            {meta.join(" · ")}
+          </span>
+        ) : null;
+      })()}
 
-      <span className="mt-3 block text-16">
-        <span className="u-num font-medium">
-          <Price rupees={stay.fromPrice} />
-        </span>{" "}
-        <span className="text-ink-soft">a night</span>
-      </span>
-
-      <span className="u-label mt-1 block text-ink-faint">
-        Nothing payable to book
-      </span>
+      {/*
+        "Rate on request" is the honest form, not a placeholder number.
+        These four houses are real businesses whose nightly rates we have not
+        been given; a figure here would be a price somebody could hold us to.
+      */}
+      {stay.fromPrice !== undefined ? (
+        <>
+          <span className="mt-3 block text-16">
+            <span className="u-num font-medium">
+              <Price rupees={stay.fromPrice} />
+            </span>{" "}
+            <span className="text-ink-soft">a night</span>
+          </span>
+          <span className="u-label mt-1 block text-ink-faint">
+            Nothing payable to book
+          </span>
+        </>
+      ) : (
+        <>
+          <span className="mt-3 block text-16 text-ink-soft">
+            Rate on request
+          </span>
+          <span className="u-label mt-1 block text-ink-faint">
+            We will confirm it with the house
+          </span>
+        </>
+      )}
     </Link>
   );
 }

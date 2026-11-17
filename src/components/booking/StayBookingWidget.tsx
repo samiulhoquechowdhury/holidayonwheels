@@ -11,7 +11,7 @@ import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { NightSelector } from "./AvailabilityCalendar";
 import { PaxStepper } from "./BookingWidget";
 import { StickyBookingBar } from "./StickyBookingBar";
-import type { Homestay } from "@/content/types";
+import type { BookableHomestay } from "@/lib/homestay";
 
 /**
  * Homestay booking. Same shape and same rules as `BookingWidget`, but the
@@ -24,7 +24,7 @@ export function StayBookingWidget({
   today,
   className,
 }: {
-  stay: Homestay;
+  stay: BookableHomestay;
   today: string;
   className?: string;
 }) {

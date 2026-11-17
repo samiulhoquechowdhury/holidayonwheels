@@ -6,6 +6,8 @@ import { SectionHeader } from "@/components/layout/SectionHeader";
 import { Reveal } from "@/components/layout/Reveal";
 import { Media } from "@/components/primitives/Media";
 import { StayBookingWidget } from "@/components/booking/StayBookingWidget";
+import { isBookable } from "@/lib/homestay";
+import { StayEnquiryPanel } from "@/components/booking/StayEnquiryPanel";
 import { Amenities } from "@/components/homestays/Amenities";
 import { HouseFacts } from "@/components/homestays/HouseFacts";
 import { HouseGallery } from "@/components/homestays/HouseGallery";
@@ -128,18 +130,25 @@ export default async function HomestayPage({
            * it and can never end a line.
            */}
           <p className="mt-4 flex flex-wrap items-center text-16 text-ink-soft">
-            <span className="u-num">
-              <span aria-hidden="true" className="text-clay-ink">
-                ★
-              </span>{" "}
-              {stay.rating.toFixed(1)}
-            </span>
-            <span className="u-num">
-              <span aria-hidden="true" className="px-3">
-                ·
+            {/* Shown only where real reviews exist. These four houses have
+                none yet, and a fabricated score beside a real business name
+                is the single most dangerous field on this page. */}
+            {stay.rating !== undefined ? (
+              <span className="u-num">
+                <span aria-hidden="true" className="text-clay-ink">
+                  ★
+                </span>{" "}
+                {stay.rating.toFixed(1)}
               </span>
-              {stay.reviewCount} reviews
-            </span>
+            ) : null}
+            {stay.reviewCount !== undefined ? (
+              <span className="u-num">
+                <span aria-hidden="true" className="px-3">
+                  ·
+                </span>
+                {stay.reviewCount} reviews
+              </span>
+            ) : null}
             {/*
               The locality takes its own line on a phone, with no separator.
               Attaching the separator to the item it precedes stopped it
@@ -148,10 +157,14 @@ export default async function HomestayPage({
               way. Below `sm` there is no separator to dangle, because there
               is nothing beside it to separate.
             */}
-            <span className="w-full sm:w-auto">
-              <span aria-hidden="true" className="hidden px-3 sm:inline">
-                ·
-              </span>
+            <span
+              className={stay.rating !== undefined ? "w-full sm:w-auto" : ""}
+            >
+              {stay.rating !== undefined ? (
+                <span aria-hidden="true" className="hidden px-3 sm:inline">
+                  ·
+                </span>
+              ) : null}
               {stay.locality}, {stateName}
             </span>
           </p>
@@ -200,9 +213,19 @@ export default async function HomestayPage({
             <div className="min-w-0 divide-y divide-[var(--ink-hairline)]">
               {/* --- Who keeps it, and what you get ------------------- */}
               <Block first>
+                {/*
+                  The heading works without a host.
+                  It read "{A room|A house} kept by {hostName}" and rendered
+                  as the words "A house kept by" followed by nothing the
+                  moment the Guwahati houses arrived without a family name —
+                  a dangling preposition at 28px, at the top of the page.
+                  The host gets named here only when we have been told the
+                  name, and `Meet your hosts` below carries the rest.
+                */}
                 <h2 className="text-22 lg:text-28">
-                  {stay.bedrooms === 1 ? "A room" : "A house"} kept by{" "}
-                  {stay.hostName}
+                  {stay.hostName
+                    ? `${stay.bedrooms === 1 ? "A room" : "A house"} kept by ${stay.hostName}`
+                    : `Homestay in ${stay.locality.split(",")[0]}`}
                 </h2>
                 {/* The specs line that used to sit here now sits under the
                     title as `HouseFacts`, where somebody can read it before
@@ -226,42 +249,53 @@ export default async function HomestayPage({
               </Block>
 
               {/* --- Rooms ------------------------------------------- */}
-              <Block>
-                <h2 className="text-22 lg:text-28">Where you sleep</h2>
-                <p className="mt-4 max-w-prose text-16 text-ink-soft">
-                  {stay.bedrooms} rooms, sleeping {stay.maxGuests} between them.
-                  Rates are per room per night, set by the house, and you can
-                  take one room or all of them.
-                </p>
-                <ul className="mt-8 grid gap-6 sm:grid-cols-2">
-                  {stay.rooms.map((room) => (
-                    <li
-                      key={room.name}
-                      className="flex flex-col rounded-[var(--radius-card)] border border-[var(--ink-hairline)] p-6"
-                    >
-                      <div className="flex items-baseline justify-between gap-3">
-                        <h3 className="text-18">{room.name}</h3>
-                        <p className="u-num shrink-0 text-16">
-                          <Price rupees={room.perNight} />
+              {/*
+                Omitted entirely where the house has not told us its rooms.
+                The intro sentence was "{bedrooms} rooms, sleeping
+                {maxGuests} between them", which with both unset printed
+                "undefined rooms, sleeping undefined" under a heading
+                promising to describe them.
+              */}
+              {stay.rooms.length > 0 ? (
+                <Block>
+                  <h2 className="text-22 lg:text-28">Where you sleep</h2>
+                  {stay.bedrooms && stay.maxGuests ? (
+                    <p className="mt-4 max-w-prose text-16 text-ink-soft">
+                      {stay.bedrooms} rooms, sleeping {stay.maxGuests} between
+                      them. Rates are per room per night, set by the house, and
+                      you can take one room or all of them.
+                    </p>
+                  ) : null}
+                  <ul className="mt-8 grid gap-6 sm:grid-cols-2">
+                    {stay.rooms.map((room) => (
+                      <li
+                        key={room.name}
+                        className="flex flex-col rounded-[var(--radius-card)] border border-[var(--ink-hairline)] p-6"
+                      >
+                        <div className="flex items-baseline justify-between gap-3">
+                          <h3 className="text-18">{room.name}</h3>
+                          <p className="u-num shrink-0 text-16">
+                            <Price rupees={room.perNight} />
+                          </p>
+                        </div>
+                        <p className="u-label mt-2 text-ink-faint">
+                          Sleeps {room.sleeps} · per night
                         </p>
-                      </div>
-                      <p className="u-label mt-2 text-ink-faint">
-                        Sleeps {room.sleeps} · per night
-                      </p>
-                      <p className="mt-4 flex-1 text-16 text-ink-soft">
-                        {room.description}
-                      </p>
-                      <ul className="mt-5 flex flex-wrap gap-1.5">
-                        {room.amenities.map((amenity) => (
-                          <li key={amenity}>
-                            <Chip>{amenity}</Chip>
-                          </li>
-                        ))}
-                      </ul>
-                    </li>
-                  ))}
-                </ul>
-              </Block>
+                        <p className="mt-4 flex-1 text-16 text-ink-soft">
+                          {room.description}
+                        </p>
+                        <ul className="mt-5 flex flex-wrap gap-1.5">
+                          {room.amenities.map((amenity) => (
+                            <li key={amenity}>
+                              <Chip>{amenity}</Chip>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ul>
+                </Block>
+              ) : null}
 
               {/* --- Amenities --------------------------------------- */}
               <Block>
@@ -281,35 +315,43 @@ export default async function HomestayPage({
               </Block>
 
               {/* --- The host ---------------------------------------- */}
-              <Block>
-                <h2 className="text-22 lg:text-28">Meet your hosts</h2>
-                <div className="mt-8 max-w-prose rounded-[var(--radius-card)] bg-shell p-6 lg:p-8">
-                  <Eyebrow tone="sage">Hosted by</Eyebrow>
-                  <p className="mt-4 text-22">{stay.hostName}</p>
-                  <p className="mt-4 text-16 text-ink-soft">{stay.hostStory}</p>
-                </div>
-              </Block>
+              {stay.hostName && stay.hostStory ? (
+                <Block>
+                  <h2 className="text-22 lg:text-28">Meet your hosts</h2>
+                  <div className="mt-8 max-w-prose rounded-[var(--radius-card)] bg-shell p-6 lg:p-8">
+                    <Eyebrow tone="sage">Hosted by</Eyebrow>
+                    <p className="mt-4 text-22">{stay.hostName}</p>
+                    <p className="mt-4 text-16 text-ink-soft">
+                      {stay.hostStory}
+                    </p>
+                  </div>
+                </Block>
+              ) : null}
 
               {/* --- Things to know ---------------------------------- */}
               <Block>
                 <h2 className="text-22 lg:text-28">Things to know</h2>
                 <div className="mt-8 grid gap-10 sm:grid-cols-3">
-                  <div>
-                    <Eyebrow className="mb-4">House rules</Eyebrow>
-                    <ul className="flex flex-col gap-3">
-                      {stay.houseRules.map((item) => (
-                        <li key={item} className="text-16 text-ink-soft">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <Eyebrow className="mb-4">Meals</Eyebrow>
-                    <p className="text-16 text-ink-soft">
-                      {MEALS_NOTE[stay.mealsIncluded]}
-                    </p>
-                  </div>
+                  {stay.houseRules.length > 0 ? (
+                    <div>
+                      <Eyebrow className="mb-4">House rules</Eyebrow>
+                      <ul className="flex flex-col gap-3">
+                        {stay.houseRules.map((item) => (
+                          <li key={item} className="text-16 text-ink-soft">
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                  {stay.mealsIncluded ? (
+                    <div>
+                      <Eyebrow className="mb-4">Meals</Eyebrow>
+                      <p className="text-16 text-ink-soft">
+                        {MEALS_NOTE[stay.mealsIncluded]}
+                      </p>
+                    </div>
+                  ) : null}
                   <div>
                     <Eyebrow className="mb-4">Booking</Eyebrow>
                     <p className="text-16 text-ink-soft">
@@ -326,7 +368,18 @@ export default async function HomestayPage({
                 the fold, as it is on the reference. */}
             <div className="order-first lg:order-none">
               <div className="lg:sticky lg:top-[calc(var(--header-h)+2.5rem)]">
-                <StayBookingWidget stay={stay} today={today} />
+                {/*
+                  A rate and rooms, or an enquiry. `StayBookingWidget` is
+                  arithmetic over a nightly rate; with neither it would be a
+                  form of blanks that reads as broken. See
+                  `StayEnquiryPanel` — the slot keeps its shape and changes
+                  what it offers.
+                */}
+                {isBookable(stay) ? (
+                  <StayBookingWidget stay={stay} today={today} />
+                ) : (
+                  <StayEnquiryPanel stay={stay} />
+                )}
               </div>
             </div>
           </div>

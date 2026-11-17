@@ -267,8 +267,21 @@ export function HouseLocator({
   const others_ = within ?? [stay];
   const centre = tileFor(stay.lat, stay.lng, MINI_ZOOM);
   const base = { x: Math.floor(centre.x), y: Math.floor(centre.y) };
+  /*
+   * `||`, not `??`.
+   *
+   * `??` falls back only on null and undefined, and an unset variable in a
+   * `.env` file is the empty string, not undefined. Written as `??` this
+   * resolved the template to `""`, every tile URL became a path of literal
+   * placeholders, and the map rendered as bare grid lines with a pin on it —
+   * silently, because an empty string is a perfectly valid string.
+   *
+   * This is the shape of bug that only appears once somebody creates the
+   * `.env.local` the README asks for and leaves the optional keys blank,
+   * which is exactly what the README asks them to do.
+   */
   const template =
-    process.env.NEXT_PUBLIC_MAP_TILE_URL ??
+    process.env.NEXT_PUBLIC_MAP_TILE_URL ||
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
   /* Where the other houses fall on this same frame, in pixels from centre. */

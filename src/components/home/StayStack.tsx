@@ -7,7 +7,7 @@ import {
   ArrowButton,
   LuxeButtonLink,
 } from "@/components/primitives/LuxeButton";
-import { getFeaturedHomestays } from "@/content/homestays";
+import { getGuwahatiHomestays } from "@/content/homestays";
 import { getDestinationName } from "@/content/destinations";
 import { stayShots, faces } from "@/config/showcase";
 import { Price } from "@/components/currency/Price";
@@ -30,7 +30,17 @@ import { Price } from "@/components/currency/Price";
  * worth strictly nothing.
  */
 export function StayStack() {
-  const stays = getFeaturedHomestays(3);
+  /*
+   * The houses somebody can actually book, which today means Guwahati.
+   *
+   * This read `getFeaturedHomestays(3)`, and `featured` is scattered across
+   * the original twelve-house content set — so the home page was showing one
+   * real Guwahati house beside two placeholder entries in Majuli and
+   * Mawphlang that the homestays page itself lists as "coming soon". The
+   * front page was advertising houses the rest of the site says are not
+   * open yet.
+   */
+  const stays = getGuwahatiHomestays();
 
   return (
     <section className="relative bg-paper py-[var(--section-pad)]">
@@ -139,11 +149,11 @@ export function StayStack() {
           </div>
         </div>
 
-        {/* --- Three real ones ------------------------------------------- */}
+        {/* --- The real ones --------------------------------------------- */}
         <Rise
           as="ul"
           stagger={0.09}
-          className="mt-24 grid gap-6 border-t border-[var(--ink-hairline)] pt-14 sm:grid-cols-2 lg:mt-32 lg:grid-cols-3"
+          className="mt-24 grid gap-6 border-t border-[var(--ink-hairline)] pt-14 sm:grid-cols-2 lg:mt-32 lg:grid-cols-4"
         >
           {stays.map((stay, index) => (
             <li key={stay.slug}>
@@ -153,7 +163,20 @@ export function StayStack() {
               >
                 <span className="relative block aspect-[3/2] overflow-hidden rounded-[var(--radius-card)]">
                   <Image
-                    src={stayShots[(index + 1) % stayShots.length] ?? ""}
+                    /*
+                      The house's own photograph. This was
+                      `stayShots[(index + 1) % …]` — a generic stock
+                      rotation — so the card showed a timber room that had
+                      nothing to do with the house named underneath it, and
+                      went on doing so after the client's real photography
+                      arrived. `stayShots` stays as the fallback for an
+                      entry that has no picture yet.
+                    */
+                    src={
+                      stay.image ??
+                      stayShots[(index + 1) % stayShots.length] ??
+                      ""
+                    }
                     alt={stay.heroAlt}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 30vw"

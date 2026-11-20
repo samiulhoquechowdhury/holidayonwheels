@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { SectionShell } from "@/components/layout/SectionShell";
 import { SectionHeader } from "@/components/layout/SectionHeader";
 import { Reveal } from "@/components/layout/Reveal";
-import { MotoCard } from "@/components/cards/ResultCard";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
-import { Accent } from "@/components/primitives/Accent";
+import { MotoBanner } from "@/components/moto/MotoBanner";
+import { MotoBooking } from "@/components/moto/MotoBooking";
 import { getMotorcycleTours } from "@/content/motorcycle-tours";
 
 export const metadata: Metadata = {
@@ -38,54 +38,41 @@ export default function MotorcycleToursPage() {
   return (
     <>
       {/*
-        No hero, no film.
+        A banner, then the booking flow.
 
-        This page used to open with a full `PageHero` and then a second
-        full-width film under it — two screens of furniture before the first
-        expedition. The film was the only second video on the site and it
-        was the heaviest asset on the page; what somebody arrives here for
-        is the list of rides and what each one costs.
+        The hero and the second full-width film that used to open this page
+        are gone — two screens of furniture before the first expedition, and
+        the film was the heaviest asset on the site after the home page.
+        `MotoBanner` is one shallow band instead, so a card is on the
+        opening screen rather than below it.
 
-        So it opens on the rides. The headline keeps the one sentence that
-        actually sells the product — the support vehicle — because that is
-        the difference between an expedition and a group of people on bikes
-        hoping for the best, and it is the thing a photograph could not say
-        anyway.
+        The grid underneath is no longer a list of links. Clicking a card
+        starts a booking: departure, riders, the dated itinerary, then the
+        request. `MotoBooking` owns all of it — see that file for why the
+        dates are fixed departures rather than a free calendar, and why
+        "confirm" goes to `enquiries` rather than to `/checkout`, which does
+        not exist in this app.
+      */}
+      <MotoBanner
+        expeditions={tours.length}
+        maxAltitude={Math.max(...tours.map((t) => t.maxAltitude))}
+        maxGroupSize={Math.max(...tours.map((t) => t.groupSizeMax))}
+      />
+
+      {/*
+        `flush` with its own top padding, not the shell's default 140px.
+        Measured, the default put the first expedition card at y=1019 on a
+        1000px laptop — just below the fold, which is the worst place for it:
+        the page looks like a banner and a heading with nothing under them.
       */}
       <SectionShell
+        id="expeditions"
         tint="paper"
         width="wide"
         spacing="flush"
-        className="pt-[calc(var(--header-h)+2rem)] pb-10 lg:pt-[calc(var(--header-h)+2.5rem)] lg:pb-12"
+        className="pt-12 pb-20 lg:pt-14 lg:pb-28"
       >
-        <Eyebrow rule>{tours.length} expeditions</Eyebrow>
-        <h1 className="lg:text-56 mt-6 max-w-3xl text-36">
-          Guided rides, with a <Accent>truck</Accent> behind you
-        </h1>
-        <p className="mt-6 max-w-2xl text-18 text-ink-soft">
-          Group motorcycle expeditions across the Northeast. Every departure
-          runs with a lead rider, a sweep rider and a support pickup — which is
-          the difference between an expedition and a group of people on bikes
-          hoping for the best.
-        </p>
-      </SectionShell>
-
-      {/* The count is in the eyebrow above now; repeating it here was the
-          same two words twice on one screen. */}
-      <SectionShell tint="paper" spacing="flush" className="pb-20 lg:pb-28">
-        <ul className="grid gap-x-8 gap-y-16 sm:grid-cols-2 xl:grid-cols-3">
-          {tours.map((tour, index) => (
-            <li key={tour.slug}>
-              <Reveal delay={Math.min(index, 5) * 0.04}>
-                <MotoCard
-                  tour={tour}
-                  priority={index < 3}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 400px"
-                />
-              </Reveal>
-            </li>
-          ))}
-        </ul>
+        <MotoBooking tours={tours} />
       </SectionShell>
 
       <SectionShell tint="night">

@@ -199,26 +199,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
 
   /*
-   * Auth.js reads AUTH_SECRET from the environment by itself. It is named
-   * here so that a missing value fails at startup with a sentence somebody
-   * can act on, rather than at the first sign-in with a decryption error.
+   * `secret` is deliberately not passed. Auth.js reads `AUTH_SECRET` from the
+   * environment itself and raises its own `MissingSecret` on the first
+   * request if it is absent.
+   *
+   * It used to be `secret: requireSecret()`, which validated eagerly — and
+   * therefore at *build* time, because this module is evaluated for every
+   * route that imports it. CI has no `.env.local`, so `pnpm build` threw
+   * before compiling anything and no pull request could pass. Validating a
+   * runtime secret during a build is checking the wrong machine's
+   * environment.
+   *
+   * The warning below keeps the early signal without failing the build.
    */
-  secret: requireSecret(),
-
   trustHost: true,
 });
 
-function requireSecret(): string {
-  const secret = process.env.AUTH_SECRET;
-  if (!secret || secret.length < 32) {
-    throw new Error(
-      "AUTH_SECRET is missing or shorter than 32 characters. Generate one " +
-        "with `openssl rand -base64 48` and set it in .env.local — it must " +
-        "match the value in api/.env, or the API cannot read this app's " +
-        "session cookies.",
-    );
-  }
-  return secret;
+if (!process.env.AUTH_SECRET || process.env.AUTH_SECRET.length < 32) {
+  console.warn(
+    "[auth] AUTH_SECRET is missing or shorter than 32 characters — sign-in " +
+      "will fail at request time. Generate one with `openssl rand -base64 48` " +
+      "and set it in both .env.local and api/.env; the two must match or the " +
+      "API cannot read this app's session cookies.",
+  );
 }
 
 /**

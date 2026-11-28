@@ -50,15 +50,39 @@ const { Pool } = pg;
  */
 const globalForDb = globalThis as unknown as { howPool?: pg.Pool };
 
+/**
+ * Absent configuration is a warning here, not an error.
+ *
+ * This threw, and that was wrong. `next build` evaluates this module for
+ * every route that imports it, so a build with no `DATABASE_URL` — which is
+ * every CI run, since CI has no `.env.local` — failed at module scope before
+ * compiling anything. The principle sounded right ("a site nobody can sign
+ * into is worse than a build that stops") and the consequence was that no
+ * pull request could pass CI and the work could not be merged at all.
+ *
+ * So it matches `src/lib/supabase.ts`: the build succeeds, and the first
+ * query fails with a connection error naming the host it could not reach.
+ * The warning below is what makes that diagnosable from a deploy log.
+ *
+ * An empty string is handed to `pg` deliberately rather than `undefined`: it
+ * keeps `Pool` from silently falling back to `PGHOST`/`PGUSER` and connecting
+ * somewhere nobody intended.
+ */
 function connectionString(): string {
   const url = process.env.DATABASE_URL;
   if (!url) {
-    throw new Error(
-      "DATABASE_URL is not set. Copy .env.example to .env.local and point it " +
-        "at the Postgres from docker-compose.yml.",
+    console.warn(
+      "[db] DATABASE_URL is unset — sign-in and the account pages will fail " +
+        "at request time. See .env.example and DEPLOYMENT.md.",
     );
+    return "";
   }
   return url;
+}
+
+/** Whether a database is configured at all, for screens that need to say so. */
+export function dbConfigured(): boolean {
+  return Boolean(process.env.DATABASE_URL);
 }
 
 function createPool(): pg.Pool {

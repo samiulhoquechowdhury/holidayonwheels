@@ -1,0 +1,49 @@
+{
+  "name": "holidaysonwheels-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Express + Postgres API behind the Holidays on Wheels admin and account areas.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json --noEmit",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:studio": "drizzle-kit studio",
+    "test": "DATABASE_URL=postgresql://how:how_local_dev@127.0.0.1:5440/holidaysonwheels_test NODE_ENV=test LOG_LEVEL=silent vitest run",
+    "db:seed": "tsx src/db/seed.ts",
+    "test:watch": "DATABASE_URL=postgresql://how:how_local_dev@127.0.0.1:5440/holidaysonwheels_test NODE_ENV=test LOG_LEVEL=silent vitest"
+  },
+  "dependencies": {
+    "@auth/core": "0.41.3",
+    "@node-rs/argon2": "2.0.2",
+    "cookie": "1.0.2",
+    "cors": "2.8.5",
+    "dotenv": "16.4.7",
+    "drizzle-orm": "0.38.4",
+    "drizzle-zod": "0.6.1",
+    "express": "4.21.2",
+    "helmet": "8.0.0",
+    "pg": "8.13.1",
+    "pino": "9.6.0",
+    "pino-http": "10.4.0",
+    "zod": "3.24.1"
+  },
+  "devDependencies": {
+    "@types/cors": "2.8.17",
+    "@types/express": "4.17.21",
+    "@types/node": "22.10.5",
+    "@types/pg": "8.11.10",
+    "@types/supertest": "6.0.2",
+    "drizzle-kit": "0.30.1",
+    "supertest": "7.0.0",
+    "tsx": "4.19.2",
+    "typescript": "5.7.3",
+    "vitest": "2.1.8"
+  }
+}

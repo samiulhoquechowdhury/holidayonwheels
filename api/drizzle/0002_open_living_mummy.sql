@@ -1,0 +1,1 @@
+ALTER TABLE "policies" ADD COLUMN "effective_from" date NOT NULL;

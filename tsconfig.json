@@ -35,5 +35,14 @@
   // appends each such directory to `include` on its own when it builds. Both
   // are excluded here; the real build's types under `.next/types` are the
   // ones that matter and stay.
-  "exclude": ["node_modules", ".next-*"]
+  // `api/` is a separate package with its own tsconfig, its own
+  // `node_modules` and its own `@types`. Swept in by `**/*.ts` above, its
+  // files get typechecked with *this* configuration and fail on type
+  // packages that only exist in its own tree (`pino-http`, `@types/express`).
+  //
+  // Excluding it does not stop `src/lib/db.ts` importing the Drizzle schema
+  // from it: TypeScript follows imports regardless of `exclude`, so those
+  // specific files are still checked — as part of the import graph, where
+  // they only need `drizzle-orm`, which this package also has.
+  "exclude": ["node_modules", ".next-*", "api"]
 }

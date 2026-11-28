@@ -1,18 +1,11 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import {
-  checkPassword,
-  startSession,
-  endSession,
-  adminConfigured,
-} from "@/lib/admin-session";
+import { requireOffice } from "@/lib/office-session";
 import { setEnquiryStatus, setEnquiryNotes } from "@/lib/enquiries";
 import type { EnquiryStatus } from "@/lib/enquiries";
 import { setTripStatus, setTripNotes } from "@/lib/trips";
 import type { TripStatus } from "@/lib/trips";
-import { isSignedIn } from "@/lib/admin-session";
 
 /**
  * Everything the admin can do, as server actions.
@@ -22,7 +15,7 @@ import { isSignedIn } from "@/lib/admin-session";
  * `"use server"` publishes each export as an HTTP endpoint that anybody can
  * call with a crafted request. The layout's guard protects *rendering*, not
  * these functions — a signed-out caller cannot see the buttons but can still
- * post to the action behind them. So each mutation starts with `isSignedIn()`.
+ * post to the action behind them. So each mutation starts with `guard()`.
  * That is not belt-and-braces, it is the only check that applies to a request
  * which never rendered a page.
  *
@@ -30,50 +23,31 @@ import { isSignedIn } from "@/lib/admin-session";
  * is a session.
  */
 
+/**
+ * Every mutation below starts here.
+ *
+ * `requireOffice` throws unless the caller holds a `staff` or `admin`
+ * account. It replaces a check against one shared password, which could not
+ * say *who* was making the change — and these actions write to the audit
+ * trail, which has to name somebody.
+ */
 async function guard(): Promise<void> {
-  if (!(await isSignedIn())) {
-    throw new Error("Not signed in.");
-  }
+  await requireOffice();
 }
 
 export type SignInResult = { ok: false; error: string };
 
-/**
- * Sign in with the shared password.
+/*
+ * `signIn` and `signOut` used to live here, built on one shared password.
+ * They are gone: the office now signs in at `/sign-in` with a real account,
+ * and signs out through `signOutAction` in `(account)/auth-actions.ts`. One
+ * sign-in for the whole site means one session format, one cookie, and one
+ * place where "who is this" is answered.
  *
- * Returns only a failure: success redirects, which throws, so there is no
- * success value to return. The error copy is deliberately identical whatever
- * went wrong — a message that distinguished "wrong password" from anything
- * else would be a hint to somebody guessing.
+ * `SignInResult` is still exported above because the old `/admin/login`
+ * route's form imports the type; that route is now a redirect and both go
+ * when it is deleted.
  */
-export async function signIn(
-  _previous: SignInResult | null,
-  formData: FormData,
-): Promise<SignInResult> {
-  if (!adminConfigured()) {
-    return { ok: false, error: "Admin access is not configured." };
-  }
-
-  const password = String(formData.get("password") ?? "");
-  if (!password || !checkPassword(password)) {
-    /*
-     * A deliberate pause on failure. It is not a defence on its own — a real
-     * attacker parallelises — but it takes a careless online guessing attempt
-     * from thousands of attempts a minute to a few, and costs a legitimate
-     * operator who mistyped half a second once.
-     */
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return { ok: false, error: "That password is not right." };
-  }
-
-  await startSession();
-  redirect("/admin");
-}
-
-export async function signOut(): Promise<void> {
-  await endSession();
-  redirect("/admin/login");
-}
 
 export async function updateEnquiryStatus(
   id: string,

@@ -76,7 +76,16 @@ export type Tour = {
   types: TourType[];
   nights: number;
   days: number;
-  /** Headline price — the lowest per-person figure across all bands. */
+  /**
+   * Headline price — the per-person rate for the **smallest** party, i.e. the
+   * band with the lowest `fromPax`.
+   *
+   * This used to read "the lowest per-person figure across all bands", which
+   * is the opposite of what every tour in the catalogue does: per-person
+   * price falls as the group grows, so the smallest party pays the most each
+   * and that is the figure a card shows. All 47 tours follow the rule as
+   * stated here; none followed it as previously stated.
+   */
   fromPrice: number;
   priceBands: PriceBand[];
   /** Single-supplement, added for solo travellers. */

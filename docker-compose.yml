@@ -1,0 +1,53 @@
+# Local development services for Holidays on Wheels.
+#
+# ## Why Postgres runs in a container and not on the host
+#
+# The host has Postgres 18 on :5432, but no role for the developer's user and
+# creating one needs root. A container needs neither: it owns its own cluster,
+# its own superuser, and it can be thrown away and rebuilt from the migrations
+# without touching anything else on the machine.
+#
+# ## Why a named volume and not ./data
+#
+# This repository lives on an NTFS mount (fuseblk). Postgres refuses to
+# initialise a data directory it cannot set Unix ownership and permissions on,
+# and even where it starts, fsync behaviour on FUSE is not something to trust
+# a database to. `pgdata` is a Docker-managed volume on the ext4 root, so the
+# cluster is on a real filesystem while the code stays where it is.
+#
+# The mount point is `/var/lib/postgresql`, not `/var/lib/postgresql/data`.
+# Postgres 18's image puts the cluster in a major-version subdirectory of
+# that path so `pg_upgrade --link` can work across a single mount; mounting
+# the old `/data` path makes 18 refuse to start and report the volume as
+# unused.
+#
+# ## Why :5440 and not :5432
+#
+# 5432 is the host's own cluster and 5433 is already taken by another
+# project's container on this machine. Binding a third database to a port in
+# use fails at `up`; worse, matching an existing one means migrations land in
+# somebody else's database.
+services:
+  postgres:
+    image: postgres:18
+    container_name: how-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: how
+      POSTGRES_PASSWORD: how_local_dev
+      POSTGRES_DB: holidaysonwheels
+      # Deterministic collation, so ORDER BY on names does not depend on
+      # whatever locale the host image happens to ship with.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      - "5440:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U how -d holidaysonwheels"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  pgdata:

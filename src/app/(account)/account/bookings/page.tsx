@@ -8,19 +8,20 @@ import { Media } from "@/components/primitives/Media";
 import { ButtonLink } from "@/components/primitives/Button";
 import { formatINR } from "@/lib/currency";
 import { formatRange, relativeToNow } from "@/lib/date";
+import { apiFetch } from "@/lib/api";
 import {
-  getUpcomingBookings,
-  getPastBookings,
-  getPermitsForBooking,
-} from "@/content/account";
-import type { Booking } from "@/content/types";
+  asWeaveRegion,
+  type AccountBooking,
+  type AccountPermit,
+  type AccountPayload,
+} from "@/lib/account";
 
 export const metadata: Metadata = {
   title: "My bookings",
   robots: { index: false, follow: false },
 };
 
-const KIND_PATH: Record<Booking["kind"], string> = {
+const KIND_PATH: Record<AccountBooking["kind"], string> = {
   tour: "/tours",
   moto: "/motorcycle-tours",
   stay: "/homestays",
@@ -28,7 +29,7 @@ const KIND_PATH: Record<Booking["kind"], string> = {
 };
 
 const STATUS: Record<
-  Booking["status"],
+  AccountBooking["status"],
   { label: string; tone: "clay" | "sage" | "ember" | "neutral" }
 > = {
   confirmed: { label: "Confirmed", tone: "sage" },
@@ -37,9 +38,53 @@ const STATUS: Record<
   cancelled: { label: "Cancelled", tone: "ember" },
 };
 
-export default function BookingsPage() {
-  const upcoming = getUpcomingBookings();
-  const past = getPastBookings();
+export const dynamic = "force-dynamic";
+
+/**
+ * Every booking this person has, and what is still to pay on each.
+ *
+ * Reads the signed-in traveller's own records from the API. It used to render
+ * six fictional bookings from a `src/content/account.ts` that has since
+ * been deleted; they were fine
+ * while there was no sign-in, and are indefensible behind one — somebody
+ * would ring the office about a reference that belongs to nobody.
+ */
+export default async function BookingsPage() {
+  const result = await apiFetch<AccountPayload>("/account");
+
+  if (!result.ok) {
+    return (
+      <>
+        <PageHero
+          eyebrow="Your account"
+          title="My bookings"
+          intro="Everything you have booked, and everything still to pay."
+          tint="shell"
+          region="neutral"
+        />
+        <SectionShell tint="paper">
+          <AccountNav current="bookings" />
+          <p
+            role="alert"
+            className="mt-12 rounded-[var(--radius-card)] border border-clay bg-sand p-6 text-16"
+          >
+            {result.error.message} Nothing is lost — your bookings are safe. Try
+            again shortly, or{" "}
+            <Link href="/contact" className="u-link">
+              ask the office
+            </Link>{" "}
+            to read them out to you.
+          </p>
+        </SectionShell>
+      </>
+    );
+  }
+
+  const {
+    upcomingBookings: upcoming,
+    pastBookings: past,
+    permits,
+  } = result.data;
 
   return (
     <>
@@ -62,7 +107,7 @@ export default function BookingsPage() {
             <ul className="mt-8 flex flex-col gap-6">
               {upcoming.map((booking) => (
                 <li key={booking.reference}>
-                  <BookingRow booking={booking} />
+                  <BookingRow booking={booking} permits={permits} />
                 </li>
               ))}
             </ul>
@@ -79,7 +124,7 @@ export default function BookingsPage() {
             <ul className="mt-8 flex flex-col gap-6">
               {past.map((booking) => (
                 <li key={booking.reference}>
-                  <BookingRow booking={booking} muted />
+                  <BookingRow booking={booking} permits={permits} muted />
                 </li>
               ))}
             </ul>
@@ -92,13 +137,24 @@ export default function BookingsPage() {
 
 function BookingRow({
   booking,
+  permits: allPermits,
   muted = false,
 }: {
-  booking: Booking;
+  booking: AccountBooking;
+  /** Every permit on the account; this row picks out its own. */
+  permits: AccountPermit[];
   muted?: boolean;
 }) {
   const status = STATUS[booking.status];
-  const permits = getPermitsForBooking(booking.reference);
+  /*
+   * Matched on `bookingId`, not on the reference string. Permits are linked
+   * by a real foreign key now; comparing references would quietly stop
+   * working the day a reference is ever reissued, and it was only a string
+   * match because the mock data had nothing better.
+   */
+  const permits = allPermits.filter(
+    (permit) => permit.bookingId === booking.id,
+  );
 
   return (
     <article
@@ -110,7 +166,7 @@ function BookingRow({
         <Media
           alt={`${booking.title}, booked for ${formatRange(booking.startDate, booking.endDate)}`}
           seed={booking.reference}
-          region={booking.region}
+          region={asWeaveRegion(booking.region)}
           aspect="4/3"
           sizes="180px"
         />
@@ -159,9 +215,20 @@ function BookingRow({
 
         {booking.status === "pending-payment" ? (
           <div className="mt-5 flex flex-wrap items-center gap-4 rounded-[var(--radius-card)] border border-[color-mix(in_srgb,var(--clay)_40%,transparent)] bg-[color-mix(in_srgb,var(--clay)_8%,transparent)] p-4">
+            {/*
+              The real outstanding amount, not an assumed fraction.
+              This said `total * 0.75` — a made-up 75% balance shown whatever
+              the traveller had actually paid. With a deposit of ₹20,000
+              against ₹2,36,000 it would have told them ₹1,77,000 was due when
+              the true figure is ₹2,16,000. A wrong number about somebody's
+              money is the one kind of placeholder that cannot be left in.
+            */}
             <p className="flex-1 text-14">
-              Your balance of {formatINR(Math.round(booking.total * 0.75))} is
+              Your balance of {formatINR(booking.total - booking.amountPaid)} is
               due 60 days before departure.
+              {booking.amountPaid > 0
+                ? ` ${formatINR(booking.amountPaid)} received so far.`
+                : ""}
             </p>
             <ButtonLink href="/contact" variant="primary" size="sm">
               Pay balance

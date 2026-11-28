@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+
+# The content dump, regenerated with `pnpm db:dump-content` from the root.
+#
+# 596 KB of JSON generated from `src/content/*.ts`, which is itself in version
+# control. Committing it would put the same content in history twice and let
+# the copy drift from the source it was derived from. It is a build input, not
+# a source file.
+seed/*.json

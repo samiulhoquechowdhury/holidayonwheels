@@ -6,9 +6,10 @@ import { AccountNav } from "@/components/account/AccountNav";
 import { Chip } from "@/components/primitives/Chip";
 import { ButtonLink } from "@/components/primitives/Button";
 import { formatLong, formatRange } from "@/lib/date";
-import { getPermits } from "@/content/account";
+import { apiFetch } from "@/lib/api";
+import type { AccountPayload, AccountPermit } from "@/lib/account";
 import { getDestinationName } from "@/content/destinations";
-import type { Permit } from "@/content/types";
+import type { StateSlug } from "@/content/types";
 
 export const metadata: Metadata = {
   title: "My permits",
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 const STATUS: Record<
-  Permit["status"],
+  AccountPermit["status"],
   { label: string; tone: "clay" | "sage" | "ember" | "neutral"; note: string }
 > = {
   draft: {
@@ -46,8 +47,56 @@ const STATUS: Record<
   },
 };
 
-export default function PermitsPage() {
-  const permits = getPermits();
+export const dynamic = "force-dynamic";
+
+/**
+ * The permits the office is carrying for this traveller.
+ *
+ * Their own, from the API. These used to be five fictional records; a permit
+ * is a government document and showing somebody a reference that is not
+ * theirs is the worst case of placeholder data on the site.
+ */
+export default async function PermitsPage() {
+  const result = await apiFetch<AccountPayload>("/account");
+
+  if (!result.ok) {
+    return (
+      <>
+        <PageHero
+          eyebrow="Your account"
+          title="My permits"
+          intro="Inner Line Permits and Protected Area Permits we are handling for you."
+          tint="shell"
+          region="manipur"
+        />
+        <SectionShell tint="paper">
+          <AccountNav current="permits" />
+          <p
+            role="alert"
+            className="mt-12 rounded-[var(--radius-card)] border border-clay bg-sand p-6 text-16"
+          >
+            {result.error.message} Your permits are unaffected —{" "}
+            <Link href="/contact" className="u-link">
+              ask the office
+            </Link>{" "}
+            for their status in the meantime.
+          </p>
+        </SectionShell>
+      </>
+    );
+  }
+
+  const { permits, upcomingBookings, pastBookings } = result.data;
+
+  /*
+   * A permit stores `bookingId`; the traveller reads references. The lookup
+   * is built from the bookings in the same payload rather than by asking the
+   * API again per permit.
+   */
+  const referenceById = new Map(
+    [...upcomingBookings, ...pastBookings].map((b) => [b.id, b.reference]),
+  );
+
   const active = permits.filter(
     (p) => p.status !== "expired" && p.status !== "rejected",
   );
@@ -80,7 +129,7 @@ export default function PermitsPage() {
             <ul className="mt-8 flex flex-col gap-4">
               {active.map((permit) => (
                 <li key={permit.reference}>
-                  <PermitRow permit={permit} />
+                  <PermitRow permit={permit} referenceById={referenceById} />
                 </li>
               ))}
             </ul>
@@ -106,7 +155,11 @@ export default function PermitsPage() {
             <ul className="mt-8 flex flex-col gap-4">
               {archived.map((permit) => (
                 <li key={permit.reference}>
-                  <PermitRow permit={permit} muted />
+                  <PermitRow
+                    permit={permit}
+                    referenceById={referenceById}
+                    muted
+                  />
                 </li>
               ))}
             </ul>
@@ -118,13 +171,19 @@ export default function PermitsPage() {
 }
 
 function PermitRow({
+  referenceById,
   permit,
   muted = false,
 }: {
-  permit: Permit;
+  permit: AccountPermit;
+  /** Booking id -> the reference a traveller reads. */
+  referenceById: Map<string, string>;
   muted?: boolean;
 }) {
   const status = STATUS[permit.status];
+  const bookingReference = permit.bookingId
+    ? referenceById.get(permit.bookingId)
+    : undefined;
 
   return (
     <article
@@ -137,7 +196,7 @@ function PermitRow({
           {/* Permit codes are utility text — always mono, always selectable. */}
           <p className="u-num text-14 tracking-[0.06em]">{permit.reference}</p>
           <h3 className="mt-2 text-22">
-            {getDestinationName(permit.state)} · {permit.kind}
+            {getDestinationName(permit.state as StateSlug)} · {permit.kind}
           </h3>
         </div>
         <Chip tone={status.tone}>{status.label}</Chip>
@@ -160,7 +219,7 @@ function PermitRow({
             <dd className="mt-1 text-14">{formatLong(permit.submittedAt)}</dd>
           </div>
         ) : null}
-        {permit.bookingReference ? (
+        {bookingReference ? (
           <div>
             <dt className="u-label text-ink-faint">Booking</dt>
             <dd className="mt-1 text-14">
@@ -168,7 +227,7 @@ function PermitRow({
                 href="/account/bookings"
                 className="u-num text-sage-ink underline underline-offset-4"
               >
-                {permit.bookingReference}
+                {bookingReference}
               </Link>
             </dd>
           </div>
@@ -177,15 +236,23 @@ function PermitRow({
 
       <p className="mt-5 text-14 text-ink-soft">{status.note}</p>
 
+      {/*
+        There was a "Download PDF" button here whose href was
+        `/account/permits` — the page it sits on. There is no PDF endpoint and
+        no stored document, so the button went nowhere and did nothing while
+        looking like the one thing a traveller with an approved permit wants.
+        A sentence that is true beats a control that is not; it comes back the
+        day permits are actually stored as files.
+      */}
       {permit.status === "approved" ? (
-        <ButtonLink
-          href="/account/permits"
-          variant="secondary"
-          size="sm"
-          className="mt-5"
-        >
-          Download PDF
-        </ButtonLink>
+        <p className="mt-5 text-14 text-ink-soft">
+          We have emailed the permit to you. Carry a printed copy — check-posts
+          are not always online. Need it again?{" "}
+          <Link href="/contact" className="u-link">
+            Ask and we will resend it
+          </Link>
+          .
+        </p>
       ) : null}
       {permit.status === "draft" ? (
         <ButtonLink
